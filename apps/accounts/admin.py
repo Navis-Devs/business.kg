@@ -21,7 +21,7 @@ class UserAdmin(UserAdmin):
 
     fieldsets = (
         (_('Главная'), {'fields': ('username', 'password')}),
-        (_('Персональная информация'), {'fields': ('name', '_avatar')}),
+        (_('Персональная информация'), {'fields': ('name', 'balance', '_avatar')}),
         (_('Права доступы'), {
             'fields': ('code', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
