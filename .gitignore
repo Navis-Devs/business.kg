@@ -2,7 +2,7 @@
 env
 media
 static
-staticfiles
+
 .env
 
 db.sqlite3
@@ -11,4 +11,3 @@ db.sqlite3
 
 **__init__.py
 !core/__init__.py
-!staticfiles/img
