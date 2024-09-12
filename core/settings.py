@@ -26,11 +26,27 @@ INSTALLED_APPS = [
 
     # additional
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_spectacular',
+    'sorl.thumbnail',
 
     # apps
-    # 'apps.accounts',
+    'apps.accounts',
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',
+        ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -81,9 +97,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
+AUTH_USER_MODEL = "accounts.User"
 
 LANGUAGE_CODE = 'en-us'
 
