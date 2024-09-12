@@ -7,5 +7,7 @@ staticfiles
 
 db.sqlite3
 
+**__pycache__
+
 **__init__.py
 !core/__init__.py
