@@ -9,7 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API
-    # path('api/accounts/', include("apps.accounts.urls")),
+    path('api/accounts/', include("apps.accounts.urls")),
 
     # swagger
     path('schema/', SpectacularAPIView.as_view(), name='schema'),

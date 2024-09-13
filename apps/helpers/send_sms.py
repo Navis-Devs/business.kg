@@ -5,8 +5,6 @@ import environ
 
 env = environ.Env()
 
-environ.Env.read_env(settings.BASE_DIR / '.env')
-
 NIKITA_LOGIN = env('NIKITA_LOGIN')
 NIKITA_PASSWORD = env('NIKITA_PASSWORD')
 NIKITA_SENDER = env('NIKITA_SENDER')

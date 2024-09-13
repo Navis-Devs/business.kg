@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 
     # apps
     'apps.accounts',
+    'apps.cars',
 ]
 
 REST_FRAMEWORK = {
@@ -110,8 +111,8 @@ USE_TZ = True
 # Swagger
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Domket',
-    'DESCRIPTION': 'Api for Domket',
+    'TITLE': 'Business KG',
+    'DESCRIPTION': 'Api for Business KG',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }

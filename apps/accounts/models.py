@@ -54,6 +54,7 @@ class User(AbstractUser, BaseModel):
             return get_thumbnail(self._avatar.name, '500x500', padding=False, quality=75).url
         return f'{settings.STATIC_URL}img/avatar.svg'
 
+
     def save(self, *args, **kwargs):
         self.code = int(random.randint(100_000, 999_999))
         super(User, self).save(*args, **kwargs)
