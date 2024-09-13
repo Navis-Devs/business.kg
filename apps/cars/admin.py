@@ -1,3 +1,5 @@
 from django.contrib import admin
+from apps.cars.models import CarType, CarMark
 
-# Register your models here.
+admin.site.register(CarType)
+admin.site.register(CarMark)
