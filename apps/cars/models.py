@@ -200,12 +200,15 @@ class CarCharacteristicValue(models.Model):
     )
     unit = models.CharField(
         _("Unit"),
-        max_length=255
+        max_length=255,
+        null=True,
+        blank=True
     )
     id_car_characteristic = models.ForeignKey(
         "CarCharacteristic",
         verbose_name=_("Id car characteristic"),
         on_delete=models.RESTRICT,
+        null=True
     )
     id_car_modification = models.ForeignKey(
         "CarModification",
@@ -241,7 +244,9 @@ class CarEquipment(models.Model):
         on_delete=models.RESTRICT
     )
     price_min = models.IntegerField(
-        _("Price min")
+        _("Price min"),
+        null=True,
+        blank=True
     )
     id_car_type = models.ForeignKey(
         "CarType",
@@ -251,7 +256,9 @@ class CarEquipment(models.Model):
         blank=True
     )
     year = models.IntegerField(
-        _("year")
+        _("year"),
+        null=True,
+        blank=True
     )
 
     def __str__(self):
