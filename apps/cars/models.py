@@ -4,6 +4,9 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CarType(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     name = models.CharField(
         _("Name"),
         max_length=255
@@ -14,6 +17,9 @@ class CarType(models.Model):
 
 
 class CarMark(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     name = models.CharField(
         _("Name"),
         max_length=255
@@ -33,6 +39,9 @@ class CarMark(models.Model):
 
 
 class CarModel(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     id_car_mark = models.ForeignKey(
         "CarMark",
         verbose_name=_("Id car mark"),
@@ -57,6 +66,9 @@ class CarModel(models.Model):
 
 
 class CarGeneration(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     name = models.CharField(
         _("Name"),
         max_length=255
@@ -87,6 +99,9 @@ class CarGeneration(models.Model):
 
 
 class CarSerie(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     id_car_model = models.ForeignKey(
         "CarModel",
         verbose_name=_("Id car model"),
@@ -116,6 +131,9 @@ class CarSerie(models.Model):
 
 
 class CarModification(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     id_car_serie = models.ForeignKey(
         "CarSerie",
         verbose_name=_("Id car serie"),
@@ -146,6 +164,9 @@ class CarModification(models.Model):
 # Branch 1, From CarModification to CarCharacteristicValue
 
 class CarCharacteristic(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     name = models.CharField(
         _("Name"),
         max_length=255
@@ -165,8 +186,14 @@ class CarCharacteristic(models.Model):
         blank=True
     )
 
+    def __str__(self):
+        return self.name
+
 
 class CarCharacteristicValue(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     value = models.CharField(
         _("Value"),
         max_length=255
@@ -195,10 +222,15 @@ class CarCharacteristicValue(models.Model):
         blank=True
     )
 
+    def __str__(self):
+        return self.value
 
 # branch 2, from CarModification to CarEquipment
 
 class CarEquipment(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     name = models.CharField(
         _("Name"),
         max_length=255
@@ -227,6 +259,9 @@ class CarEquipment(models.Model):
 
 
 class CarOption(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     name = models.CharField(
         _("Name"),
         max_length=255
@@ -246,7 +281,13 @@ class CarOption(models.Model):
         blank=True
     )
 
+    def __str__(self):
+        return self.name
+
 class CarOptionValue(models.Model):
+    id = models.IntegerField(
+        primary_key=True
+    )
     is_base = models.PositiveSmallIntegerField(
         _("Is base")
     )
