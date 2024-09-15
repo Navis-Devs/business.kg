@@ -12,19 +12,28 @@ from .serializers import (
     CarOptionValueSerializer
 )
 
+import base64
+import hashlib
+
+
 class CarDataListView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         data = {
             'car_types': CarTypeSerializer(CarType.objects.all(), many=True).data,
-            'car_marks': CarMarkSerializer(CarMark.objects.all(), many=True).data,
-            'car_models': CarModelSerializer(CarModel.objects.all(), many=True).data,
-            'car_generations': CarGenerationSerializer(CarGeneration.objects.all(), many=True).data,
-            'car_series': CarSerieSerializer(CarSerie.objects.all(), many=True).data,
-            'car_modifications': CarModificationSerializer(CarModification.objects.all(), many=True).data,
-            'car_characteristics': CarCharacteristicSerializer(CarCharacteristic.objects.all(), many=True).data,
-            'car_characteristic_values': CarCharacteristicValueSerializer(CarCharacteristicValue.objects.all(), many=True).data,
-            'car_equipments': CarEquipmentSerializer(CarEquipment.objects.all(), many=True).data,
-            'car_options': CarOptionSerializer(CarOption.objects.all(), many=True).data,
-            'car_option_values': CarOptionValueSerializer(CarOptionValue.objects.all(), many=True).data,
+            # 'car_marks': CarMarkSerializer(CarMark.objects.all(), many=True).data,
+            # 'car_models': CarModelSerializer(CarModel.objects.all(), many=True).data,
+            # 'car_generations': CarGenerationSerializer(CarGeneration.objects.all(), many=True).data,
+            # 'car_series': CarSerieSerializer(CarSerie.objects.all(), many=True).data,
+            # 'car_modifications': CarModificationSerializer(CarModification.objects.all(), many=True).data,
+            # 'car_characteristics': CarCharacteristicSerializer(CarCharacteristic.objects.all(), many=True).data,
+            # 'car_characteristic_values': CarCharacteristicValueSerializer(CarCharacteristicValue.objects.all(), many=True).data,
+            # 'car_equipments': CarEquipmentSerializer(CarEquipment.objects.all(), many=True).data,
+            # 'car_options': CarOptionSerializer(CarOption.objects.all(), many=True).data,
+            # 'car_option_values': CarOptionValueSerializer(CarOptionValue.objects.all(), many=True).data,
         }
-        return Response(data)
+
+        data_str = str(data).encode('utf-8')
+        hashed_data = hashlib.sha256(data_str).hexdigest()
+        encoded_data = base64.b64encode(data_str).decode('utf-8')
+
+        return Response(encoded_data)

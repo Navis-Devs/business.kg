@@ -2,6 +2,25 @@ from django.db import models
 from django.db.models import SET_NULL
 from django.utils.translation import gettext_lazy as _
 
+import secrets
+import string
+
+class PermissionForFront(models.Model):
+    key = models.CharField(
+        _("Key"),
+        max_length=255
+    )
+    value = models.CharField(
+        _("Value"),
+        max_length=255
+    )
+
+    def save(self, *args, **kwargs):
+        alphabet = string.ascii_letters + string.digits + string.punctuation
+        self.key = ''.join(secrets.choice(alphabet) for _ in range(32))
+        self.value = ''.join(secrets.choice(alphabet) for _ in range(32))
+        super().save(*args, **kwargs)
+
 
 class CarType(models.Model):
     id = models.IntegerField(

@@ -1,8 +1,10 @@
 from django.contrib import admin
-from apps.cars.models import (
+from apps.cars.models import (PermissionForFront,
     CarType, CarMark, CarModel, CarGeneration, CarSerie, CarModification,
     CarCharacteristic, CarCharacteristicValue, CarEquipment, CarOption, CarOptionValue
 )
+
+admin.site.register(PermissionForFront)
 
 admin.site.register(CarType)
 admin.site.register(CarMark)
