@@ -4,7 +4,13 @@ from apps.cars.models import (PermissionForFront,
     CarCharacteristic, CarCharacteristicValue, CarEquipment, CarOption, CarOptionValue
 )
 
-admin.site.register(PermissionForFront)
+class PermissionForFrontAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        if PermissionForFront.objects.count() >= 1:
+            return False
+        return True
+
+admin.site.register(PermissionForFront, PermissionForFrontAdmin)
 
 admin.site.register(CarType)
 admin.site.register(CarMark)

@@ -16,7 +16,7 @@ class PermissionForFront(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        alphabet = string.ascii_letters + string.digits + string.punctuation
+        alphabet = string.ascii_letters + string.digits
         self.key = ''.join(secrets.choice(alphabet) for _ in range(32))
         self.value = ''.join(secrets.choice(alphabet) for _ in range(32))
         super().save(*args, **kwargs)
