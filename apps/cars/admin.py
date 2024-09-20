@@ -12,14 +12,46 @@ class PermissionForFrontAdmin(admin.ModelAdmin):
 
 admin.site.register(PermissionForFront, PermissionForFrontAdmin)
 
-admin.site.register(CarType)
-admin.site.register(CarMark)
-admin.site.register(CarModel)
-admin.site.register(CarGeneration)
-admin.site.register(CarSerie)
-admin.site.register(CarModification)
-admin.site.register(CarCharacteristic)
-admin.site.register(CarCharacteristicValue)
-admin.site.register(CarEquipment)
-admin.site.register(CarOption)
-admin.site.register(CarOptionValue)
+@admin.register(CarType)
+class CarTypeAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+@admin.register(CarMark)
+class CarMarkAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'name_rus', 'id_car_type__name']
+
+@admin.register(CarModel)
+class CarModelAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'name_rus', 'id_car_mark__name', 'id_car_type__name']
+
+@admin.register(CarGeneration)
+class CarGenerationAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'id_car_model__name', 'year_begin', 'year_end', 'id_car_type__name']
+
+@admin.register(CarSerie)
+class CarSerieAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'id_car_model__name', 'id_car_generation__name', 'id_car_type__name']
+
+@admin.register(CarModification)
+class CarModificationAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'id_car_serie__name', 'id_car_model__name', 'id_car_type__name']
+
+@admin.register(CarCharacteristic)
+class CarCharacteristicAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'id_parent__name', 'id_car_type__name']
+
+@admin.register(CarCharacteristicValue)
+class CarCharacteristicValueAdmin(admin.ModelAdmin):
+    search_fields = ['value', 'unit', 'id_car_characteristic__name', 'id_car_modification__name', 'id_car_type__name']
+
+@admin.register(CarEquipment)
+class CarEquipmentAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'id_car_modification__name', 'id_car_type__name']
+
+@admin.register(CarOption)
+class CarOptionAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'id_parent__name', 'id_car_type__name']
+
+@admin.register(CarOptionValue)
+class CarOptionValueAdmin(admin.ModelAdmin):
+    search_fields = ['id_car_option__name', 'id_car_equipment__name', 'id_car_type__name']
