@@ -1,5 +1,8 @@
 from rest_framework import generics
 from rest_framework.response import Response
+
+from django.db.models import Min, Max
+
 from .models import (
     CarType, CarMark, CarModel, CarGeneration, CarSerie,
     CarModification, CarCharacteristic, CarCharacteristicValue,
@@ -14,26 +17,59 @@ from .serializers import (
 
 import base64
 import hashlib
+import datetime
+
+data = {
+    # 'car_types': CarTypeSerializer(CarType.objects.all(), many=True).data,
+    # 'car_marks': CarMarkSerializer(CarMark.objects.all(), many=True).data,
+    # 'car_models': CarModelSerializer(CarModel.objects.all(), many=True).data,
+    # 'car_generations': CarGenerationSerializer(CarGeneration.objects.all(), many=True).data,
+    # 'car_series': CarSerieSerializer(CarSerie.objects.all(), many=True).data,
+    # 'car_modifications': CarModificationSerializer(CarModification.objects.all(), many=True).data,
+    # 'car_characteristics': CarCharacteristicSerializer(CarCharacteristic.objects.all(), many=True).data,
+    # 'car_characteristic_values': CarCharacteristicValueSerializer(CarCharacteristicValue.objects.all(), many=True).data,
+    # 'car_equipments': CarEquipmentSerializer(CarEquipment.objects.all(), many=True).data,
+    # 'car_options': CarOptionSerializer(CarOption.objects.all(), many=True).data,
+    # 'car_option_values': CarOptionValueSerializer(CarOptionValue.objects.all(), many=True).data,
+}
+
+
+# data_str = str(data).encode('utf-8')
+# hashed_data = hashlib.sha256(data_str).hexdigest()
+# encoded_data = base64.b64encode(data_str).decode('utf-8')
 
 
 class CarDataListView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
-        data = {
-            'car_types': CarTypeSerializer(CarType.objects.all(), many=True).data,
-            # 'car_marks': CarMarkSerializer(CarMark.objects.all(), many=True).data,
-            # 'car_models': CarModelSerializer(CarModel.objects.all(), many=True).data,
-            # 'car_generations': CarGenerationSerializer(CarGeneration.objects.all(), many=True).data,
-            # 'car_series': CarSerieSerializer(CarSerie.objects.all(), many=True).data,
-            # 'car_modifications': CarModificationSerializer(CarModification.objects.all(), many=True).data,
-            # 'car_characteristics': CarCharacteristicSerializer(CarCharacteristic.objects.all(), many=True).data,
-            # 'car_characteristic_values': CarCharacteristicValueSerializer(CarCharacteristicValue.objects.all(), many=True).data,
-            # 'car_equipments': CarEquipmentSerializer(CarEquipment.objects.all(), many=True).data,
-            # 'car_options': CarOptionSerializer(CarOption.objects.all(), many=True).data,
-            # 'car_option_values': CarOptionValueSerializer(CarOptionValue.objects.all(), many=True).data,
-        }
+        id_car_mark = request.query_params.get("mark")
+        id_car_model = request.query_params.get("model")
 
-        data_str = str(data).encode('utf-8')
-        hashed_data = hashlib.sha256(data_str).hexdigest()
-        encoded_data = base64.b64encode(data_str).decode('utf-8')
+        # filter mark
+        if id_car_mark:
+            response = {
+                "data": CarModelSerializer(CarModel.objects.filter(id_car_mark__id=id_car_mark), many=True).data}
+            # filter year
+            if id_car_model:
+                response = {"data": self.get_year(id_car_model)}
 
-        return Response(encoded_data)
+        else:
+            response = {"data": CarMarkSerializer(CarMark.objects.all(), many=True).data}
+
+        return Response(response)
+
+    def get_year(self, id_car_model):
+        car_generations = CarGeneration.objects.filter(id_car_model__id=id_car_model).aggregate(
+            min_year=Min("year_begin"),
+            max_year=Max("year_end")
+        )
+        min_year = car_generations.get("min_year")
+        max_year = car_generations.get("max_year")
+
+        if max_year == "NULL":
+            max_year = datetime.date.today().year
+
+        print(car_generations)
+        if min_year is not None and max_year is not None:
+            return [year for year in range(int(min_year), int(max_year) + 1)]
+        else:
+            return []

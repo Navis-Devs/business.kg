@@ -22,6 +22,9 @@ class PermissionForFront(models.Model):
         super().save(*args, **kwargs)
 
 
+###################################################################################################################################################################################################################
+
+
 class CarType(models.Model):
     id = models.IntegerField(
         primary_key=True
