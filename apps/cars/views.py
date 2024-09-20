@@ -43,17 +43,31 @@ class CarDataListView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         id_car_mark = request.query_params.get("mark")
         id_car_model = request.query_params.get("model")
+        year = request.query_params.get("year")
 
-        # filter mark
+        ''' filter with mark '''
         if id_car_mark:
-            response = {
-                "data": CarModelSerializer(CarModel.objects.filter(id_car_mark__id=id_car_mark), many=True).data}
-            # filter year
+            response = {"data": CarModelSerializer(
+                CarModel.objects.filter(
+                    id_car_mark__id=id_car_mark
+                ), many=True).data}
+
+            ''' filter with year (filtering with function)'''
             if id_car_model:
                 response = {"data": self.get_year(id_car_model)}
 
+                ''' filter with year '''
+                if year:
+                    response = {"data": CarGenerationSerializer(
+                        CarGeneration.objects.filter(
+                            id_car_model__id=id_car_model,
+                            year_end__gte=year,
+                            year_begin__lte=year
+                        ).order_by("year_begin"), many=True).data}
+
         else:
-            response = {"data": CarMarkSerializer(CarMark.objects.all(), many=True).data}
+            response = {"data": CarMarkSerializer(
+                CarMark.objects.all(), many=True).data}
 
         return Response(response)
 
@@ -68,7 +82,6 @@ class CarDataListView(generics.GenericAPIView):
         if max_year == "NULL":
             max_year = datetime.date.today().year
 
-        print(car_generations)
         if min_year is not None and max_year is not None:
             return [year for year in range(int(min_year), int(max_year) + 1)]
         else:

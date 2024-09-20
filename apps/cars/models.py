@@ -129,7 +129,7 @@ class CarSerie(models.Model):
         verbose_name=_("Id car model"),
         on_delete=SET_NULL,
         null=True,
-        blank=True
+        blank=True,
     )
     name = models.CharField(
         _("Name"),
@@ -138,7 +138,8 @@ class CarSerie(models.Model):
     id_car_generation = models.ForeignKey(
         "CarGeneration",
         verbose_name=_("Id car generation"),
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        related_name = "car_serie"
     )
     id_car_type = models.ForeignKey(
         "CarType",
