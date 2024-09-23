@@ -47,18 +47,27 @@ class CarDataListView(generics.GenericAPIView):
 
         ''' filter with mark '''
         if id_car_mark:
-            response = {"data": CarModelSerializer(
+            response = {
+                "🥰": "🥵",
+                "type": "models",
+                "data": CarModelSerializer(
                 CarModel.objects.filter(
                     id_car_mark__id=id_car_mark
                 ), many=True).data}
 
             ''' filter with year (filtering with function)'''
             if id_car_model:
-                response = {"data": self.get_year(id_car_model)}
+                response = {
+                    "🥰": "🥵",
+                    "type": "years",
+                    "data": self.get_year(id_car_model)}
 
                 ''' filter with year '''
                 if year:
-                    response = {"data": CarGenerationSerializer(
+                    response = {
+                        "🥰": "🥵",
+                        "type": "series",
+                        "data": CarGenerationSerializer(
                         CarGeneration.objects.filter(
                             id_car_model__id=id_car_model,
                             year_end__gte=year,
@@ -66,7 +75,10 @@ class CarDataListView(generics.GenericAPIView):
                         ).order_by("year_begin"), many=True).data}
 
         else:
-            response = {"data": CarMarkSerializer(
+            response = {
+                "🥰": "🥵",
+                "type": "marks",
+                "data": CarMarkSerializer(
                 CarMark.objects.all(), many=True).data}
 
         return Response(response)
