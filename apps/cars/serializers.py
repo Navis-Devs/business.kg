@@ -24,18 +24,17 @@ class CarModelSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'name_rus', 'id_car_mark', 'id_car_type']
 
 
+class CarGenerationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CarGeneration
+        fields = ['id', 'name', 'year_begin', 'year_end', 'id_car_model', 'id_car_type']
+
+
 class CarSerieSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarSerie
         fields = ['id', 'name', 'id_car_model', 'id_car_generation', 'id_car_type']
-
-
-class CarGenerationSerializer(serializers.ModelSerializer):
-    car_serie = CarSerieSerializer(many=True)
-
-    class Meta:
-        model = CarGeneration
-        fields = ['id', 'name', 'year_begin', 'year_end', 'id_car_model', 'id_car_type', 'car_serie']
 
 # до этого все сделал
 

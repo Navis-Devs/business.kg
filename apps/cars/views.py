@@ -44,29 +44,27 @@ class CarDataListView(generics.GenericAPIView):
         id_car_mark = request.query_params.get("mark")
         id_car_model = request.query_params.get("model")
         year = request.query_params.get("year")
+        id_car_generation = request.query_params.get("gen")
 
-        ''' filter with mark '''
+        ''' filter with mark | output = marks'''
         if id_car_mark:
             response = {
-                "🥰": "🥵",
                 "type": "models",
                 "data": CarModelSerializer(
                 CarModel.objects.filter(
                     id_car_mark__id=id_car_mark
                 ), many=True).data}
 
-            ''' filter with year (filtering with function)'''
+            ''' filter with year (filtering with function) | output = available years'''
             if id_car_model:
                 response = {
-                    "🥰": "🥵",
                     "type": "years",
                     "data": self.get_year(id_car_model)}
 
-                ''' filter with year '''
+                ''' filter with year | output = generations'''
                 if year:
                     response = {
-                        "🥰": "🥵",
-                        "type": "series",
+                        "type": "generations",
                         "data": CarGenerationSerializer(
                         CarGeneration.objects.filter(
                             id_car_model__id=id_car_model,
@@ -74,9 +72,18 @@ class CarDataListView(generics.GenericAPIView):
                             year_begin__lte=year
                         ).order_by("year_begin"), many=True).data}
 
+                    ''' filter with generation | output = series '''
+                    if id_car_generation:
+                        response = {
+                            "type": "serie",
+                            "data": CarSerieSerializer(
+                            CarSerie.objects.filter(
+                                id_car_model=id_car_model,
+                                id_car_generation=id_car_generation,
+                            ), many=True).data}
         else:
+            ''' output = all marks'''
             response = {
-                "🥰": "🥵",
                 "type": "marks",
                 "data": CarMarkSerializer(
                 CarMark.objects.all(), many=True).data}
