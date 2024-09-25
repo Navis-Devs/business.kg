@@ -67,7 +67,7 @@ class CarModel(models.Model):
     id_car_mark = models.ForeignKey(
         "CarMark",
         verbose_name=_("Id car mark"),
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
     )
     name = models.CharField(
         _("Name"),
@@ -231,7 +231,8 @@ class CarCharacteristicValue(models.Model):
         "CarCharacteristic",
         verbose_name=_("Id car characteristic"),
         on_delete=models.RESTRICT,
-        null=True
+        null=True,
+        related_name="car_characteristic_value"
     )
     id_car_modification = models.ForeignKey(
         "CarModification",

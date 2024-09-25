@@ -10,7 +10,7 @@ from .models import (
 )
 from .serializers import (
     CarTypeSerializer, CarMarkSerializer, CarModelSerializer, CarGenerationSerializer,
-    CarSerieSerializer, CarModificationSerializer, CarCharacteristicSerializer,
+    CarSerieSerializer, CarModificationSerializer,
     CarCharacteristicValueSerializer, CarEquipmentSerializer, CarOptionSerializer,
     CarOptionValueSerializer
 )
@@ -45,6 +45,8 @@ class CarDataListView(generics.GenericAPIView):
         id_car_model = request.query_params.get("model")
         year = request.query_params.get("year")
         id_car_generation = request.query_params.get("gen")
+        id_car_serie = request.query_params.get("serie")
+        id_car_modification = request.query_params.get("mod")
 
         ''' filter with mark | output = marks'''
         if id_car_mark:
@@ -81,6 +83,27 @@ class CarDataListView(generics.GenericAPIView):
                                 id_car_model=id_car_model,
                                 id_car_generation=id_car_generation,
                             ), many=True).data}
+
+                        ''' filter with serie | output = modification '''
+                        if id_car_serie:
+                            response = {
+                                "type": "modification",
+                                "data": CarModificationSerializer(
+                                    CarModification.objects.filter(
+                                        id_car_model=id_car_model,
+                                        id_car_serie=id_car_serie
+                                    ), many=True).data}
+
+                            ''' filter with modification | output = characteristic '''
+                            if id_car_modification:
+                                response = {
+                                    "type": "characteristic",
+                                    "data": CarCharacteristicValueSerializer(
+                                        CarCharacteristicValue.objects.filter(
+                                            id_car_modification__id=id_car_modification
+                                        ), many=True).data}
+
+
         else:
             ''' output = all marks'''
             response = {

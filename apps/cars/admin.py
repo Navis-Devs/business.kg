@@ -38,7 +38,8 @@ class CarModificationAdmin(admin.ModelAdmin):
 
 @admin.register(CarCharacteristic)
 class CarCharacteristicAdmin(admin.ModelAdmin):
-    search_fields = ['name', 'id_parent__name', 'id_car_type__name']
+    search_fields = ['name', 'id_parent__name', 'id_car_type__name', 'car_characteristic_value__id_car_modification__name']
+    ordering = ['id']
 
 @admin.register(CarCharacteristicValue)
 class CarCharacteristicValueAdmin(admin.ModelAdmin):

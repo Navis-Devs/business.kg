@@ -36,7 +36,6 @@ class CarSerieSerializer(serializers.ModelSerializer):
         model = CarSerie
         fields = ['id', 'name', 'id_car_model', 'id_car_generation', 'id_car_type']
 
-# до этого все сделал
 
 class CarModificationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,16 +43,12 @@ class CarModificationSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'id_car_serie', 'id_car_model', 'id_car_type']
 
 
-class CarCharacteristicSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CarCharacteristic
-        fields = ['id', 'name', 'id_parent', 'id_car_type']
-
-
 class CarCharacteristicValueSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='id_car_characteristic.name')
+
     class Meta:
         model = CarCharacteristicValue
-        fields = ['id', 'value', 'unit', 'id_car_characteristic', 'id_car_modification', 'id_car_type']
+        fields = ['name', 'value', 'unit']
 
 
 class CarEquipmentSerializer(serializers.ModelSerializer):
