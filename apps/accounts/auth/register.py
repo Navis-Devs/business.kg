@@ -82,7 +82,7 @@ class RegisterView(CreateAPIView):
             serializer.save()
             user = User.objects.get(username=serializer.validated_data.get("username"))
 
-            ''' send activation code code to email or phone number '''
+            ''' send activation code to email or phone number '''
             if serializer.validated_data.get("type") == "email":
                 send_mail.send_mail(mail_registration(user.username, user.code))
 

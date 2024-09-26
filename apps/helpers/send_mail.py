@@ -5,7 +5,7 @@ from core.celery import app
 @app.task(ignore_result=True)
 def send_mail(data):
     email = EmailMessage(
-        subject="Hotel KG",
+        subject="Business KG",
         body=data['email_body'],
         to=[data['to_email']]
     )
