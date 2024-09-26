@@ -101,7 +101,8 @@ class CarDataListView(generics.GenericAPIView):
                                     "data": CarCharacteristicValueSerializer(
                                         CarCharacteristicValue.objects.filter(
                                             id_car_modification__id=id_car_modification
-                                        ), many=True).data}
+                                        ), many=True).data,
+                                    "fuel_type": self.get_fuel_type()}
 
 
         else:
@@ -128,3 +129,13 @@ class CarDataListView(generics.GenericAPIView):
             return [year for year in range(int(min_year), int(max_year) + 1)]
         else:
             return []
+
+
+    def get_fuel_type(self,):
+        from apps.cars.models import CarCharacteristicValue
+        fuel = list(
+            set(
+                CarCharacteristicValue.objects.filter(
+                    id_car_characteristic__name="Тип двигателя"
+                ).values_list("value", flat=True)))
+        return fuel
