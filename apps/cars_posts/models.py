@@ -81,7 +81,7 @@ class CarsPosts(BaseModel):
 
     ''' Media '''
     video_url = models.URLField(
-        _("URL to video")
+        _("URL для видео")
     )
 
     ''' Описание и комплектация '''
@@ -151,14 +151,107 @@ class CarsPosts(BaseModel):
         choices=choices.Currency.choices
     )
     exchange_possibility = models.CharField(
+        _("Возможность обмена"),
         max_length=30,
-        choices=choices.ExchangePossibility.choices
+        choices=choices.ExchangePossibility.choices,
+        null=True,
     )
     installment = models.BooleanField(
         _("Возможно рассрочка"),
         default=False
     )
 
+
+    ''' OneToOne rel '''
+
+    exterior = models.OneToOneField("Exterior", on_delete=models.CASCADE)
+    interior = models.OneToOneField("Interior", on_delete=models.CASCADE)
+    media = models.OneToOneField("Media", on_delete=models.CASCADE)
+    security = models.OneToOneField("Security", on_delete=models.CASCADE)
+    options = models.OneToOneField("GeneralOptions", on_delete=models.CASCADE)
+
     class Meta:
         verbose_name = _("Car post")
         verbose_name_plural = _("Cars posts")
+
+
+class Media(models.Model):
+    cd = models.BooleanField(default=False)
+    dvd = models.BooleanField(default=False)
+    mp3 = models.BooleanField(default=False)
+    usb = models.BooleanField(default=False)
+    subwoofer = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "Media Options"
+
+
+class Exterior(models.Model):
+    body_kit = models.BooleanField(default=False)
+    tinting = models.BooleanField(default=False)
+    spoiler = models.BooleanField(default=False)
+    alloy_wheel_rims = models.BooleanField(default=False)
+    sunroof = models.BooleanField(default=False)
+    winch = models.BooleanField(default=False)
+    roofrack = models.BooleanField(default=False)
+    trunk = models.BooleanField(default=False)
+    hitch = models.BooleanField(default=False)
+    panoramic_roof = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "Exterior Options"
+
+
+class Interior(models.Model):
+    velour = models.BooleanField(default=False)
+    leather = models.BooleanField(default=False)
+    window_blinds = models.BooleanField(default=False)
+    alcantara = models.BooleanField(default=False)
+    combined = models.BooleanField(default=False)
+    wood = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "Interior Options"
+
+
+class Security(models.Model):
+    abs = models.BooleanField(default=False)
+    traction_control = models.BooleanField(default=False)
+    vehicle_stability_control = models.BooleanField(default=False)
+    airbags = models.BooleanField(default=False)
+    parking_sensors = models.BooleanField(default=False)
+    rear_view_camera = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "Security Options"
+
+
+class GeneralOptions(models.Model):
+    full_power_pack = models.BooleanField(default=False)
+    anti_theft_alarm = models.BooleanField(default=False)
+    remote_car_starter = models.BooleanField(default=False)
+    air_conditioner = models.BooleanField(default=False)
+    climate_control_system = models.BooleanField(default=False)
+    auto_gas_system = models.BooleanField(default=False)
+    cruise_control = models.BooleanField(default=False)
+    light_sensor = models.BooleanField(default=False)
+    heated_steering_wheel = models.BooleanField(default=False)
+    seat_ventilation = models.BooleanField(default=False)
+    laser_headlights = models.BooleanField(default=False)
+    front_seat_heating = models.BooleanField(default=False)
+    all_seat_heating = models.BooleanField(default=False)
+    mirror_heating_system = models.BooleanField(default=False)
+    xenon_headlights = models.BooleanField(default=False)
+    bi_xenon_headlights = models.BooleanField(default=False)
+    headlight_washer = models.BooleanField(default=False)
+    air_suspension = models.BooleanField(default=False)
+    seat_memory = models.BooleanField(default=False)
+    steering_wheel_memory = models.BooleanField(default=False)
+    rain_sensor = models.BooleanField(default=False)
+    onboard_computer = models.BooleanField(default=False)
+    headlight_adjustment_system = models.BooleanField(default=False)
+    keyless_access = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "General Options"
+
