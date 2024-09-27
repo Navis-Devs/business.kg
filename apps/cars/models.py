@@ -24,6 +24,9 @@ class PermissionForFront(models.Model):
 
 ###################################################################################################################################################################################################################
 
+class CarColors(models.Model):
+    pass
+
 
 class CarType(models.Model):
     id = models.IntegerField(
