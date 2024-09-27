@@ -54,10 +54,10 @@ class RegistrationCountry(models.TextChoices):
     NOT_REGISTERED = 'Not registered', _("Не зарегистрировано")
 
 class VehicleStatus(models.TextChoices):
-    RECENTLY_DELIVERED = 'recently_delivered', _("Недавно доставлено")
+    RECENTLY_DELIVERED = 'recently_delivered', _("Свежепригнан")
     TAX_PAID = 'tax_paid', _("Налог уплачен")
     INSPECTION_PASSED = 'inspection_passed', _("Технический осмотр пройден")
-    NO_INVESTMENT_REQUIRED = 'no_investment_required', _("Инвестиции не требуются")
+    NO_INVESTMENT_REQUIRED = 'no_investment_required', _("Вложений не требуются")
 
 class ExchangePossibility(models.TextChoices):
     WILL_CONSIDER_OPTIONS = 'will_consider_options', _("Рассмотрю варианты")

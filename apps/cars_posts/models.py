@@ -158,3 +158,7 @@ class CarsPosts(BaseModel):
         _("Возможно рассрочка"),
         default=False
     )
+
+    class Meta:
+        verbose_name = _("Car post")
+        verbose_name_plural = _("Cars posts")

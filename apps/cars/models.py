@@ -1,7 +1,8 @@
 from django.db import models
 from django.db.models import SET_NULL
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-
+from colorfield.fields import ColorField
 import secrets
 import string
 
@@ -25,7 +26,18 @@ class PermissionForFront(models.Model):
 ###################################################################################################################################################################################################################
 
 class CarColors(models.Model):
-    pass
+    id = ColorField(
+        _("HEX"),
+        primary_key=True
+    )
+    name = models.CharField(
+        _("Название"),
+        max_length=300,
+        null=True
+    )
+
+    def __str__(self):
+        return self.name
 
 
 class CarType(models.Model):
