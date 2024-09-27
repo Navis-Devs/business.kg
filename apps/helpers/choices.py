@@ -67,7 +67,3 @@ class ExchangePossibility(models.TextChoices):
     NOT_INTERESTED = 'not_interested', _("Не интересует обмен")
     REAL_ESTATE_EXCHANGE = 'real_estate_exchange', _("Обмен на недвижимость")
     ONLY_EXCHANGE = 'only_exchange', _("Только обмен")
-
-class Currency(models.TextChoices):
-    SOM = 'SOM', _("СОМ")
-    USD = 'USD', _("Доллар")

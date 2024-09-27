@@ -15,24 +15,12 @@ from .serializers import (
     CarOptionValueSerializer
 )
 
+from apps.helpers.choices import Currency, FuelType, DriveType, TransmissionType, SteeringWheelPosition, CarCondition, \
+    MileageUnit, AvailabilityStatus, RegistrationCountry, VehicleStatus, ExchangePossibility
+
 import base64
 import hashlib
 import datetime
-
-data = {
-    # 'car_types': CarTypeSerializer(CarType.objects.all(), many=True).data,
-    # 'car_marks': CarMarkSerializer(CarMark.objects.all(), many=True).data,
-    # 'car_models': CarModelSerializer(CarModel.objects.all(), many=True).data,
-    # 'car_generations': CarGenerationSerializer(CarGeneration.objects.all(), many=True).data,
-    # 'car_series': CarSerieSerializer(CarSerie.objects.all(), many=True).data,
-    # 'car_modifications': CarModificationSerializer(CarModification.objects.all(), many=True).data,
-    # 'car_characteristics': CarCharacteristicSerializer(CarCharacteristic.objects.all(), many=True).data,
-    # 'car_characteristic_values': CarCharacteristicValueSerializer(CarCharacteristicValue.objects.all(), many=True).data,
-    # 'car_equipments': CarEquipmentSerializer(CarEquipment.objects.all(), many=True).data,
-    # 'car_options': CarOptionSerializer(CarOption.objects.all(), many=True).data,
-    # 'car_option_values': CarOptionValueSerializer(CarOptionValue.objects.all(), many=True).data,
-}
-
 
 # data_str = str(data).encode('utf-8')
 # hashed_data = hashlib.sha256(data_str).hexdigest()
@@ -139,3 +127,92 @@ class CarDataListView(generics.GenericAPIView):
                     id_car_characteristic__name="Тип двигателя"
                 ).values_list("value", flat=True)))
         return fuel
+
+
+class ChoicesView(generics.GenericAPIView):
+    def get(self, request):
+        data = {
+            "data": [
+                {
+                    "label": "Currency",
+                    "key": [
+                        {"key": Currency.USD, "value": Currency.USD.label},
+                        {"key": Currency.SOM, "value": Currency.SOM.label}
+                    ]
+                },
+                {
+                    "label": "SteeringWheelPosition",
+                    "key": [
+                        {"key": SteeringWheelPosition.LEFT, "value": SteeringWheelPosition.LEFT.label},
+                        {"key": SteeringWheelPosition.RIGHT, "value": SteeringWheelPosition.RIGHT.label}
+                    ]
+                },
+                {
+                    "label": "CarCondition",
+                    "key": [
+                        {"key": CarCondition.GOOD, "value": CarCondition.GOOD.label},
+                        {"key": CarCondition.PERFECT, "value": CarCondition.PERFECT.label},
+                        {"key": CarCondition.SALVAGE, "value": CarCondition.SALVAGE.label},
+                        {"key": CarCondition.NEW, "value": CarCondition.NEW.label}
+                    ]
+                },
+                {
+                    "label": "MileageUnit",
+                    "key": [
+                        {"key": MileageUnit.KILOMETERS, "value": MileageUnit.KILOMETERS.label},
+                        {"key": MileageUnit.MILES, "value": MileageUnit.MILES.label}
+                    ]
+                },
+                {
+                    "label": "AvailabilityStatus",
+                    "key": [
+                        {"key": AvailabilityStatus.IN_STOCK, "value": AvailabilityStatus.IN_STOCK.label},
+                        {"key": AvailabilityStatus.PRE_ORDER, "value": AvailabilityStatus.PRE_ORDER.label},
+                        {"key": AvailabilityStatus.IN_TRANSIT, "value": AvailabilityStatus.IN_TRANSIT.label}
+                    ]
+                },
+                {
+                    "label": "RegistrationCountry",
+                    "key": [
+                        {"key": RegistrationCountry.KYRGYZSTAN, "value": RegistrationCountry.KYRGYZSTAN.label},
+                        {"key": RegistrationCountry.ABKHAZIA, "value": RegistrationCountry.ABKHAZIA.label},
+                        {"key": RegistrationCountry.ARMENIA, "value": RegistrationCountry.ARMENIA.label},
+                        {"key": RegistrationCountry.KAZAKHSTAN, "value": RegistrationCountry.KAZAKHSTAN.label},
+                        {"key": RegistrationCountry.RUSSIA, "value": RegistrationCountry.RUSSIA.label},
+                        {"key": RegistrationCountry.BELARUS, "value": RegistrationCountry.BELARUS.label},
+                        {"key": RegistrationCountry.ANOTHER_COUNTRY,
+                         "value": RegistrationCountry.ANOTHER_COUNTRY.label},
+                        {"key": RegistrationCountry.NOT_REGISTERED, "value": RegistrationCountry.NOT_REGISTERED.label}
+                    ]
+                },
+                {
+                    "label": "VehicleStatus",
+                    "key": [
+                        {"key": VehicleStatus.RECENTLY_DELIVERED, "value": VehicleStatus.RECENTLY_DELIVERED.label},
+                        {"key": VehicleStatus.TAX_PAID, "value": VehicleStatus.TAX_PAID.label},
+                        {"key": VehicleStatus.INSPECTION_PASSED, "value": VehicleStatus.INSPECTION_PASSED.label},
+                        {"key": VehicleStatus.NO_INVESTMENT_REQUIRED,
+                         "value": VehicleStatus.NO_INVESTMENT_REQUIRED.label}
+                    ]
+                },
+                {
+                    "label": "ExchangePossibility",
+                    "key": [
+                        {"key": ExchangePossibility.WILL_CONSIDER_OPTIONS,
+                         "value": ExchangePossibility.WILL_CONSIDER_OPTIONS.label},
+                        {"key": ExchangePossibility.EXTRA_CHARGE_BUYER,
+                         "value": ExchangePossibility.EXTRA_CHARGE_BUYER.label},
+                        {"key": ExchangePossibility.EXTRA_CHARGE_SELLER,
+                         "value": ExchangePossibility.EXTRA_CHARGE_SELLER.label},
+                        {"key": ExchangePossibility.NO_ADDITIONAL_PAYMENTS,
+                         "value": ExchangePossibility.NO_ADDITIONAL_PAYMENTS.label},
+                        {"key": ExchangePossibility.NOT_INTERESTED, "value": ExchangePossibility.NOT_INTERESTED.label},
+                        {"key": ExchangePossibility.REAL_ESTATE_EXCHANGE,
+                         "value": ExchangePossibility.REAL_ESTATE_EXCHANGE.label},
+                        {"key": ExchangePossibility.ONLY_EXCHANGE, "value": ExchangePossibility.ONLY_EXCHANGE.label}
+                    ]
+                }
+            ]
+        }
+
+        return Response(data, status=200)
