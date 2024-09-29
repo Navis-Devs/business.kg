@@ -1,0 +1,172 @@
+{
+    "data": [
+        {
+            "label": "Currency",
+            "key": [
+                {
+                    "key": "USD",
+                    "value": "Доллар"
+                },
+                {
+                    "key": "SOM",
+                    "value": "СОМ"
+                }
+            ]
+        },
+        {
+            "label": "SteeringWheelPosition",
+            "key": [
+                {
+                    "key": "left",
+                    "value": "Левый"
+                },
+                {
+                    "key": "right",
+                    "value": "Правый"
+                }
+            ]
+        },
+        {
+            "label": "CarCondition",
+            "key": [
+                {
+                    "key": "good",
+                    "value": "Хорошее"
+                },
+                {
+                    "key": "perfect",
+                    "value": "Отличное"
+                },
+                {
+                    "key": "salvage",
+                    "value": "Битый"
+                },
+                {
+                    "key": "new",
+                    "value": "Новый"
+                }
+            ]
+        },
+        {
+            "label": "MileageUnit",
+            "key": [
+                {
+                    "key": "km",
+                    "value": "Километры"
+                },
+                {
+                    "key": "mi",
+                    "value": "Мили"
+                }
+            ]
+        },
+        {
+            "label": "AvailabilityStatus",
+            "key": [
+                {
+                    "key": "in_stock",
+                    "value": "В наличии"
+                },
+                {
+                    "key": "pre_order",
+                    "value": "Предзаказ"
+                },
+                {
+                    "key": "in_transit",
+                    "value": "В пути"
+                }
+            ]
+        },
+        {
+            "label": "RegistrationCountry",
+            "key": [
+                {
+                    "key": "Kyrgyzstan",
+                    "value": "Кыргызстан"
+                },
+                {
+                    "key": "Abkhazia",
+                    "value": "Абхазия"
+                },
+                {
+                    "key": "Armenia",
+                    "value": "Армения"
+                },
+                {
+                    "key": "Kazakhstan",
+                    "value": "Казахстан"
+                },
+                {
+                    "key": "Russia",
+                    "value": "Россия"
+                },
+                {
+                    "key": "Belarus",
+                    "value": "Беларусь"
+                },
+                {
+                    "key": "Another country",
+                    "value": "Другая страна"
+                },
+                {
+                    "key": "Not registered",
+                    "value": "Не зарегистрировано"
+                }
+            ]
+        },
+        {
+            "label": "VehicleStatus",
+            "key": [
+                {
+                    "key": "recently_delivered",
+                    "value": "Свежепригнан"
+                },
+                {
+                    "key": "tax_paid",
+                    "value": "Налог уплачен"
+                },
+                {
+                    "key": "inspection_passed",
+                    "value": "Технический осмотр пройден"
+                },
+                {
+                    "key": "no_investment_required",
+                    "value": "Вложений не требуются"
+                }
+            ]
+        },
+        {
+            "label": "ExchangePossibility",
+            "key": [
+                {
+                    "key": "will_consider_options",
+                    "value": "Рассмотрю варианты"
+                },
+                {
+                    "key": "extra_charge_buyer",
+                    "value": "С доплатой от покупателя"
+                },
+                {
+                    "key": "extra_charge_seller",
+                    "value": "С доплатой от продавца"
+                },
+                {
+                    "key": "no_additional_payments",
+                    "value": "Обмен без доплат"
+                },
+                {
+                    "key": "not_interested",
+                    "value": "Не интересует обмен"
+                },
+                {
+                    "key": "real_estate_exchange",
+                    "value": "Обмен на недвижимость"
+                },
+                {
+                    "key": "only_exchange",
+                    "value": "Только обмен"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,172 @@
+{
+    "data": [
+        {
+            "label": "Currency",
+            "key": [
+                {
+                    "key": "USD",
+                    "value": "Доллар"
+                },
+                {
+                    "key": "SOM",
+                    "value": "Сом"
+                }
+            ]
+        },
+        {
+            "label": "SteeringWheelPosition",
+            "key": [
+                {
+                    "key": "left",
+                    "value": "Сол"
+                },
+                {
+                    "key": "right",
+                    "value": "Оң"
+                }
+            ]
+        },
+        {
+            "label": "CarCondition",
+            "key": [
+                {
+                    "key": "good",
+                    "value": "Жакшы"
+                },
+                {
+                    "key": "perfect",
+                    "value": "Мыкты"
+                },
+                {
+                    "key": "salvage",
+                    "value": "Сүзүлгөн"
+                },
+                {
+                    "key": "new",
+                    "value": "Жаңы"
+                }
+            ]
+        },
+        {
+            "label": "MileageUnit",
+            "key": [
+                {
+                    "key": "km",
+                    "value": "Километр"
+                },
+                {
+                    "key": "mi",
+                    "value": "Миль"
+                }
+            ]
+        },
+        {
+            "label": "AvailabilityStatus",
+            "key": [
+                {
+                    "key": "in_stock",
+                    "value": "Бар"
+                },
+                {
+                    "key": "pre_order",
+                    "value": "Алдын ала буйрутма"
+                },
+                {
+                    "key": "in_transit",
+                    "value": "Жолдо"
+                }
+            ]
+        },
+        {
+            "label": "RegistrationCountry",
+            "key": [
+                {
+                    "key": "Kyrgyzstan",
+                    "value": "Кыргызстан"
+                },
+                {
+                    "key": "Abkhazia",
+                    "value": "Абхазия"
+                },
+                {
+                    "key": "Armenia",
+                    "value": "Армения"
+                },
+                {
+                    "key": "Kazakhstan",
+                    "value": "Казакстан"
+                },
+                {
+                    "key": "Russia",
+                    "value": "Россия"
+                },
+                {
+                    "key": "Belarus",
+                    "value": "Беларусь"
+                },
+                {
+                    "key": "Another country",
+                    "value": "Башка өлкө"
+                },
+                {
+                    "key": "Not registered",
+                    "value": "Катталбаган"
+                }
+            ]
+        },
+        {
+            "label": "VehicleStatus",
+            "key": [
+                {
+                    "key": "recently_delivered",
+                    "value": "Жакында жеткирилген"
+                },
+                {
+                    "key": "tax_paid",
+                    "value": "Салык төлөнгөн"
+                },
+                {
+                    "key": "inspection_passed",
+                    "value": "Техникалык кароодон өткөн"
+                },
+                {
+                    "key": "no_investment_required",
+                    "value": "Салым талап кылынбайт"
+                }
+            ]
+        },
+        {
+            "label": "ExchangePossibility",
+            "key": [
+                {
+                    "key": "will_consider_options",
+                    "value": "Варианттарды карайм"
+                },
+                {
+                    "key": "extra_charge_buyer",
+                    "value": "Кошумча төлөм менен сатып алуучудан"
+                },
+                {
+                    "key": "extra_charge_seller",
+                    "value": "Кошумча төлөм менен сатуучудан"
+                },
+                {
+                    "key": "no_additional_payments",
+                    "value": "Кошумча төлөм жок алмашуу"
+                },
+                {
+                    "key": "not_interested",
+                    "value": "Алмашууга кызыкдар эмесмин"
+                },
+                {
+                    "key": "real_estate_exchange",
+                    "value": "Кыймылсыз мүлккө алмашуу"
+                },
+                {
+                    "key": "only_exchange",
+                    "value": "Тек гана алмашуу"
+                }
+            ]
+        }
+    ]
+}

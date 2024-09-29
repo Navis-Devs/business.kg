@@ -1,0 +1,172 @@
+{
+    "data": [
+        {
+            "label": "Currency",
+            "key": [
+                {
+                    "key": "USD",
+                    "value": "Dollar"
+                },
+                {
+                    "key": "SOM",
+                    "value": "SOM"
+                }
+            ]
+        },
+        {
+            "label": "SteeringWheelPosition",
+            "key": [
+                {
+                    "key": "left",
+                    "value": "Left"
+                },
+                {
+                    "key": "right",
+                    "value": "Right"
+                }
+            ]
+        },
+        {
+            "label": "CarCondition",
+            "key": [
+                {
+                    "key": "good",
+                    "value": "Good"
+                },
+                {
+                    "key": "perfect",
+                    "value": "Perfect"
+                },
+                {
+                    "key": "salvage",
+                    "value": "Damaged"
+                },
+                {
+                    "key": "new",
+                    "value": "New"
+                }
+            ]
+        },
+        {
+            "label": "MileageUnit",
+            "key": [
+                {
+                    "key": "km",
+                    "value": "Kilometers"
+                },
+                {
+                    "key": "mi",
+                    "value": "Miles"
+                }
+            ]
+        },
+        {
+            "label": "AvailabilityStatus",
+            "key": [
+                {
+                    "key": "in_stock",
+                    "value": "In stock"
+                },
+                {
+                    "key": "pre_order",
+                    "value": "Pre-order"
+                },
+                {
+                    "key": "in_transit",
+                    "value": "In transit"
+                }
+            ]
+        },
+        {
+            "label": "RegistrationCountry",
+            "key": [
+                {
+                    "key": "Kyrgyzstan",
+                    "value": "Kyrgyzstan"
+                },
+                {
+                    "key": "Abkhazia",
+                    "value": "Abkhazia"
+                },
+                {
+                    "key": "Armenia",
+                    "value": "Armenia"
+                },
+                {
+                    "key": "Kazakhstan",
+                    "value": "Kazakhstan"
+                },
+                {
+                    "key": "Russia",
+                    "value": "Russia"
+                },
+                {
+                    "key": "Belarus",
+                    "value": "Belarus"
+                },
+                {
+                    "key": "Another country",
+                    "value": "Another country"
+                },
+                {
+                    "key": "Not registered",
+                    "value": "Not registered"
+                }
+            ]
+        },
+        {
+            "label": "VehicleStatus",
+            "key": [
+                {
+                    "key": "recently_delivered",
+                    "value": "Recently delivered"
+                },
+                {
+                    "key": "tax_paid",
+                    "value": "Tax paid"
+                },
+                {
+                    "key": "inspection_passed",
+                    "value": "Inspection passed"
+                },
+                {
+                    "key": "no_investment_required",
+                    "value": "No investment required"
+                }
+            ]
+        },
+        {
+            "label": "ExchangePossibility",
+            "key": [
+                {
+                    "key": "will_consider_options",
+                    "value": "Will consider options"
+                },
+                {
+                    "key": "extra_charge_buyer",
+                    "value": "With extra charge from buyer"
+                },
+                {
+                    "key": "extra_charge_seller",
+                    "value": "With extra charge from seller"
+                },
+                {
+                    "key": "no_additional_payments",
+                    "value": "No additional payments"
+                },
+                {
+                    "key": "not_interested",
+                    "value": "Not interested in exchange"
+                },
+                {
+                    "key": "real_estate_exchange",
+                    "value": "Exchange for real estate"
+                },
+                {
+                    "key": "only_exchange",
+                    "value": "Only exchange"
+                }
+            ]
+        }
+    ]
+}
