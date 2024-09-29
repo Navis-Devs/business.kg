@@ -21,6 +21,7 @@ from apps.helpers.choices import Currency, FuelType, DriveType, TransmissionType
 import base64
 import hashlib
 import datetime
+import json
 
 # data_str = str(data).encode('utf-8')
 # hashed_data = hashlib.sha256(data_str).hexdigest()
@@ -130,89 +131,14 @@ class CarDataListView(generics.GenericAPIView):
 
 
 class ChoicesView(generics.GenericAPIView):
-    def get(self, request):
-        data = {
-            "data": [
-                {
-                    "label": "Currency",
-                    "key": [
-                        {"key": Currency.USD, "value": Currency.USD.label},
-                        {"key": Currency.SOM, "value": Currency.SOM.label}
-                    ]
-                },
-                {
-                    "label": "SteeringWheelPosition",
-                    "key": [
-                        {"key": SteeringWheelPosition.LEFT, "value": SteeringWheelPosition.LEFT.label},
-                        {"key": SteeringWheelPosition.RIGHT, "value": SteeringWheelPosition.RIGHT.label}
-                    ]
-                },
-                {
-                    "label": "CarCondition",
-                    "key": [
-                        {"key": CarCondition.GOOD, "value": CarCondition.GOOD.label},
-                        {"key": CarCondition.PERFECT, "value": CarCondition.PERFECT.label},
-                        {"key": CarCondition.SALVAGE, "value": CarCondition.SALVAGE.label},
-                        {"key": CarCondition.NEW, "value": CarCondition.NEW.label}
-                    ]
-                },
-                {
-                    "label": "MileageUnit",
-                    "key": [
-                        {"key": MileageUnit.KILOMETERS, "value": MileageUnit.KILOMETERS.label},
-                        {"key": MileageUnit.MILES, "value": MileageUnit.MILES.label}
-                    ]
-                },
-                {
-                    "label": "AvailabilityStatus",
-                    "key": [
-                        {"key": AvailabilityStatus.IN_STOCK, "value": AvailabilityStatus.IN_STOCK.label},
-                        {"key": AvailabilityStatus.PRE_ORDER, "value": AvailabilityStatus.PRE_ORDER.label},
-                        {"key": AvailabilityStatus.IN_TRANSIT, "value": AvailabilityStatus.IN_TRANSIT.label}
-                    ]
-                },
-                {
-                    "label": "RegistrationCountry",
-                    "key": [
-                        {"key": RegistrationCountry.KYRGYZSTAN, "value": RegistrationCountry.KYRGYZSTAN.label},
-                        {"key": RegistrationCountry.ABKHAZIA, "value": RegistrationCountry.ABKHAZIA.label},
-                        {"key": RegistrationCountry.ARMENIA, "value": RegistrationCountry.ARMENIA.label},
-                        {"key": RegistrationCountry.KAZAKHSTAN, "value": RegistrationCountry.KAZAKHSTAN.label},
-                        {"key": RegistrationCountry.RUSSIA, "value": RegistrationCountry.RUSSIA.label},
-                        {"key": RegistrationCountry.BELARUS, "value": RegistrationCountry.BELARUS.label},
-                        {"key": RegistrationCountry.ANOTHER_COUNTRY,
-                         "value": RegistrationCountry.ANOTHER_COUNTRY.label},
-                        {"key": RegistrationCountry.NOT_REGISTERED, "value": RegistrationCountry.NOT_REGISTERED.label}
-                    ]
-                },
-                {
-                    "label": "VehicleStatus",
-                    "key": [
-                        {"key": VehicleStatus.RECENTLY_DELIVERED, "value": VehicleStatus.RECENTLY_DELIVERED.label},
-                        {"key": VehicleStatus.TAX_PAID, "value": VehicleStatus.TAX_PAID.label},
-                        {"key": VehicleStatus.INSPECTION_PASSED, "value": VehicleStatus.INSPECTION_PASSED.label},
-                        {"key": VehicleStatus.NO_INVESTMENT_REQUIRED,
-                         "value": VehicleStatus.NO_INVESTMENT_REQUIRED.label}
-                    ]
-                },
-                {
-                    "label": "ExchangePossibility",
-                    "key": [
-                        {"key": ExchangePossibility.WILL_CONSIDER_OPTIONS,
-                         "value": ExchangePossibility.WILL_CONSIDER_OPTIONS.label},
-                        {"key": ExchangePossibility.EXTRA_CHARGE_BUYER,
-                         "value": ExchangePossibility.EXTRA_CHARGE_BUYER.label},
-                        {"key": ExchangePossibility.EXTRA_CHARGE_SELLER,
-                         "value": ExchangePossibility.EXTRA_CHARGE_SELLER.label},
-                        {"key": ExchangePossibility.NO_ADDITIONAL_PAYMENTS,
-                         "value": ExchangePossibility.NO_ADDITIONAL_PAYMENTS.label},
-                        {"key": ExchangePossibility.NOT_INTERESTED, "value": ExchangePossibility.NOT_INTERESTED.label},
-                        {"key": ExchangePossibility.REAL_ESTATE_EXCHANGE,
-                         "value": ExchangePossibility.REAL_ESTATE_EXCHANGE.label},
-                        {"key": ExchangePossibility.ONLY_EXCHANGE, "value": ExchangePossibility.ONLY_EXCHANGE.label}
-                    ]
-                }
-            ]
-        }
+    def get(self, request, language):
+        if language not in ["KY", "RU", "EN"]:
+            return Response({"response": False, "message": "No language found"})
 
-        return Response(data, status=200)
+        file_path = f"apps/helpers/languages/{language}_car_data.json"
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                data = json.load(file)
+            return Response(data)
+        except FileNotFoundError:
+            return Response({"response": False, "message": "File not found"}, status=404)

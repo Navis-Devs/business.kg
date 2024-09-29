@@ -1,172 +1,406 @@
 {
-    "data": [
+  "data": [
+    {
+      "label": "Currency",
+      "key": [
         {
-            "label": "Currency",
-            "key": [
-                {
-                    "key": "USD",
-                    "value": "Dollar"
-                },
-                {
-                    "key": "SOM",
-                    "value": "SOM"
-                }
-            ]
+          "key": "USD",
+          "value": "Dollar"
         },
         {
-            "label": "SteeringWheelPosition",
-            "key": [
-                {
-                    "key": "left",
-                    "value": "Left"
-                },
-                {
-                    "key": "right",
-                    "value": "Right"
-                }
-            ]
-        },
-        {
-            "label": "CarCondition",
-            "key": [
-                {
-                    "key": "good",
-                    "value": "Good"
-                },
-                {
-                    "key": "perfect",
-                    "value": "Perfect"
-                },
-                {
-                    "key": "salvage",
-                    "value": "Damaged"
-                },
-                {
-                    "key": "new",
-                    "value": "New"
-                }
-            ]
-        },
-        {
-            "label": "MileageUnit",
-            "key": [
-                {
-                    "key": "km",
-                    "value": "Kilometers"
-                },
-                {
-                    "key": "mi",
-                    "value": "Miles"
-                }
-            ]
-        },
-        {
-            "label": "AvailabilityStatus",
-            "key": [
-                {
-                    "key": "in_stock",
-                    "value": "In stock"
-                },
-                {
-                    "key": "pre_order",
-                    "value": "Pre-order"
-                },
-                {
-                    "key": "in_transit",
-                    "value": "In transit"
-                }
-            ]
-        },
-        {
-            "label": "RegistrationCountry",
-            "key": [
-                {
-                    "key": "Kyrgyzstan",
-                    "value": "Kyrgyzstan"
-                },
-                {
-                    "key": "Abkhazia",
-                    "value": "Abkhazia"
-                },
-                {
-                    "key": "Armenia",
-                    "value": "Armenia"
-                },
-                {
-                    "key": "Kazakhstan",
-                    "value": "Kazakhstan"
-                },
-                {
-                    "key": "Russia",
-                    "value": "Russia"
-                },
-                {
-                    "key": "Belarus",
-                    "value": "Belarus"
-                },
-                {
-                    "key": "Another country",
-                    "value": "Another country"
-                },
-                {
-                    "key": "Not registered",
-                    "value": "Not registered"
-                }
-            ]
-        },
-        {
-            "label": "VehicleStatus",
-            "key": [
-                {
-                    "key": "recently_delivered",
-                    "value": "Recently delivered"
-                },
-                {
-                    "key": "tax_paid",
-                    "value": "Tax paid"
-                },
-                {
-                    "key": "inspection_passed",
-                    "value": "Inspection passed"
-                },
-                {
-                    "key": "no_investment_required",
-                    "value": "No investment required"
-                }
-            ]
-        },
-        {
-            "label": "ExchangePossibility",
-            "key": [
-                {
-                    "key": "will_consider_options",
-                    "value": "Will consider options"
-                },
-                {
-                    "key": "extra_charge_buyer",
-                    "value": "With extra charge from buyer"
-                },
-                {
-                    "key": "extra_charge_seller",
-                    "value": "With extra charge from seller"
-                },
-                {
-                    "key": "no_additional_payments",
-                    "value": "No additional payments"
-                },
-                {
-                    "key": "not_interested",
-                    "value": "Not interested in exchange"
-                },
-                {
-                    "key": "real_estate_exchange",
-                    "value": "Exchange for real estate"
-                },
-                {
-                    "key": "only_exchange",
-                    "value": "Only exchange"
-                }
-            ]
+          "key": "SOM",
+          "value": "SOM"
         }
-    ]
+      ]
+    },
+    {
+      "label": "SteeringWheelPosition",
+      "key": [
+        {
+          "key": "left",
+          "value": "Left"
+        },
+        {
+          "key": "right",
+          "value": "Right"
+        }
+      ]
+    },
+    {
+      "label": "CarCondition",
+      "key": [
+        {
+          "key": "good",
+          "value": "Good"
+        },
+        {
+          "key": "perfect",
+          "value": "Perfect"
+        },
+        {
+          "key": "salvage",
+          "value": "Damaged"
+        },
+        {
+          "key": "new",
+          "value": "New"
+        }
+      ]
+    },
+    {
+      "label": "MileageUnit",
+      "key": [
+        {
+          "key": "km",
+          "value": "Kilometers"
+        },
+        {
+          "key": "mi",
+          "value": "Miles"
+        }
+      ]
+    },
+    {
+      "label": "AvailabilityStatus",
+      "key": [
+        {
+          "key": "in_stock",
+          "value": "In stock"
+        },
+        {
+          "key": "pre_order",
+          "value": "Pre-order"
+        },
+        {
+          "key": "in_transit",
+          "value": "In transit"
+        }
+      ]
+    },
+    {
+      "label": "RegistrationCountry",
+      "key": [
+        {
+          "key": "Kyrgyzstan",
+          "value": "Kyrgyzstan"
+        },
+        {
+          "key": "Abkhazia",
+          "value": "Abkhazia"
+        },
+        {
+          "key": "Armenia",
+          "value": "Armenia"
+        },
+        {
+          "key": "Kazakhstan",
+          "value": "Kazakhstan"
+        },
+        {
+          "key": "Russia",
+          "value": "Russia"
+        },
+        {
+          "key": "Belarus",
+          "value": "Belarus"
+        },
+        {
+          "key": "Another country",
+          "value": "Another country"
+        },
+        {
+          "key": "Not registered",
+          "value": "Not registered"
+        }
+      ]
+    },
+    {
+      "label": "VehicleStatus",
+      "key": [
+        {
+          "key": "recently_delivered",
+          "value": "Recently delivered"
+        },
+        {
+          "key": "tax_paid",
+          "value": "Tax paid"
+        },
+        {
+          "key": "inspection_passed",
+          "value": "Inspection passed"
+        },
+        {
+          "key": "no_investment_required",
+          "value": "No investment required"
+        }
+      ]
+    },
+    {
+      "label": "ExchangePossibility",
+      "key": [
+        {
+          "key": "will_consider_options",
+          "value": "Will consider options"
+        },
+        {
+          "key": "extra_charge_buyer",
+          "value": "With extra charge from buyer"
+        },
+        {
+          "key": "extra_charge_seller",
+          "value": "With extra charge from seller"
+        },
+        {
+          "key": "no_additional_payments",
+          "value": "No additional payments"
+        },
+        {
+          "key": "not_interested",
+          "value": "Not interested in exchange"
+        },
+        {
+          "key": "real_estate_exchange",
+          "value": "Exchange for real estate"
+        },
+        {
+          "key": "only_exchange",
+          "value": "Only exchange"
+        }
+      ]
+    },
+    {
+      "label": "Equipment",
+      "key": [
+        {
+          "label": "Media",
+          "key": [
+            {
+              "key": "cd",
+              "value": "CD"
+            },
+            {
+              "key": "dvd",
+              "value": "DVD"
+            },
+            {
+              "key": "mp3",
+              "value": "MP3"
+            },
+            {
+              "key": "usb",
+              "value": "USB"
+            },
+            {
+              "key": "subwoofer",
+              "value": "Subwoofer"
+            }
+          ]
+        },
+        {
+          "label": "Exterior",
+          "key": [
+            {
+              "key": "body_kit",
+              "value": "Body Kit"
+            },
+            {
+              "key": "tinting",
+              "value": "Tinting"
+            },
+            {
+              "key": "spoiler",
+              "value": "Spoiler"
+            },
+            {
+              "key": "alloy_wheel_rims",
+              "value": "Alloy Wheel Rims"
+            },
+            {
+              "key": "sunroof",
+              "value": "Sunroof"
+            },
+            {
+              "key": "winch",
+              "value": "Winch"
+            },
+            {
+              "key": "roofrack",
+              "value": "Roofrack"
+            },
+            {
+              "key": "trunk",
+              "value": "Trunk"
+            },
+            {
+              "key": "hitch",
+              "value": "Hitch"
+            },
+            {
+              "key": "panoramic_roof",
+              "value": "Panoramic Roof"
+            }
+          ]
+        },
+        {
+          "label": "Interior",
+          "key": [
+            {
+              "key": "velour",
+              "value": "Velour"
+            },
+            {
+              "key": "leather",
+              "value": "Leather"
+            },
+            {
+              "key": "window_blinds",
+              "value": "Window Blinds"
+            },
+            {
+              "key": "alcantara",
+              "value": "Alcantara"
+            },
+            {
+              "key": "combined",
+              "value": "Combined"
+            },
+            {
+              "key": "wood",
+              "value": "Wood"
+            }
+          ]
+        },
+        {
+          "label": "Security",
+          "key": [
+            {
+              "key": "abs",
+              "value": "Anti-lock Braking System (ABS)"
+            },
+            {
+              "key": "traction_control",
+              "value": "Traction Control"
+            },
+            {
+              "key": "vehicle_stability_control",
+              "value": "Vehicle Stability Control"
+            },
+            {
+              "key": "airbags",
+              "value": "Airbags"
+            },
+            {
+              "key": "parking_sensors",
+              "value": "Parking Sensors"
+            },
+            {
+              "key": "rear_view_camera",
+              "value": "Rear View Camera"
+            }
+          ]
+        },
+        {
+          "label": "General Options",
+          "key": [
+            {
+              "key": "full_power_pack",
+              "value": "Full Power Pack"
+            },
+            {
+              "key": "anti_theft_alarm",
+              "value": "Anti-theft Alarm"
+            },
+            {
+              "key": "remote_car_starter",
+              "value": "Remote Car Starter"
+            },
+            {
+              "key": "air_conditioner",
+              "value": "Air Conditioner"
+            },
+            {
+              "key": "climate_control_system",
+              "value": "Climate Control System"
+            },
+            {
+              "key": "auto_gas_system",
+              "value": "Auto Gas System"
+            },
+            {
+              "key": "cruise_control",
+              "value": "Cruise Control"
+            },
+            {
+              "key": "light_sensor",
+              "value": "Light Sensor"
+            },
+            {
+              "key": "heated_steering_wheel",
+              "value": "Heated Steering Wheel"
+            },
+            {
+              "key": "seat_ventilation",
+              "value": "Seat Ventilation"
+            },
+            {
+              "key": "laser_headlights",
+              "value": "Laser Headlights"
+            },
+            {
+              "key": "front_seat_heating",
+              "value": "Front Seat Heating"
+            },
+            {
+              "key": "all_seat_heating",
+              "value": "All-seat Heating"
+            },
+            {
+              "key": "mirror_heating_system",
+              "value": "Mirror Heating System"
+            },
+            {
+              "key": "xenon_headlights",
+              "value": "Xenon Headlights"
+            },
+            {
+              "key": "bi_xenon_headlights",
+              "value": "Bi-xenon Headlights"
+            },
+            {
+              "key": "headlight_washer",
+              "value": "Headlight Washer"
+            },
+            {
+              "key": "air_suspension",
+              "value": "Air Suspension"
+            },
+            {
+              "key": "seat_memory",
+              "value": "Seat Memory"
+            },
+            {
+              "key": "steering_wheel_memory",
+              "value": "Steering Wheel Memory"
+            },
+            {
+              "key": "rain_sensor",
+              "value": "Rain Sensor"
+            },
+            {
+              "key": "onboard_computer",
+              "value": "Onboard Computer"
+            },
+            {
+              "key": "headlight_adjustment_system",
+              "value": "Headlight Adjustment System"
+            },
+            {
+              "key": "keyless_access",
+              "value": "Keyless Access"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
