@@ -14,6 +14,10 @@ from apps.helpers import choices
 
 
 class CarsPosts(BaseModel):
+    is_active = models.BooleanField(
+        _("Активный"),
+        default=True
+    )
     user = models.ForeignKey(
         to=User,
         on_delete=models.SET_NULL,
@@ -81,7 +85,8 @@ class CarsPosts(BaseModel):
 
     ''' Media '''
     video_url = models.URLField(
-        _("URL для видео")
+        _("URL для видео"),
+        null=True
     )
 
     ''' Описание и комплектация '''
@@ -140,9 +145,8 @@ class CarsPosts(BaseModel):
     )
 
     ''' License plate and VIN / chassis number '''
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
+    price = models.IntegerField(
+        _("Цена")
     )
     currency = models.CharField(
         _("Валюта"),

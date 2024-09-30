@@ -131,7 +131,7 @@
                 },
                 {
                     "key": "no_investment_required",
-                    "value": "Вложений не требуются"
+                    "value": "Вложений не требуется"
                 }
             ]
         },
@@ -165,6 +165,216 @@
                 {
                     "key": "only_exchange",
                     "value": "Только обмен"
+                }
+            ]
+        },
+        {
+            "label": "Equipment",
+            "key": [
+                {
+                    "label": "Media",
+                    "key": [
+                        {
+                            "key": "cd",
+                            "value": "CD"
+                        },
+                        {
+                            "key": "dvd",
+                            "value": "DVD"
+                        },
+                        {
+                            "key": "mp3",
+                            "value": "MP3"
+                        },
+                        {
+                            "key": "usb",
+                            "value": "USB"
+                        },
+                        {
+                            "key": "subwoofer",
+                            "value": "Сабвуфер"
+                        }
+                    ]
+                },
+                {
+                    "label": "Exterior",
+                    "key": [
+                        {
+                            "key": "body_kit",
+                            "value": "Обвес"
+                        },
+                        {
+                            "key": "tinting",
+                            "value": "Тонировка"
+                        },
+                        {
+                            "key": "spoiler",
+                            "value": "Спойлер"
+                        },
+                        {
+                            "key": "alloy_wheel_rims",
+                            "value": "Легкосплавные диски"
+                        },
+                        {
+                            "key": "sunroof",
+                            "value": "Люк"
+                        },
+                        {
+                            "key": "winch",
+                            "value": "Лебедка"
+                        },
+                        {
+                            "key": "roofrack",
+                            "value": "Багажник на крышу"
+                        },
+                        {
+                            "key": "trunk",
+                            "value": "Багажник"
+                        },
+                        {
+                            "key": "hitch",
+                            "value": "Фаркоп"
+                        },
+                        {
+                            "key": "panoramic_roof",
+                            "value": "Панорамная крыша"
+                        }
+                    ]
+                },
+                {
+                    "label": "Interior",
+                    "key": [
+                        {
+                            "key": "velour",
+                            "value": "Велюр"
+                        },
+                        {
+                            "key": "leather",
+                            "value": "Кожа"
+                        },
+                        {
+                            "key": "window_blinds",
+                            "value": "Шторки"
+                        },
+                        {
+                            "key": "alcantara",
+                            "value": "Алькантара"
+                        },
+                        {
+                            "key": "combined",
+                            "value": "Комбинированный"
+                        },
+                        {
+                            "key": "wood",
+                            "value": "Дерево"
+                        }
+                    ]
+                },
+                {
+                    "label": "Security",
+                    "key": [
+                        {
+                            "key": "abs",
+                            "value": "Антиблокировочная система (ABS)"
+                        },
+                        {
+                            "key": "traction_control",
+                            "value": "Антипробуксовочная система"
+                        },
+                        {
+                            "key": "vehicle_stability_control",
+                            "value": "Система стабилизации"
+                        },
+                        {
+                            "key": "airbags",
+                            "value": "Подушки безопасности"
+                        },
+                        {
+                            "key": "parking_sensors",
+                            "value": "Парктроники"
+                        },
+                        {
+                            "key": "rear_view_camera",
+                            "value": "Камера заднего вида"
+                        }
+                    ]
+                },
+                {
+                    "label": "General Options",
+                    "key": [
+                        {
+                            "key": "full_power_pack",
+                            "value": "Полный электропакет"
+                        },
+                        {
+                            "key": "anti_theft_alarm",
+                            "value": "Противоугонная сигнализация"
+                        },
+                        {
+                            "key": "remote_car_starter",
+                            "value": "Дистанционный запуск"
+                        },
+                        {
+                            "key": "air_conditioner",
+                            "value": "Кондиционер"
+                        },
+                        {
+                            "key": "climate_control_system",
+                            "value": "Климат-контроль"
+                        },
+                        {
+                            "key": "auto_gas_system",
+                            "value": "Газобаллонное оборудование"
+                        },
+                        {
+                            "key": "cruise_control",
+                            "value": "Круиз-контроль"
+                        },
+                        {
+                            "key": "light_sensor",
+                            "value": "Датчик света"
+                        },
+                        {
+                            "key": "heated_steering_wheel",
+                            "value": "Подогрев руля"
+                        },
+                        {
+                            "key": "seat_ventilation",
+                            "value": "Вентиляция сидений"
+                        },
+                        {
+                            "key": "laser_headlights",
+                            "value": "Лазерные фары"
+                        },
+                        {
+                            "key": "front_seat_heating",
+                            "value": "Подогрев передних сидений"
+                        },
+                        {
+                            "key": "all_seat_heating",
+                            "value": "Подогрев всех сидений"
+                        },
+                        {
+                            "key": "mirror_heating_system",
+                            "value": "Подогрев зеркал"
+                        },
+                        {
+                            "key": "xenon_headlights",
+                            "value": "Ксеноновые фары"
+                        },
+                        {
+                            "key": "bi_xenon_headlights",
+                            "value": "Биксеноновые фары"
+                        },
+                        {
+                            "key": "headlight_washer",
+                            "value": "Омыватель фар"
+                        },
+                        {
+                            "key": "air_suspension",
+                            "value": "Пневмоподвеска"
+                        }
+                    ]
                 }
             ]
         }
