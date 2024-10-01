@@ -34,6 +34,9 @@ class CarsPostsSerializer(serializers.ModelSerializer):
     serie_name = serializers.CharField(source="serie.name", read_only=True)
     modification_name = serializers.CharField(source="modification.name", read_only=True)
 
+    # additional
+    likes = serializers.IntegerField(source="likes.count", read_only=True)
+
     # nested
     exterior = ExteriorSerializer()
     interior = InteriorSerializer()
@@ -75,6 +78,7 @@ class CarsPostsSerializer(serializers.ModelSerializer):
             "currency",
             "exchange_possibility",
             "installment",
+            "likes",
 
             # nested one to one
             "exterior",
@@ -83,6 +87,22 @@ class CarsPostsSerializer(serializers.ModelSerializer):
             "security",
             "options",
         )
+
+    def __init__(self, *args, **kwargs):
+        context = kwargs.get('context', {})
+        super().__init__(*args, **kwargs)
+
+        if not context.get('is_detail', False):
+            allowed_fields = ['id', 'user', 'mark_name',
+                              'model_name', 'price', 'price_unit',
+                              'year', 'modification_name', 'engine',
+                              'serie_name', 'transmission', 'steering_wheel',
+                              'mileage', 'mileage_unit'
+                              ]
+            for field_name in list(self.fields):
+                if field_name not in allowed_fields:
+                    self.fields.pop(field_name)
+
 
     def create(self, validated_data):
         exterior_data = validated_data.pop('exterior')
