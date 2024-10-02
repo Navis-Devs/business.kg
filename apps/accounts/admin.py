@@ -36,3 +36,4 @@ class UserAdmin(UserAdmin):
 
 
 admin.site.register(models.BusinessAccount)
+admin.site.register(models.TariffPlan)

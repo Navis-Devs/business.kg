@@ -107,3 +107,50 @@ class BusinessAccount(BaseModel):
         _("Deadline")
     )
 
+
+class TariffPlan(models.Model):
+    TARIFF_TYPES = (
+        ('Basic', 'Basic'),
+        ('Advanced', 'Advanced'),
+        ('Expert', 'Expert'),
+    )
+
+    DURATION_CHOICES = (
+        (30, '1 month'),
+        (90, '3 months'),
+        (180, '6 months'),
+        (365, '12 months'),
+    )
+
+    name = models.CharField(
+        max_length=50,
+        choices=TARIFF_TYPES,
+        verbose_name=_('Tariff name')
+    )
+    price = models.IntegerField(verbose_name=_('Price'))
+    duration_days = models.IntegerField(
+        choices=DURATION_CHOICES,
+        verbose_name=_('Duration in days')
+    )
+    limit = models.IntegerField(
+        _("Limit")
+    )
+
+    own_branded_page = models.BooleanField(default=False, verbose_name=_('собственная брендированная страница'))
+    auto_up = models.BooleanField(default=False, verbose_name=_('UP'))
+    placement_on_main_page = models.BooleanField(default=False, verbose_name=_('размещение на главной странице сайта и в мобильных приложениях'))
+    tag_with_company_name = models.BooleanField(default=False, verbose_name=_('метка на объявлениях с названием вашей компании'))
+    no_ad_photos = models.BooleanField(default=False, verbose_name=_('отсутствие рекламы среди фотографий объявления'))
+    without_competitors = models.BooleanField(default=False, verbose_name=_('отсутствие конкурентов под вашим объявлением'))
+    auto_business_priority = models.BooleanField(default=False, verbose_name=_('приоритет в разделе Автобизнес (выше планов Базовый и Продвинутый)'))
+    crm_sync = models.BooleanField(default=False, verbose_name=_('автоматическая загрузка объявлений с вашего сайта или CRM'))
+    search_by_ads = models.BooleanField(default=False, verbose_name=_('поиск по вашим объявлениям'))
+    body_condition_status = models.BooleanField(default=False, verbose_name=_('возможность отметить состояние кузова'))
+
+    def __str__(self):
+        return f"{self.name} - {self.get_duration_days_display()}"
+
+    class Meta:
+        verbose_name = _('Tariff Plan')
+        verbose_name_plural = _('Tariff Plans')
+        unique_together = ("name", "duration_days", )
