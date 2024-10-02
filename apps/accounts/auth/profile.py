@@ -26,7 +26,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "name", "is_active", "_avatar", "balance")
+        fields = ("id", "username", "phone", "name", "is_active", "_avatar", "balance")
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
@@ -77,7 +77,6 @@ class ProfileViewSet(
         user = request.user
 
         data = self.serializer_class(user).data
-        data["token"] = f"{Token.objects.get(user=user)}"
         data["dates"] = {
             "date_joined": f"{user.date_joined}",
             "last_login": f"{user.last_login}",
