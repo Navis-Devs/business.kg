@@ -21,6 +21,18 @@ class BaseModel(models.Model):
 
 
 class User(AbstractUser, BaseModel):
+    email = models.EmailField(
+        _("email address"),
+        blank=True,
+        null=True,
+        unique=True
+    )
+    phone = models.IntegerField(
+        _("Phone"),
+        blank=True,
+        null=True,
+        unique=True
+    )
     name = models.CharField(
         max_length=50,
         blank=True,
@@ -46,6 +58,15 @@ class User(AbstractUser, BaseModel):
     objects = UserManager()
 
     first_name = None
+    last_name = None
+
+    @staticmethod
+    def generate_unique_username():
+        while True:
+            username = str(random.randint(100_000_000, 999_999_999))
+            if not User.objects.filter(username=username).exists():
+                return username
+
 
     @property
     def avatar(self):
@@ -58,6 +79,7 @@ class User(AbstractUser, BaseModel):
     def save(self, *args, **kwargs):
         self.code = int(random.randint(100_000, 999_999))
         super(User, self).save(*args, **kwargs)
+
 
     class Meta:
         ordering = ('-date_joined',)

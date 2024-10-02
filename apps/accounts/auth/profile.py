@@ -26,13 +26,13 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "name", "last_name", "is_active", "_avatar", "balance")
+        fields = ("id", "username", "name", "is_active", "_avatar", "balance")
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("name", "last_name",)
+        fields = ("name",)
 
 
 class UserAvatarSerializer(serializers.Serializer):
