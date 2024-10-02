@@ -47,9 +47,13 @@ class ActivateAccountView(generics.GenericAPIView):
         if serializer.is_valid():
             username = serializer.validated_data.get("username")
             code = serializer.validated_data.get("code")
+            type = serializer.validated_data.get("type")
 
             try:
-                user = User.objects.get(username=username)
+                if type == "email":
+                    user = User.objects.get(email=username)
+                elif type == "phone":
+                    user = User.objects.get(phone=username)
 
                 if user.is_active:
                     return Response({"response": False, "message": "Account is already active"})

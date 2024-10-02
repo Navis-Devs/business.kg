@@ -19,5 +19,5 @@ def mail_registration(username, code):
 
 
 def phone_registration(code):
-    sms_data = f"Ваш код для активации аккаунта в Hotel KG: {code}"
+    sms_data = f"Ваш код для активации аккаунта в Business KG: {code}"
     return sms_data

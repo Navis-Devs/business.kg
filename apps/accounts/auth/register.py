@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from django.contrib.auth.password_validation import validate_password
+from django.db.models import Q
 
 from apps.accounts.models import User
 from apps.accounts.utils import check_username
@@ -55,10 +56,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        username = validated_data["username"]
-        password = validated_data["password"]
+        username = User.generate_unique_username()
 
-        user = User(username=username)
+        login = validated_data["username"]
+        password = validated_data["password"]
+        type = validated_data["type"]
+
+        if type == "email":
+            user = User(username=username, email=login)
+        elif type == "phone":
+            user = User(username=username, phone=login)
+
         user.set_password(password)
         user.save()
         return user
@@ -71,23 +79,24 @@ class RegisterView(CreateAPIView):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-            if User.objects.filter(username=serializer.validated_data.get("username")).exists():
-                return Response(
-                    {
-                        "response": False,
-                        "message": "A user with this name already exists.",
-                    },
-                )
+            # username = serializer.validated_data.get("username")
+            # if User.objects.filter(Q(email=username) | Q(phone=int(username))).exists():
+            #     return Response(
+            #         {
+            #             "response": False,
+            #             "message": "A user with this name already exists.",
+            #         },
+            #     )
 
-            serializer.save()
-            user = User.objects.get(username=serializer.validated_data.get("username"))
+            user = serializer.save()
+            # user = User.objects.get(username=serializer.validated_data.get("username"))
 
             ''' send activation code to email or phone number '''
             if serializer.validated_data.get("type") == "email":
-                send_mail.send_mail(mail_registration(user.username, user.code))
+                send_mail.send_mail(mail_registration(user.email, user.code))
 
             elif serializer.validated_data.get("type") == "phone":
-                send_sms.send_sms(user.username, phone_registration(user.code))
+                send_sms.send_sms(user.phone, phone_registration(user.code))
 
             else:
                 return Response({"response": False, "message": "Not valid username"})
