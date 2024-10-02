@@ -50,8 +50,19 @@ class LoginView(generics.GenericAPIView):
         if serializer.is_valid():
             username = serializer.validated_data.get("username")
             password = serializer.validated_data.get("password")
+            type = serializer.validated_data.get("type")
+
             try:
-                user = User.objects.get(username=username)
+                if type == "email":
+                    user = User.objects.get(email=username)
+                elif type == "phone":
+                    user = User.objects.get(phone=username)
+
+                else:
+                    return Response({
+                        "response": False,
+                        "message": "Invalid username"}
+                    )
                 if not user.is_active:
                     return Response(
                         {
@@ -67,7 +78,7 @@ class LoginView(generics.GenericAPIView):
                     }
                 )
 
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, username=user.username, password=password)
 
             if not user:
                 return Response(

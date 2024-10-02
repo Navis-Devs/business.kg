@@ -25,13 +25,13 @@ class User(AbstractUser, BaseModel):
         _("email address"),
         blank=True,
         null=True,
-        unique=True
+        # unique=True
     )
     phone = models.IntegerField(
         _("Phone"),
         blank=True,
         null=True,
-        unique=True
+        # unique=True
     )
     name = models.CharField(
         max_length=50,
