@@ -1,9 +1,17 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
+class Language(models.TextChoices):
+    KY = 'KY', _("Кыргыз")
+    RU = 'RU', _("Русский")
+    EN = 'EN', _("English")
+
+
 class Currency(models.TextChoices):
     USD = 'USD', _("Доллар")
     SOM = 'SOM', _("СОМ")
+
 
 class FuelType(models.TextChoices):
     GAS = 'gas', _("Газ")
@@ -12,11 +20,13 @@ class FuelType(models.TextChoices):
     HYBRID = 'hybrid', _("Гибридный")
     DIESEL = 'diesel', _("Дизельный")
 
+
 class DriveType(models.TextChoices):
     AWD = 'awd', _("Полный")
     PART_TIME_AWD = 'part_time_awd', _("Полный подключаемый")
     RWD = 'rwd', _("Задний")
     FWD = 'fwd', _("Передний")
+
 
 class TransmissionType(models.TextChoices):
     MANUAL = 'manual', _("Механика")
@@ -24,9 +34,11 @@ class TransmissionType(models.TextChoices):
     ROBOTIC = 'robotic', _("Робот")
     CVT = 'cvt', _("Вариатор")
 
+
 class SteeringWheelPosition(models.TextChoices):
     LEFT = 'left', _("Левый")
     RIGHT = 'right', _("Правый")
+
 
 class CarCondition(models.TextChoices):
     GOOD = 'good', _("Хорошее")
@@ -34,14 +46,17 @@ class CarCondition(models.TextChoices):
     SALVAGE = 'salvage', _("Битый")
     NEW = 'new', _("Новый")
 
+
 class MileageUnit(models.TextChoices):
     KILOMETERS = 'km', _("Километры")
     MILES = 'mi', _("Мили")
+
 
 class AvailabilityStatus(models.TextChoices):
     IN_STOCK = 'in_stock', _("В наличии")
     PRE_ORDER = 'pre_order', _("Предзаказ")
     IN_TRANSIT = 'in_transit', _("В пути")
+
 
 class RegistrationCountry(models.TextChoices):
     KYRGYZSTAN = 'Kyrgyzstan', _("Кыргызстан")
@@ -53,11 +68,13 @@ class RegistrationCountry(models.TextChoices):
     ANOTHER_COUNTRY = 'Another country', _("Другая страна")
     NOT_REGISTERED = 'Not registered', _("Не зарегистрировано")
 
+
 class VehicleStatus(models.TextChoices):
     RECENTLY_DELIVERED = 'recently_delivered', _("Свежепригнан")
     TAX_PAID = 'tax_paid', _("Налог уплачен")
     INSPECTION_PASSED = 'inspection_passed', _("Технический осмотр пройден")
     NO_INVESTMENT_REQUIRED = 'no_investment_required', _("Вложений не требуются")
+
 
 class ExchangePossibility(models.TextChoices):
     WILL_CONSIDER_OPTIONS = 'will_consider_options', _("Рассмотрю варианты")

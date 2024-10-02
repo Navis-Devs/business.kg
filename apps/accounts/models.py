@@ -6,6 +6,7 @@ import random
 import uuid
 
 from .managers import UserManager
+from apps.helpers import choices
 
 
 class BaseModel(models.Model):
@@ -22,7 +23,7 @@ class BaseModel(models.Model):
 
 class User(AbstractUser, BaseModel):
     email = models.EmailField(
-        _("email address"),
+        _("Email address"),
         blank=True,
         null=True,
         # unique=True
@@ -36,14 +37,16 @@ class User(AbstractUser, BaseModel):
     name = models.CharField(
         max_length=50,
         blank=True,
-        verbose_name=_('Имя'),
+        verbose_name=_('Name'),
+    )
+    language = models.CharField(
+        _("Language"),
+        max_length=150,
+        choices=choices.Language.choices,
+        default=choices.Language.EN
     )
     balance = models.IntegerField(
         default=0
-    )
-    is_active = models.BooleanField(
-        _("active"),
-        default=False,
     )
     code = models.IntegerField(
         "Activation code",
@@ -54,6 +57,10 @@ class User(AbstractUser, BaseModel):
         _("Avatar"),
         blank=True,
         null=True
+    )
+    is_active = models.BooleanField(
+        _("active"),
+        default=False,
     )
     objects = UserManager()
 
@@ -85,3 +92,18 @@ class User(AbstractUser, BaseModel):
         ordering = ('-date_joined',)
         verbose_name = _('User')
         verbose_name_plural = _('Users')
+
+
+class BusinessAccount(BaseModel):
+    user = models.OneToOneField(
+        to=User,
+        on_delete=models.CASCADE,
+        verbose_name=_("User")
+    )
+    tariff_plan = models.IntegerField(
+        verbose_name=_("Tariff plan")
+    )
+    deadline = models.DateTimeField(
+        _("Deadline")
+    )
+

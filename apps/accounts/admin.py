@@ -20,8 +20,7 @@ class UserAdmin(UserAdmin):
     readonly_fields = ('username', 'code',)
 
     fieldsets = (
-        (_('Главная'), {'fields': ('username', 'email', 'phone', 'password')}),
-        (_('Персональная информация'), {'fields': ('name', 'balance', '_avatar')}),
+        (_('Главная'), {'fields': ('name', 'email', 'phone', 'language', 'balance', 'password', '_avatar')}),
         (_('Права доступы'), {
             'fields': ('code', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
@@ -34,3 +33,6 @@ class UserAdmin(UserAdmin):
         return "No Avatar"
 
     get_avatar.short_description = 'Avatar'
+
+
+admin.site.register(models.BusinessAccount)
