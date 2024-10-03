@@ -8,7 +8,6 @@ from apps.accounts import models
 
 admin.site.unregister(Group)
 
-
 @admin.register(models.User)
 class UserAdmin(UserAdmin):
     list_display = ('get_avatar', 'name', 'email', 'phone', 'is_active', 'date_joined')
