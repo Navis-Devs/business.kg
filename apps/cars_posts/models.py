@@ -1,4 +1,5 @@
 from random import choice
+from versatileimagefield.fields import VersatileImageField
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -266,3 +267,19 @@ class GeneralOptions(models.Model):
     def __str__(self):
         return "General Options"
 
+
+class Pictures(models.Model):
+    cars = models.ForeignKey(CarsPosts, on_delete=models.CASCADE, related_name='cars_pictures')
+    pictures = VersatileImageField(
+        upload_to='car/user/pictures/list/',
+    )
+
+    # pictures = ResizedImageField(
+    #     force_format="WEBP",
+    #     quality=75,
+    #     upload_to='house/user/pictures/list/',
+    # )
+
+    class Meta:
+        verbose_name = _("Фотография")
+        verbose_name_plural = _("Фотографии")

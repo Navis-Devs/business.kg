@@ -6,3 +6,6 @@ class CarsPostsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.cars_posts'
     verbose_name = _("Cars Posts")
+
+    def ready(self):
+        import apps.cars_posts.signals
