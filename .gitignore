@@ -1,11 +1,12 @@
 .idea
 env
 media
+!media/watermark_logo
 static
 
 .env
 
-db.sqlite3
+#db.sqlite3
 
 **__pycache__
 
