@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.response import Response
 
-from django.db.models import Min, Max
+from django.db.models import Min, Max, Q
 
 from .models import (
     CarType, CarMark, CarModel, CarGeneration, CarSerie,
@@ -33,9 +33,11 @@ class CarDataListView(generics.GenericAPIView):
         id_car_mark = request.query_params.get("mark")
         id_car_model = request.query_params.get("model")
         year = request.query_params.get("year")
-        id_car_generation = request.query_params.get("gen")
+        id_car_generation = request.query_params.get("generation")
         id_car_serie = request.query_params.get("serie")
-        id_car_modification = request.query_params.get("mod")
+        car_fuel = request.query_params.get("fuel")
+        transmission = request.query_params.get("transmission")
+        gear_box = request.query_params.get("gear_box")
 
         ''' filter with mark | output = marks'''
         if id_car_mark:
@@ -55,43 +57,124 @@ class CarDataListView(generics.GenericAPIView):
                 ''' filter with year | output = generations'''
                 if year:
                     response = {
-                        "type": "generations",
-                        "data": CarGenerationSerializer(
-                        CarGeneration.objects.filter(
+                        "type": "series",
+                        "data": CarSerieSerializer(
+                        CarSerie.objects.filter(
                             id_car_model__id=id_car_model,
-                            year_end__gte=year,
-                            year_begin__lte=year
-                        ).order_by("year_begin"), many=True).data}
+                            id_car_generation__year_end__gte=year,
+                            id_car_generation__year_begin__lte=year
+                        ),
+                        # ).distinct('name'),
+                            many=True).data}
 
-                    ''' filter with generation | output = series '''
-                    if id_car_generation:
+                    ''' filter with serie | output = generation '''
+                    if id_car_serie:
                         response = {
-                            "type": "serie",
-                            "data": CarSerieSerializer(
-                            CarSerie.objects.filter(
-                                id_car_model=id_car_model,
-                                id_car_generation=id_car_generation,
-                            ), many=True).data}
+                            "type": "generations",
+                            "data": CarGenerationSerializer(
+                                CarGeneration.objects.filter(
+                                    id_car_model__id=id_car_model,
+                                    year_end__gte=year,
+                                    year_begin__lte=year,
+                                    car_serie__id=id_car_serie
+                                ).order_by("year_begin"), many=True).data}
 
-                        ''' filter with serie | output = modification '''
-                        if id_car_serie:
+                        ''' filter with generation | output = fuel type '''
+                        if id_car_generation:
                             response = {
-                                "type": "modification",
-                                "data": CarModificationSerializer(
-                                    CarModification.objects.filter(
-                                        id_car_model=id_car_model,
-                                        id_car_serie=id_car_serie
-                                    ), many=True).data}
+                                "type": "fuels",
+                                "data":
+                                    list(
+                                        set(
+                                            CarCharacteristicValue.objects.filter(
+                                                id_car_characteristic__name="Тип двигателя",
+                                                id_car_modification__id_car_serie__id=id_car_serie
+                                            ).values_list("value", flat=True)
+                                        )
+                                    )
+                            }
 
-                            ''' filter with modification | output = characteristic '''
-                            if id_car_modification:
+                            ''' filter with car_fuel | output = transmission '''
+                            if car_fuel:
                                 response = {
-                                    "type": "characteristic",
-                                    "data": CarCharacteristicValueSerializer(
-                                        CarCharacteristicValue.objects.filter(
-                                            id_car_modification__id=id_car_modification
-                                        ), many=True).data,
-                                    "fuel_type": self.get_fuel_type()}
+                                    "type": "transmissions",
+                                    "data":
+                                        list(
+                                            set(
+                                                CarCharacteristicValue.objects.filter(
+                                                    id_car_characteristic__name="Привод",
+                                                    id_car_modification__id_car_serie_id=id_car_serie
+                                                ).values_list("value", flat=True)
+                                            )
+                                        )
+                                }
+
+                                ''' filter with transmission | output = gear_box '''
+                                if transmission:
+                                    response = {
+                                        "type": "gear_boxes",
+                                        "data":
+                                            list(
+                                                set(
+                                                    CarCharacteristicValue.objects.filter(
+                                                        id_car_characteristic__name="Тип КПП",
+                                                        id_car_modification__id_car_serie_id=id_car_serie
+                                                    ).values_list("value", flat=True)
+                                                )
+                                            )
+                                    }
+
+                                    ''' filter with gear_box '''
+                                    if gear_box:
+                                        response = {
+                                            "type": "engine",
+                                            "data": list(
+                                                        set(
+                                                            CarCharacteristicValue.objects.filter(
+                                                                id_car_characteristic__name="Объем двигателя",
+                                                                id_car_modification__id_car_serie_id=id_car_serie,
+                                                            ).values_list("value", flat=True)
+                                                        )
+                                                    )
+                                        }
+
+
+                    # "data": CarModificationSerializer(
+                    #     CarModification.objects.filter(
+                    #         id_car_model=id_car_model,
+                    #         id_car_serie=id_car_serie
+                    #     ), many=True).data}
+
+
+                    # ''' filter with generation | output = series '''
+                    # if id_car_generation:
+                    #     response = {
+                    #         "type": "serie",
+                    #         "data": CarSerieSerializer(
+                    #         CarSerie.objects.filter(
+                    #             id_car_model=id_car_model,
+                    #             id_car_generation=id_car_generation,
+                    #         ), many=True).data}
+
+                    #     ''' filter with serie | output = modification '''
+                    #     if id_car_serie:
+                    #         response = {
+                    #             "type": "modification",
+                    #             "data": CarModificationSerializer(
+                    #                 CarModification.objects.filter(
+                    #                     id_car_model=id_car_model,
+                    #                     id_car_serie=id_car_serie
+                    #                 ), many=True).data}
+                    #
+                    #         ''' filter with modification | output = characteristic '''
+                    #         if id_car_modification:
+                    #             response = {
+                    #                 "type": "characteristic",
+                    #                 "data": CarCharacteristicValueSerializer(
+                    #                     CarCharacteristicValue.objects.filter(
+                    #                         id_car_modification__id=id_car_modification
+                    #                     ), many=True).data,
+                    #                 "fuel_type": self.get_fuel_type()}
 
 
         else:

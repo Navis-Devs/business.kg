@@ -15,32 +15,32 @@ class CarTypeSerializer(serializers.ModelSerializer):
 class CarMarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarMark
-        fields = ['id', 'name', 'name_rus', 'id_car_type']
+        fields = ['id', 'name', 'img']
 
 
 class CarModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarModel
-        fields = ['id', 'name', 'name_rus', 'id_car_mark', 'id_car_type']
+        fields = ['id', 'name']
 
 
 class CarGenerationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CarGeneration
-        fields = ['id', 'name', 'year_begin', 'year_end', 'id_car_model', 'id_car_type']
+        fields = ['id', 'name', 'img', 'year_begin', 'year_end']
 
 
 class CarSerieSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarSerie
-        fields = ['id', 'name', 'id_car_model', 'id_car_generation', 'id_car_type']
+        fields = ['id', 'name']
 
 
 class CarModificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarModification
-        fields = ['id', 'name', 'id_car_serie', 'id_car_model', 'id_car_type']
+        fields = ['id', 'name']
 
 
 class CarCharacteristicValueSerializer(serializers.ModelSerializer):

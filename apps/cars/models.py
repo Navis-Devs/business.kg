@@ -39,6 +39,10 @@ class CarColors(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Car colors"
+        verbose_name_plural = verbose_name
+
 
 class CarType(models.Model):
     id = models.IntegerField(
@@ -60,6 +64,11 @@ class CarMark(models.Model):
     name = models.CharField(
         _("Name"),
         max_length=255
+    )
+    img = models.ImageField(
+        _("Image"),
+        null=True,
+        upload_to="cars/mark"
     )
     id_car_type = models.ForeignKey(
         "CarType",
@@ -109,6 +118,11 @@ class CarGeneration(models.Model):
     name = models.CharField(
         _("Name"),
         max_length=255
+    )
+    img = models.ImageField(
+        _("Image"),
+        null=True,
+        upload_to="cars/mark"
     )
     id_car_model = models.ForeignKey(
         "CarModel",
