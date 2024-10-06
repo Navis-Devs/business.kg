@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import CarsPosts, Media, Exterior, Interior, Security, GeneralOptions
+from versatileimagefield.serializers import VersatileImageFieldSerializer
+from .models import CarsPosts, Media, Exterior, Interior, Security, GeneralOptions, Pictures
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +26,31 @@ class GeneralOptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralOptions
         fields = '__all__'
+
+
+# class PicturesListSerializer(serializers.ModelSerializer):
+#     pictures = VersatileImageFieldSerializer(
+#         sizes=[
+#             ('medium_size', 'crop__400x400')
+#         ]
+#     )
+#
+#     class Meta:
+#         model = Pictures
+#         fields = ['pictures', ]
+#
+#
+# class PicturesDetailSerializer(serializers.ModelSerializer):
+#     pictures = VersatileImageFieldSerializer(
+#         sizes=[
+#             ('full_size', 'url'),
+#         ]
+#     )
+#
+#     class Meta:
+#         model = Pictures
+#         fields = ['pictures', ]
+
 
 class CarsPostsSerializer(serializers.ModelSerializer):
     # read only

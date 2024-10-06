@@ -22,3 +22,6 @@ class StandardPaginationSet(PageNumberPagination):
                 'data': data,
             }
         )
+
+class PropertyResultsPagination(PageNumberPagination):
+    page_size = 10

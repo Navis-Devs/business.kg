@@ -25,16 +25,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # additional
+    'mptt',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
     'sorl.thumbnail',
     'colorfield',
+    'versatileimagefield',
 
     # apps
     'apps.accounts',
     'apps.cars',
     'apps.cars_posts',
+    'apps.house',
+    'apps.main',
+    'apps.helpers.api',
 ]
 
 REST_FRAMEWORK = {
@@ -43,6 +48,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
@@ -138,6 +145,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6380/0")
 
+
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -145,3 +153,11 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 WATERMARK_PATH = 'media/watermark_logo/logo-1.png'
+
+GMAIL_TEMPLATE_ADD = 'apps/helpers/send_mail_house.html'
+
+HASHID_FIELD_MIN_LENGTH = 25
+
+HASHID_FIELD_LOOKUP_EXCEPTION = False
+
+HASHID_FIELD_SALT = 'EF92B778BAFE771E89245B89ECBC08A44A4E166C06659911881F383D4473E94F'
