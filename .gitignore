@@ -1,8 +1,8 @@
-.idea
-env
-media
+**.idea
+src/env
+src/media
 !media/watermark_logo
-static
+src/static
 
 .env
 
@@ -11,4 +11,4 @@ static
 **__pycache__
 
 **__init__.py
-!core/__init__.py
+!src/core/__init__.py

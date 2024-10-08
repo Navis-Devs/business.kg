@@ -169,7 +169,6 @@ class CarsPosts(BaseModel):
 
     likes = models.ManyToManyField(
         to=User,
-        null=True,
         verbose_name=_("Понравится"),
         related_name="liked_posts",
         blank=True

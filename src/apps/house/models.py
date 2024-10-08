@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 from apps.accounts.models import User
 from apps.house import choices
+from apps.house.choices import year_choices, current_year
 from apps.house.validators import ENIValidator, validate_youtube_url
 from django_resized import ResizedImageField
 from versatileimagefield.fields import VersatileImageField
@@ -324,8 +325,8 @@ class Property(models.Model):
     )
     year_construction = models.IntegerField(
         _('Год построения'),
-        choices=choices.year_choices,
-        default=choices.current_year,
+        choices=year_choices(),
+        default=current_year(),
         null=True,
         blank=True,
     )

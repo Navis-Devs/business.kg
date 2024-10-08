@@ -1,0 +1,54 @@
+FROM python:3.8-slim-buster as builder
+
+WORKDIR /usr/src/app
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update \
+&& apt-get install gcc -y \
+&& apt-get clean
+
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+
+
+#########
+# FINAL #
+#########
+
+FROM python:3.8-slim-buster
+
+RUN mkdir -p /home/app
+
+RUN apt-get update \
+&& apt-get install netcat -y \
+&& apt-get clean
+
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/web
+RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/staticfiles
+RUN mkdir $APP_HOME/media
+WORKDIR $APP_HOME
+
+COPY --from=builder /usr/src/app/wheels /wheels
+COPY --from=builder /usr/src/app/requirements.txt .
+RUN pip install --upgrade pip
+ENV VIRTUAL_ENV=venv
+RUN python -m $VIRTUAL_ENV venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN pip install --no-cache /wheels/*
+
+COPY ./src/entrypoint.sh $APP_HOME
+
+COPY ./src $APP_HOME
+COPY .env $APP_HOME/main/
+
+RUN chmod +x /home/app/web/entrypoint.sh
+RUN chmod +x /home/app/web/manage.py
+ENTRYPOINT ["/home/app/web/entrypoint.sh"]
+
+RUN apt-get update && apt-get install -y libmagic1
