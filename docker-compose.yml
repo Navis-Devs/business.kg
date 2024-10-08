@@ -33,7 +33,6 @@ services:
       dockerfile: Dockerfile.prod
     command: celery -A core worker --loglevel=info --uid=nobody
     volumes:
-      - ./src:/home/app/web/
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/media
     extra_hosts:
@@ -49,7 +48,6 @@ services:
     build:
       context: nginx/
     volumes:
-      - ./src:/home/app/web/
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/media
     ports:
