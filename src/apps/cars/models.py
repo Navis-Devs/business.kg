@@ -104,6 +104,7 @@ class CarModel(models.Model):
     )
     name_rus = models.CharField(
         _("Name rus"),
+        null=True,
         max_length=255
     )
 
@@ -131,10 +132,12 @@ class CarGeneration(models.Model):
     )
     year_begin = models.CharField(
         _("Year begin"),
+        null=True,
         max_length=255
     )
     year_end = models.CharField(
         _("Year end"),
+        null=True,
         max_length=255
     )
     id_car_type = models.ForeignKey(
