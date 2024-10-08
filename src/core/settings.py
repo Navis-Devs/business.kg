@@ -16,6 +16,7 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['localhost']
 
+
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',
 ]
