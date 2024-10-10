@@ -133,7 +133,7 @@ SPECTACULAR_SETTINGS = {
 
 # URL Settings
 
-SITE_URL = env('SITE_URL', default='http://localhost:8000')
+SITE_URL = env('SITE_URL', default='http://localhost:8080')
 
 STATIC_URL = f'{SITE_URL}/static/'
 STATIC_ROOT = 'staticfiles'
