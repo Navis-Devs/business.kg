@@ -549,7 +549,7 @@ class Property(models.Model):
         blank=True,
         choices=choices.FLOOR_CHOICES
     )
-    # TODO: comment_to_property = 
+    # TODO: comment_to_property =
     phone_number = models.CharField(
         max_length=16,
         verbose_name=_("Второй Номер телефона пользователя"),
@@ -600,7 +600,15 @@ class Property(models.Model):
         null=True,
         blank=True,
     )
-
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    likes = models.ManyToManyField(
+        to=User,
+        verbose_name=_("Понравится"),
+        related_name="liked_house",
+        blank=True
+    )
     class Meta:
         verbose_name = _("Недвижимость")
         verbose_name_plural = _("Недвижимость")

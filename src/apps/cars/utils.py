@@ -120,11 +120,13 @@ def CarModificationLoad():
                 id_car_type=CarType.objects.get(id=cleaned_row.get("id_car_type")),
             )
 
+
 def get_or_none(model, **kwargs):
     try:
         return model.objects.get(**kwargs)
     except model.DoesNotExist:
         return None
+
 
 def CarCharacteristicLoad():
     file_path = f'{dir}car_characteristic.csv'

@@ -34,7 +34,7 @@ class CarDataListView(generics.GenericAPIView):
         id_car_model = request.query_params.get("model")
         year = request.query_params.get("year")
         id_car_generation = request.query_params.get("generation")
-        id_car_serie = request.query_params.get("serie")
+        car_serie = request.query_params.get("serie")
         car_fuel = request.query_params.get("fuel")
         transmission = request.query_params.get("transmission")
         gear_box = request.query_params.get("gear_box")
@@ -56,19 +56,31 @@ class CarDataListView(generics.GenericAPIView):
 
                 ''' filter with year | output = generations'''
                 if year:
+                    # Получаем данные без уникальности
+                    car_series = CarSerie.objects.filter(
+                        id_car_model__id=id_car_model,
+                        id_car_generation__year_end__gte=year,
+                        id_car_generation__year_begin__lte=year
+                    )
+
+                    serialized_data = CarSerieSerializer(car_series, many=True).data
+
+                    unique_data = []
+                    seen_names = set()
+
+                    for item in serialized_data:
+                        name = item.get('name')
+                        if name not in seen_names:
+                            seen_names.add(name)
+                            unique_data.append(item)
+
                     response = {
                         "type": "series",
-                        "data": CarSerieSerializer(
-                        CarSerie.objects.filter(
-                            id_car_model__id=id_car_model,
-                            id_car_generation__year_end__gte=year,
-                            id_car_generation__year_begin__lte=year
-                        ),
-                        # ).distinct('name'),
-                            many=True).data}
+                        "data": unique_data
+                    }
 
                     ''' filter with serie | output = generation '''
-                    if id_car_serie:
+                    if car_serie:
                         response = {
                             "type": "generations",
                             "data": CarGenerationSerializer(
@@ -76,7 +88,7 @@ class CarDataListView(generics.GenericAPIView):
                                     id_car_model__id=id_car_model,
                                     year_end__gte=year,
                                     year_begin__lte=year,
-                                    car_serie__id=id_car_serie
+                                    car_serie__name=car_serie
                                 ).order_by("year_begin"), many=True).data}
 
                         ''' filter with generation | output = fuel type '''
@@ -88,7 +100,7 @@ class CarDataListView(generics.GenericAPIView):
                                         set(
                                             CarCharacteristicValue.objects.filter(
                                                 id_car_characteristic__name="Тип двигателя",
-                                                id_car_modification__id_car_serie__id=id_car_serie
+                                                id_car_modification__id_car_serie__name=car_serie
                                             ).values_list("value", flat=True)
                                         )
                                     )
@@ -103,7 +115,7 @@ class CarDataListView(generics.GenericAPIView):
                                             set(
                                                 CarCharacteristicValue.objects.filter(
                                                     id_car_characteristic__name="Привод",
-                                                    id_car_modification__id_car_serie_id=id_car_serie
+                                                    id_car_modification__id_car_serie_id__name=car_serie
                                                 ).values_list("value", flat=True)
                                             )
                                         )
@@ -118,7 +130,7 @@ class CarDataListView(generics.GenericAPIView):
                                                 set(
                                                     CarCharacteristicValue.objects.filter(
                                                         id_car_characteristic__name="Тип КПП",
-                                                        id_car_modification__id_car_serie_id=id_car_serie
+                                                        id_car_modification__id_car_serie_id__name=car_serie
                                                     ).values_list("value", flat=True)
                                                 )
                                             )
@@ -132,7 +144,7 @@ class CarDataListView(generics.GenericAPIView):
                                                         set(
                                                             CarCharacteristicValue.objects.filter(
                                                                 id_car_characteristic__name="Объем двигателя",
-                                                                id_car_modification__id_car_serie_id=id_car_serie,
+                                                                id_car_modification__id_car_serie_id__name=car_serie,
                                                             ).values_list("value", flat=True)
                                                         )
                                                     )
@@ -142,7 +154,7 @@ class CarDataListView(generics.GenericAPIView):
                     # "data": CarModificationSerializer(
                     #     CarModification.objects.filter(
                     #         id_car_model=id_car_model,
-                    #         id_car_serie=id_car_serie
+                    #         car_serie=car_serie
                     #     ), many=True).data}
 
 
@@ -157,13 +169,13 @@ class CarDataListView(generics.GenericAPIView):
                     #         ), many=True).data}
 
                     #     ''' filter with serie | output = modification '''
-                    #     if id_car_serie:
+                    #     if car_serie:
                     #         response = {
                     #             "type": "modification",
                     #             "data": CarModificationSerializer(
                     #                 CarModification.objects.filter(
                     #                     id_car_model=id_car_model,
-                    #                     id_car_serie=id_car_serie
+                    #                     car_serie=car_serie
                     #                 ), many=True).data}
                     #
                     #         ''' filter with modification | output = characteristic '''

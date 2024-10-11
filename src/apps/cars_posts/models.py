@@ -47,11 +47,10 @@ class CarsPosts(BaseModel):
         _("Год выпуска"),
         null=True
     )
-    serie = models.ForeignKey(
-        to=CarSerie,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name=_("Кузов")
+    serie = models.CharField(
+        _("Кузов"),
+        max_length=255,
+        null=True
     )
     engine = models.CharField(
         _("Тип топлива"),
@@ -165,12 +164,13 @@ class CarsPosts(BaseModel):
         _("Возможно рассрочка"),
         default=False
     )
-
-
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
     likes = models.ManyToManyField(
         to=User,
         verbose_name=_("Понравится"),
-        related_name="liked_posts",
+        related_name="liked_car",
         blank=True
     )
     ''' OneToOne rel '''
