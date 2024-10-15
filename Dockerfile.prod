@@ -42,8 +42,6 @@ ENV PATH="$HOME/venv/bin:$PATH"
 
 RUN pip install --no-cache /wheels/*
 
-RUN pip show django
-
 COPY ./src/entrypoint.sh $APP_HOME
 COPY ./src $APP_HOME
 COPY .env $APP_HOME/main/
