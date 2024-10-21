@@ -1,10 +1,10 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
 from apps.house import models
-
+from django_admin_geomap import ModelAdmin as MapAdmin
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
-from .models import Location
+from django.utils.safestring import mark_safe
 
 
 @admin.register(models.Location)
@@ -14,9 +14,22 @@ class LocationAdmin(MPTTModelAdmin):
 
 
 @admin.register(models.ResidentialCategory)
-class CategoryAdmin(MPTTModelAdmin):
-    list_display = ('id', 'complex_name', 'parent')
+class CategoryAdmin(MapAdmin):
+    geomap_field_longitude = "id_lon"
+    geomap_field_latitude = "id_lat"
+    geomap_default_longitude = "74.6066926"
+    geomap_default_latitude = "42.8777895"
+    geomap_default_zoom = "12"
+    geomap_height = "500px"
+    list_display = ('complex_name', 'object_state', 'get_media')
     search_fields = ('complex_name', 'id')
+
+    def get_media(self, obj):
+        if obj.media:
+            return mark_safe(f"<img src='{obj.media.url}' height='61' width='80'>")
+        return None
+
+    get_media.short_description = 'видимость обьекта'
 
 
 class PicteresInline(admin.TabularInline):
@@ -34,5 +47,10 @@ class SecurityInline(admin.TabularInline):
 
 @admin.register(models.Property)
 class Property(admin.ModelAdmin):
-    list_display = ['id', ]
+    list_display = ['id', 'active_post']
     inlines = [PicteresInline, ]
+
+
+@admin.register(models.Security)
+class Security(admin.ModelAdmin):
+    list_display = ['id', ]

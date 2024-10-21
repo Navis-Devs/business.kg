@@ -1,16 +1,19 @@
-from django.db import models
 from django.utils.translation import gettext_lazy as _
-from mptt.models import MPTTModel, TreeForeignKey
-from apps.accounts.models import User
-from apps.house import choices
-from apps.house.choices import year_choices, current_year
-from apps.house.validators import ENIValidator, validate_youtube_url
 from django_resized import ResizedImageField
+from django.db import models
 from versatileimagefield.fields import VersatileImageField
 from hashid_field import HashidAutoField
+from mptt.models import MPTTModel, TreeForeignKey
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django_admin_geomap import GeoItem
+from django.contrib.gis.db.models import PointField
+
+from apps.accounts.models import User
+from apps.house import choices
+from apps.house.validators import ENIValidator, validate_youtube_url
 
 
-class ResidentialCategory(MPTTModel):
+class ResidentialCategory(models.Model, GeoItem):
     # Основные характеристики
     complex_name = models.CharField(
         max_length=255,
@@ -18,12 +21,62 @@ class ResidentialCategory(MPTTModel):
         null=True,
         blank=True
     )
-    parent = TreeForeignKey(
-        'self',
-        on_delete=models.CASCADE,
+    price = models.IntegerField(
+        _("Цена"),
+    )
+    object_state = models.CharField(
+        _("Состояние обьекта"),
+        max_length=50,
+        choices=choices.OBJECT_STATE,
+    )
+    ceiling_height = models.DecimalField(
+        _("Высота потолков"),
+        max_digits=5,
+        decimal_places=2,
         null=True,
         blank=True,
-        related_name='children'
+    )
+    type_heating = models.CharField(
+        _("Тип отопления"),
+        max_length=50,
+        choices=choices.HEATING_CHOICES,
+        null=True,
+        blank=True,
+    )
+    type_building = models.CharField(
+        _("Тип строения"),
+        max_length=50,
+        choices=choices.BUILDING_TYPE_CHOICES,
+        null=True,
+        blank=True
+    )
+    storey = models.IntegerField(
+        _("Этажность"),
+        validators=[MaxValueValidator(50)]
+    )
+    housing_class = models.CharField(
+        _("Тип класса"),
+        max_length=50,
+        choices=choices.HOUSING_CLASS,
+    )
+
+    lon = models.FloatField()
+    lat = models.FloatField()
+
+    location = models.ForeignKey(
+        "Location",
+        verbose_name=_("Расположение обьекта"),
+        on_delete=models.CASCADE
+    )
+    about_complex = models.TextField(
+        _("Об объекте"),
+        null=True,
+        blank=True,
+    )
+    media = models.FileField(
+        upload_to='uploads/',
+        null=True,
+        blank=True
     )
     building_date = models.DateField(
         _("Дата постройки комплекса"),
@@ -31,46 +84,57 @@ class ResidentialCategory(MPTTModel):
         null=True,
         blank=True
     )
+    due_date = models.DateField(
+        _("Дата сдачи"),
+    )
 
-    class MPTTMeta:
-        order_insertion_by = ['complex_name']
+    @property
+    def geomap_longitude(self):
+        return self.complex_name if self.lon is None else str(self.lon)
 
-    class Meta:
-        verbose_name = _("Жилой комплекс")
-        verbose_name_plural = _("Жилой комплекс")
+    @property
+    def geomap_latitude(self):
+        return self.complex_name if self.lat is None else str(self.lat)
 
     def __str__(self):
-        return self.complex_name
+        return f"{self.complex_name} Цена: {self.price}$"
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = _("Жилой комплекс")
+        verbose_name_plural = _("Жилой комплекс")
 
 
 class Location(MPTTModel):
     # Локация
     city = models.CharField(max_length=255)
-    lat = models.DecimalField(
-        max_digits=9,
-        decimal_places=6,
+    lat = models.FloatField(
         blank=True,
         null=True
     )
-    lng = models.DecimalField(
-        max_digits=9,
-        decimal_places=6,
+    lng = models.FloatField(
         blank=True,
         null=True
     )
-    population = models.IntegerField(
+    population = models.CharField(
+        max_length=100,
         blank=True,
         null=True
     )
     iso2 = models.CharField(
-        max_length=2,
+        max_length=10,
         blank=True,
         null=True
     )
     capital = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True
+    )
+    admin_name = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
     )
     parent = TreeForeignKey(
         'self',
@@ -325,8 +389,8 @@ class Property(models.Model):
     )
     year_construction = models.IntegerField(
         _('Год построения'),
-        choices=year_choices(),
-        default=current_year(),
+        choices=choices.year_choices(),
+        default=choices.current_year(),
         null=True,
         blank=True,
     )
@@ -357,6 +421,12 @@ class Property(models.Model):
         max_length=50,
         null=True,
         blank=True
+    )
+    ceiling_height = models.CharField(
+        _("Высота потолков"),
+        max_length=50,
+        null=True,
+        blank=True,
     )
     land_area = models.IntegerField(
         'Площадь учатска',
@@ -408,16 +478,7 @@ class Property(models.Model):
         null=True,
         blank=True
     )
-    lat = models.DecimalField(
-        _('Широта'),
-        max_digits=9,
-        decimal_places=6
-    )
-    lon = models.DecimalField(
-        _('Долгата'),
-        max_digits=9,
-        decimal_places=6
-    )
+    point = PointField(null=True, blank=True)
     youtube_url = models.URLField(
         _('Ссылка на видео'),
         max_length=200,
@@ -560,7 +621,16 @@ class Property(models.Model):
         blank=True,
         default=1
     )
-
+    active_post = models.BooleanField(
+        _("Активный пост"),
+        default=True
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
     security = models.OneToOneField(
         Security,
         verbose_name=_("Безопасность"),
@@ -600,21 +670,13 @@ class Property(models.Model):
         null=True,
         blank=True,
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    likes = models.ManyToManyField(
-        to=User,
-        verbose_name=_("Понравится"),
-        related_name="liked_house",
-        blank=True
-    )
+
     class Meta:
         verbose_name = _("Недвижимость")
         verbose_name_plural = _("Недвижимость")
 
     def __str__(self):
-        return f"{self.location} - or None "
+        return f"{self.id} - {self.price} "
 
 
 class Pictures(models.Model):
@@ -625,7 +687,7 @@ class Pictures(models.Model):
     )
 
     # pictures = ResizedImageField(
-    #     force_format="WEBP", 
+    #     force_format="WEBP",
     #     quality=75,
     #     upload_to='house/user/pictures/list/',
     # )

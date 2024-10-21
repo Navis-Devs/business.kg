@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'colorfield',
     'versatileimagefield',
+    'leaflet',
+    'django_admin_geomap',
 
     # apps
     'apps.accounts',
@@ -133,7 +135,7 @@ SPECTACULAR_SETTINGS = {
 
 # URL Settings
 
-SITE_URL = env('SITE_URL', default='http://localhost:8080')
+SITE_URL = env('SITE_URL', default='http://localhost')
 
 STATIC_URL = f'{SITE_URL}/static/'
 STATIC_ROOT = 'staticfiles'
@@ -166,3 +168,4 @@ HASHID_FIELD_LOOKUP_EXCEPTION = False
 
 HASHID_FIELD_SALT = 'EF92B778BAFE771E89245B89ECBC08A44A4E166C06659911881F383D4473E94F'
 
+GDAL_LIBRARY_PATH = env('GDAL_LIBRARY_PATH', default='/usr/lib/libgdal.so')

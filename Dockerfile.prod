@@ -23,8 +23,12 @@ FROM python:3.8-slim-buster
 RUN mkdir -p /home/app
 
 RUN apt-get update \
-    && apt-get install netcat -y \
+    && apt-get install -y netcat nano libmagic1 \
     && apt-get clean
+
+RUN apt-get update && apt-get install -y \
+    gdal-bin \
+    libgdal-dev
 
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
@@ -50,4 +54,3 @@ RUN chmod +x /home/app/web/entrypoint.sh
 RUN chmod +x /home/app/web/manage.py
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]
 
-RUN apt-get update && apt-get install -y libmagic1

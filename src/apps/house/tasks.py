@@ -1,6 +1,9 @@
 from celery import shared_task
 import requests
 from apps.helpers.api import models
+from django.utils import timezone
+from datetime import timedelta
+from apps.house import models as house_models
 
 
 @shared_task()
@@ -26,3 +29,14 @@ def get_current_cy():
             return f'Error: {response.status_code}, {response.text}'
     except requests.exceptions.RequestException as e:
         return f'Exception: {str(e)}'
+
+
+@shared_task
+def delete_post(post_id):
+    post_id = str(post_id)
+    instance = house_models.Property.objects.get(id=post_id)
+    if instance.active_post == False:
+        date_now = timezone.now()
+        if date_now - instance.updated_at >= timedelta(seconds=30):
+            instance.delete()
+        return None

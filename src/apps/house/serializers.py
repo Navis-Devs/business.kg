@@ -5,17 +5,13 @@ from drf_writable_nested import WritableNestedModelSerializer
 from apps.helpers.api.models import Currency
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 from apps.main.serializers import CommentListSerializer
+from rest_framework_gis.serializers import GeoModelSerializer
 
 
-class ResidentialCategorySerializer(serializers.ModelSerializer, mixins.HierarchicalMixin):
-    children = serializers.SerializerMethodField()
-
+class ResidentialCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ResidentialCategory
-        fields = ['id', 'complex_name', 'building_date', 'level', 'parent', 'children']
-
-    def get_children(self, instance):
-        return super().base_method(instance)
+        fields = '__all__'
 
 
 class MiscellaneousSerializer(serializers.ModelSerializer):
@@ -96,8 +92,8 @@ class AddPropertySerializer(WritableNestedModelSerializer):
             'type_building', 'year_construction',
             'floor_number', 'total_floors', 'general',
             'residential', 'kitchen', 'land_area', 'type_heating', 'type_condition',
-            'eni_code', 'street', 'house_number', 'intersection_with', 'lat',
-            'lon', 'youtube_url', 'description', 'description', 'location', 'price', 'currency', 'price_for',
+            'eni_code', 'street', 'house_number', 'intersection_with', 'point',
+            'youtube_url', 'description', 'description', 'location', 'price', 'currency', 'price_for',
             'installment_type',
             'mortage_type', 'exchange_type', 'advertiser_type', 'phone_number', 'floor', 'internet', 'gas', 'furniture',
             'front_door',
@@ -118,7 +114,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
         fields = ['username', '_avatar']
 
 
-class PropertyDetailSerializer(serializers.ModelSerializer, mixins.BaseMixin):
+class PropertyDetailSerializer(GeoModelSerializer, serializers.ModelSerializer, mixins.BaseMixin):
     user = UserInfoSerializer()
     id = serializers.CharField()
     properties_pictures = PicturesDetailSerializer(many=True, read_only=True)
@@ -126,13 +122,14 @@ class PropertyDetailSerializer(serializers.ModelSerializer, mixins.BaseMixin):
 
     class Meta:
         model = models.Property
+        geo_field = "point"
         fields = [
             'id', 'user', 'type_deal', 'type_property', 'room_count',
             'type_series', 'type_building', 'year_construction',
             'floor_number', 'total_floors', 'general', 'residential',
             'kitchen', 'land_area', 'type_heating', 'type_condition',
             'eni_code', 'street', 'house_number', 'intersection_with',
-            'lat', 'lon', 'youtube_url', 'description', 'price',
+            'point', 'youtube_url', 'description', 'price',
             'currency', 'price_for', 'installment_type', 'mortage_type',
             'exchange_type', 'advertiser_type', 'phone_connection',
             'drinking_water', 'sewage', 'electricity', 'disposition_object',

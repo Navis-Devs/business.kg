@@ -10,7 +10,6 @@ ENIValidator = validators.RegexValidator(
     code="invalid_eni"
 )
 
-
 def validate_youtube_url(request_text):
     if "youtube.com" not in request_text and "youtu.be" not in request_text:
         raise ValidationError(

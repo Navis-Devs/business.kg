@@ -10,7 +10,6 @@ from django.core.mail import send_mail
 
 from PIL import Image
 
-
 @receiver(post_save, sender=models.Pictures)
 def add_watermark(sender, instance, created, **kwargs):
     if created:

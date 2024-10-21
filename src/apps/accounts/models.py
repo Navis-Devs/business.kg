@@ -154,3 +154,5 @@ class TariffPlan(models.Model):
         verbose_name = _('Tariff Plan')
         verbose_name_plural = _('Tariff Plans')
         unique_together = ("name", "duration_days", )
+
+
