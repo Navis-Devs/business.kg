@@ -59,12 +59,14 @@ class ResidentialCategory(models.Model, GeoItem):
         max_length=50,
         choices=choices.HOUSING_CLASS,
     )
-
-    lon = models.FloatField(blank=True,
-        null=True)
-    lat = models.FloatField(blank=True,
-        null=True)
-
+    lon = models.FloatField(
+        blank=True,
+        null=True
+    )
+    lat = models.FloatField(
+        blank=True,
+        null=True
+    )
     location = models.ForeignKey(
         "Location",
         verbose_name=_("Расположение обьекта"),
