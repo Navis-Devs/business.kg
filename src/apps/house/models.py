@@ -60,8 +60,10 @@ class ResidentialCategory(models.Model, GeoItem):
         choices=choices.HOUSING_CLASS,
     )
 
-    lon = models.FloatField()
-    lat = models.FloatField()
+    lon = models.FloatField(blank=True,
+        null=True)
+    lat = models.FloatField(blank=True,
+        null=True)
 
     location = models.ForeignKey(
         "Location",
@@ -112,7 +114,7 @@ class Location(MPTTModel):
         blank=True,
         null=True
     )
-    lng = models.FloatField(
+    lon = models.FloatField(
         blank=True,
         null=True
     )
