@@ -65,7 +65,7 @@ services:
     environment:
       - POSTGRES_USER=navisdevs
       - POSTGRES_PASSWORD=adminadmin
-      - POSTGRES_DB=businesskg
+      - POSTGRES_DB=business
     depends_on:
       - redis
 
