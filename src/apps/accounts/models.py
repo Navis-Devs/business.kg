@@ -107,6 +107,53 @@ class BusinessAccount(BaseModel):
         _("Deadline")
     )
 
+    # personal info
+
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_("Company Name")
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_("Description")
+    )
+    location = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_("Location")
+    )
+    website = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_("Website URL")
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created At")
+    )
+    video = models.FileField(
+        upload_to='business/videos/',
+        blank=True,
+        null=True,
+        verbose_name=_("Company Video")
+    )
+
+    class Meta:
+        ordering = ('-created_at',)
+        verbose_name = _('Business Account')
+        verbose_name_plural = _('Business Accounts')
+
+
+class BusinessAccountImages(models.Model):
+    main = models.ForeignKey(BusinessAccount, on_delete=models.CASCADE)
+    image = models.ImageField(_("Image"), upload_to="business/images/")
+
+    class Meta:
+        verbose_name = _("Image")
+        verbose_name_plural = _("Images")
+
 
 class TariffPlan(models.Model):
     TARIFF_TYPES = (

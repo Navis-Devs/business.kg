@@ -34,5 +34,13 @@ class UserAdmin(UserAdmin):
     get_avatar.short_description = 'Avatar'
 
 
-admin.site.register(models.BusinessAccount)
+class BusinessAccountImagesInline(admin.TabularInline):
+    model = models.BusinessAccountImages
+    extra = 0
+
+
+@admin.register(models.BusinessAccount)
+class BusinessAccountAdmin(admin.ModelAdmin):
+    inlines = [BusinessAccountImagesInline]
+
 admin.site.register(models.TariffPlan)

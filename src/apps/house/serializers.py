@@ -44,7 +44,7 @@ class RegionsSerializer(serializers.ModelSerializer, mixins.HierarchicalMixin):
         fields = [
             'id',
             'city', 'lat',
-            'lng', 'population',
+            'lon', 'population',
             'iso2', 'capital', 'lft',
             "rght", "tree_id", "level", "parent",
         ]
