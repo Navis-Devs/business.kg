@@ -6,11 +6,11 @@ then
 
     while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
       sleep 0.1
+    echo "DB started"
     done
 
-    echo "PostgreSQL started"
 fi
 python manage.py collectstatic --noinput
 python manage.py migrate
-exec "$@"
 echo "ВСЕ ОК"
+exec "$@"

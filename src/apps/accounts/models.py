@@ -155,7 +155,7 @@ class BusinessAccountImages(models.Model):
         verbose_name_plural = _("Images")
 
 
-class TariffPlan(models.Model):
+class TariffPlan(BaseModel):
     TARIFF_TYPES = (
         ('Basic', 'Basic'),
         ('Advanced', 'Advanced'),
@@ -189,10 +189,7 @@ class TariffPlan(models.Model):
     tag_with_company_name = models.BooleanField(default=False, verbose_name=_('метка на объявлениях с названием вашей компании'))
     no_ad_photos = models.BooleanField(default=False, verbose_name=_('отсутствие рекламы среди фотографий объявления'))
     without_competitors = models.BooleanField(default=False, verbose_name=_('отсутствие конкурентов под вашим объявлением'))
-    auto_business_priority = models.BooleanField(default=False, verbose_name=_('приоритет в разделе Автобизнес (выше планов Базовый и Продвинутый)'))
-    crm_sync = models.BooleanField(default=False, verbose_name=_('автоматическая загрузка объявлений с вашего сайта или CRM'))
     search_by_ads = models.BooleanField(default=False, verbose_name=_('поиск по вашим объявлениям'))
-    body_condition_status = models.BooleanField(default=False, verbose_name=_('возможность отметить состояние кузова'))
 
     def __str__(self):
         return f"{self.name} - {self.get_duration_days_display()}"
