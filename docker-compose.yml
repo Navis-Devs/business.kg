@@ -27,7 +27,6 @@ services:
     depends_on:
       - redis
       - db
-#    entrypoint: /home/app/web/entrypoint.sh
 
   celery:
     container_name: celery
