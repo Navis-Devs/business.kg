@@ -106,8 +106,7 @@ class AbstractAdFeatures(models.Model):
 
 DAY_RANGE = [(i, str(i)) for i in range(1, 31)]
 
-
-class AutoUP(BaseModel):
+class AbstractDefaultTariff(BaseModel):
     days = models.IntegerField(
         _("Days duration"),
         choices=DAY_RANGE,
@@ -115,11 +114,25 @@ class AutoUP(BaseModel):
     price = models.IntegerField(
         _("Price")
     )
+    class Meta:
+        abstract = True
 
+
+class AutoUP(AbstractDefaultTariff):
     class Meta:
         ordering = ("-days",)
         verbose_name = _("Auto Up")
         verbose_name_plural = _("Auto Up")
 
     def __str__(self):
-        return f"{self.days} - {self.price}сом"
+        return f"продолжительность {self.days}дней за {self.price}сом"
+
+
+class Urgent(AbstractDefaultTariff):
+    class Meta:
+        ordering = ("-days",)
+        verbose_name = _("Urgent")
+        verbose_name_plural = _("Urgent")
+
+    def __str__(self):
+        return f"продолжительность {self.days}дней за {self.price}сом"
