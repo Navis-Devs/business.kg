@@ -11,10 +11,11 @@ from apps.cars.models import (
     CarSerie,
     CarModification, CarColors
 )
+from apps.tariffs.models import AbstractAdFeatures
 from apps.helpers import choices
 
 
-class CarsPosts(BaseModel):
+class CarsPosts(BaseModel, AbstractAdFeatures):
     is_active = models.BooleanField(
         _("Активный"),
         default=True
@@ -25,6 +26,7 @@ class CarsPosts(BaseModel):
         null=True,
         verbose_name=_("Пользователь")
     )
+    ''' about car '''
     car_type = models.ForeignKey(
         to=CarType,
         on_delete=models.SET_NULL,
