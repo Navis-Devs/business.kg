@@ -1,25 +1,33 @@
 from rest_framework import generics, views, response, permissions
+
 Response = response.Response
 
-from .models import AutoUP, Urgent
-from .serializers import AutoUPSerializer, UrgentSerializer
+from .models import AutoUP, Urgent, Highlight
+from .serializers import AutoUPSerializer, UrgentSerializer, HighlightSerializer
 
 
-class AutoUPView(views.APIView):
+class BaseTariffView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
+    model = None
+    serializer_class = None
 
     def get(self, request, *args, **kwargs):
         balance = request.user.balance
-        queryset = AutoUP.objects.all().order_by("-days")
-        data = {"data": AutoUPSerializer(queryset, many=True).data}, {"currentBalance": balance}
+        queryset = self.model.objects.all().order_by("-days")
+        data = {"data": self.serializer_class(queryset, many=True).data, "currentBalance": balance}
         return Response(data, status=200)
 
 
-class UrgentView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
+class AutoUPView(BaseTariffView):
+    model = AutoUP
+    serializer_class = AutoUPSerializer
 
-    def get(self, request, *args, **kwargs):
-        balance = request.user.balance
-        queryset = Urgent.objects.all().order_by("-days")
-        data = {"data": UrgentSerializer(queryset, many=True).data}, {"currentBalance": balance}
-        return Response(data, status=200)
+
+class UrgentView(BaseTariffView):
+    model = Urgent
+    serializer_class = UrgentSerializer
+
+
+class HighlightView(BaseTariffView):
+    model = Highlight
+    serializer_class = HighlightSerializer

@@ -136,3 +136,13 @@ class Urgent(AbstractDefaultTariff):
 
     def __str__(self):
         return f"продолжительность {self.days}дней за {self.price}сом"
+
+
+class Highlight(AbstractDefaultTariff):
+    class Meta:
+        ordering = ("-days",)
+        verbose_name = _("Highlights")
+        verbose_name_plural = _("Highlights")
+
+    def __str__(self):
+        return f"продолжительность {self.days}дней за {self.price}сом"
