@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.cars_posts',
     'apps.house',
     'apps.main',
+    'apps.transactions',
     'apps.helpers.api',
 ]
 
