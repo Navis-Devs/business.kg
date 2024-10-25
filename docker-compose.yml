@@ -66,6 +66,8 @@ services:
       - POSTGRES_USER=navisdevs
       - POSTGRES_PASSWORD=adminadmin
       - POSTGRES_DB=business
+    ports:
+      - "5432:5432"
     depends_on:
       - redis
 
