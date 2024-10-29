@@ -84,7 +84,7 @@ class AbstractAdFeatures(models.Model):
     )
     ad_color = models.CharField(
         _("Ad Color"),
-        max_length=7,  # For hex color codes like #FFFFFF
+        max_length=7,
         null=True,
         blank=True
     )
@@ -106,6 +106,7 @@ class AbstractAdFeatures(models.Model):
 
 DAY_RANGE = [(i, str(i)) for i in range(1, 31)]
 
+
 class AbstractDefaultTariff(BaseModel):
     days = models.IntegerField(
         _("Days duration"),
@@ -114,8 +115,19 @@ class AbstractDefaultTariff(BaseModel):
     price = models.IntegerField(
         _("Price")
     )
+
     class Meta:
         abstract = True
+
+
+class Top(AbstractDefaultTariff):
+    class Meta:
+        ordering = ("-days",)
+        verbose_name = _("Top")
+        verbose_name_plural = _("Top")
+
+    def __str__(self):
+        return f"Продолжительность {self.days}дней за {self.price}сом"
 
 
 class AutoUP(AbstractDefaultTariff):
@@ -125,7 +137,7 @@ class AutoUP(AbstractDefaultTariff):
         verbose_name_plural = _("Auto Up")
 
     def __str__(self):
-        return f"продолжительность {self.days}дней за {self.price}сом"
+        return f"Продолжительность {self.days}дней за {self.price}сом"
 
 
 class Urgent(AbstractDefaultTariff):
@@ -135,7 +147,7 @@ class Urgent(AbstractDefaultTariff):
         verbose_name_plural = _("Urgent")
 
     def __str__(self):
-        return f"продолжительность {self.days}дней за {self.price}сом"
+        return f"Продолжительность {self.days}дней за {self.price}сом"
 
 
 class Highlight(AbstractDefaultTariff):
@@ -145,4 +157,4 @@ class Highlight(AbstractDefaultTariff):
         verbose_name_plural = _("Highlights")
 
     def __str__(self):
-        return f"продолжительность {self.days}дней за {self.price}сом"
+        return f"Продолжительность {self.days}дней за {self.price}сом"

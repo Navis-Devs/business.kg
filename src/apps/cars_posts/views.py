@@ -42,7 +42,8 @@ class CarsPostsViewSet(mixins.ListModelMixin,
 
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        print(self.request.data)
+        serializer.save(user=self.request.user, context={'is_detail': False})
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

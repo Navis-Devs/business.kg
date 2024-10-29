@@ -119,12 +119,12 @@ class CarsPostsSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not context.get('is_detail', False):
-            allowed_fields = ['id', 'user', 'mark_name',
+            allowed_fields = ('id', 'user', 'mark_name',
                               'model_name', 'price', 'price_unit',
                               'year', 'modification_name', 'engine',
                               'serie_name', 'transmission', 'steering_wheel',
-                              'mileage', 'mileage_unit'
-                              ]
+                              'mileage', 'mileage_unit',
+                              )
             for field_name in list(self.fields):
                 if field_name not in allowed_fields:
                     self.fields.pop(field_name)
@@ -143,7 +143,6 @@ class CarsPostsSerializer(serializers.ModelSerializer):
         security = Security.objects.create(**security_data)
         options = GeneralOptions.objects.create(**options_data)
 
-        # Create CarsPosts instance with related instances
         car_post = CarsPosts.objects.create(
             **validated_data,
             exterior=exterior,
@@ -156,8 +155,6 @@ class CarsPostsSerializer(serializers.ModelSerializer):
         return car_post
 
     def update(self, instance, validated_data):
-        # update for nested models
-
         exterior_data = validated_data.pop('exterior', None)
         interior_data = validated_data.pop('interior', None)
         media_data = validated_data.pop('media', None)
@@ -189,7 +186,6 @@ class CarsPostsSerializer(serializers.ModelSerializer):
                 setattr(instance.options, attr, value)
             instance.options.save()
 
-        # Update the rest of the fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
