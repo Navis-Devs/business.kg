@@ -62,6 +62,7 @@ class User(AbstractUser, BaseModel):
         _("active"),
         default=False,
     )
+    mkg_id = models.CharField(null=True, max_length=99999)
     objects = UserManager()
 
     first_name = None
