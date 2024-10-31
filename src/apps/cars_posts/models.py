@@ -20,6 +20,7 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
         _("Активный"),
         default=True
     )
+    mkg_id = models.CharField(null=True, max_length=99999)
     user = models.ForeignKey(
         to=User,
         on_delete=models.SET_NULL,
@@ -186,6 +187,7 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
     class Meta:
         verbose_name = _("Car post")
         verbose_name_plural = _("Cars posts")
+        ordering = ("-created_at",)
 
 
 class Media(models.Model):

@@ -28,7 +28,7 @@ class User(AbstractUser, BaseModel):
         null=True,
         # unique=True
     )
-    phone = models.IntegerField(
+    phone = models.BigIntegerField(
         _("Phone"),
         blank=True,
         null=True,
@@ -88,6 +88,10 @@ class User(AbstractUser, BaseModel):
         self.code = int(random.randint(100_000, 999_999))
         super(User, self).save(*args, **kwargs)
 
+    def __str__(self):
+        if self.name:
+            return self.name
+        return "Пользователь"
 
     class Meta:
         ordering = ('-date_joined',)

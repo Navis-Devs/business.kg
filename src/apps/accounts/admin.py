@@ -19,7 +19,7 @@ class UserAdmin(UserAdmin):
     readonly_fields = ('username', 'code',)
 
     fieldsets = (
-        (_('Главная'), {'fields': ('name', 'email', 'phone', 'language', 'balance', 'password', '_avatar')}),
+        (_('Главная'), {'fields': ('mkg_id', 'username', 'name', 'email', 'phone', 'language', 'balance', 'password', '_avatar')}),
         (_('Права доступы'), {
             'fields': ('code', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
