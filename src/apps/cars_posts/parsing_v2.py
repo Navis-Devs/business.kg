@@ -3,7 +3,7 @@ import re
 import requests
 from django.contrib.auth import get_user_model
 from .models import CarsPosts, Exterior, Interior, Media, Security, GeneralOptions
-from apps.cars.models import CarMark, CarModel, CarType
+from apps.cars.models import CarColors, CarMark, CarModel, CarType
 from apps.helpers.choices import *
 User = get_user_model()
 
@@ -27,6 +27,19 @@ transmission_type_map = {
     "Автомат": TransmissionType.AUTOMATIC,
     "Робот": TransmissionType.ROBOTIC,
     "Вариатор": TransmissionType.CVT,
+}
+
+condition_type_map = {
+    "хорошее": CarCondition.GOOD,
+    "идеальное": CarCondition.PERFECT,
+    "аварийное / не на ходу": CarCondition.SALVAGE,
+    "новое": CarCondition.NEW
+}
+
+availability_status_map = {
+    "в наличии": AvailabilityStatus.IN_STOCK,
+    "на заказ": AvailabilityStatus.PRE_ORDER,
+    "в пути": AvailabilityStatus.IN_TRANSIT,
 }
 
 def core():
@@ -60,6 +73,15 @@ def core():
                 third_element = breadcrumbs.find_all('li')[3]
                 model = third_element.find('span', itemprop='name').text if third_element else None
 
+            if items:
+                color_row = items.find_all("div", class_="field-row clr")[3]
+                field_value = color_row.find("div", class_="field-value")
+                if field_value:
+                    color_icon = field_value.find("i", class_="color-icon")
+                    color_name = field_value.text.strip()
+                    color_code = color_icon['data-color']
+
+
             ''' personal info '''
             id = data.get("id")
             user_id = data.get("user_hash")
@@ -86,8 +108,34 @@ def core():
                     gear_box = field_value.text.strip().capitalize()
                     gear_box = transmission_type_map.get(gear_box)
             steering_wheel = SteeringWheelPosition.LEFT if data.get("steering_wheel") == 1 else SteeringWheelPosition.RIGHT
+            if items:
+                condition_row = items.find_all("div", class_="field-row clr")[8]
+                field_value = condition_row.find('div', class_="field-value")
+                if field_value:
+                    condition = field_value.text.strip()
+                    condition = condition_type_map.get(condition)
+            mileage = data.get("mileage")
+            if items:
+                mileage_row = items.find_all("div", class_="field-row clr")[1]
+                field_value = mileage_row.find('div', class_="field-value")
+                if field_value:
+                    mileage_unit = MileageUnit.KILOMETERS if field_value.text.strip()[-2:] == "км" else MileageUnit.MILES
+            description = data.get("description")
+            if items:
+                available_row = items.find_all("div", class_="field-row clr")[11]
+                field_value = available_row.find('div', class_="field-value")
+                if field_value:
+                    availability = field_value.text.strip()
+                    availability = availability_status_map.get(availability)
+            if items:
+                cc_row = items.find_all("div", class_="field-row clr")[9]
+                field_value = cc_row.find('div', class_="field-value")
+                if field_value:
+                    cc = field_value.text.strip()
+                    cc = True if cc == "растаможен" else False
 
 
+            ''' USER '''
             user, created = User.objects.get_or_create(
                 mkg_id=user_id,
                 defaults={'phone': user_phone, 'name': user_name}
@@ -101,6 +149,7 @@ def core():
             car_type = CarType.objects.get(name="легковые")
             mark = CarMark.objects.get(name=mark)
             model = CarModel.objects.get(name=model)
+            color, created = CarColors.objects.get_or_create(id=color_code, name=color_name)
 
 
             exterior = Exterior.objects.create()
@@ -126,6 +175,13 @@ def core():
                     "drive": drivetype,
                     "transmission": gear_box,
                     "steering_wheel": steering_wheel,
+                    "color": color,
+                    "condition": condition,
+                    "mileage": mileage,
+                    "mileage_unit": mileage_unit,
+                    "description": description,
+                    "availability": availability,
+                    "customs_cleared": cc,
 
                     "exterior": exterior,
                     "interior": interior,
