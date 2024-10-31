@@ -22,6 +22,13 @@ drive_type_map = {
     "Передний": DriveType.FWD
 }
 
+transmission_type_map = {
+    "Механика": TransmissionType.MANUAL,
+    "Автомат": TransmissionType.AUTOMATIC,
+    "Робот": TransmissionType.ROBOTIC,
+    "Вариатор": TransmissionType.CVT,
+}
+
 def core():
     # url = "https://doubledragon.mashina.kg:443/v1/ads?filter=%7B%22type_id%22:[%7B%22value%22:%221%22,%22operator%22:%22=%22%7D]%7D&limit=50&source=1&orderby=created_date&sort=desc&offset=20"
     url_detail = "https://doubledragon.mashina.kg:443/v1/ads/2418392"
@@ -39,6 +46,20 @@ def core():
     else:
         data = response.get("data")
         if data.get("status") == 1:
+            # parsing from html
+            html_url = f"https://www.mashina.kg/details/{data.get('slug')}"
+            html_response = requests.get(html_url)
+            soup = BS(html_response.text, 'lxml')
+            items = soup.find('div', class_="tab-pane fade in active")
+            breadcrumbs = soup.find('ol', class_='breadcrumbs details-breadcrumb')
+            if breadcrumbs:
+                third_element = breadcrumbs.find_all('li')[2]
+                mark = third_element.find('span', itemprop='name').text if third_element else None
+
+            if breadcrumbs:
+                third_element = breadcrumbs.find_all('li')[3]
+                model = third_element.find('span', itemprop='name').text if third_element else None
+
             ''' personal info '''
             id = data.get("id")
             user_id = data.get("user_hash")
@@ -58,19 +79,14 @@ def core():
             engine = fuel_type_map.get(engine)
             drivetype = next((char.get("value") for char in data.get("characteristics", []) if char.get("name") == "Привод"), None)
             drivetype = drive_type_map.get(drivetype)
+            if items:
+                gear_row = items.find_all("div", class_="field-row clr")[5]
+                field_value = gear_row.find('div', class_="field-value")
+                if field_value:
+                    gear_box = field_value.text.strip().capitalize()
+                    gear_box = transmission_type_map.get(gear_box)
+            steering_wheel = SteeringWheelPosition.LEFT if data.get("steering_wheel") == 1 else SteeringWheelPosition.RIGHT
 
-            # parsing from html
-            html_url = f"https://www.mashina.kg/details/{data.get('slug')}"
-            html_response = requests.get(html_url)
-            soup = BS(html_response.text, 'lxml')
-            breadcrumbs = soup.find('ol', class_='breadcrumbs details-breadcrumb')
-            if breadcrumbs:
-                third_element = breadcrumbs.find_all('li')[2]
-                mark = third_element.find('span', itemprop='name').text if third_element else None
-
-            if breadcrumbs:
-                third_element = breadcrumbs.find_all('li')[3]
-                model = third_element.find('span', itemprop='name').text if third_element else None
 
             user, created = User.objects.get_or_create(
                 mkg_id=user_id,
@@ -80,6 +96,8 @@ def core():
                 user.username = User.generate_unique_username()
                 user.save()
 
+
+            ''' OBJECTS '''
             car_type = CarType.objects.get(name="легковые")
             mark = CarMark.objects.get(name=mark)
             model = CarModel.objects.get(name=model)
@@ -106,6 +124,8 @@ def core():
                     "serie": serie,
                     "engine": engine,
                     "drive": drivetype,
+                    "transmission": gear_box,
+                    "steering_wheel": steering_wheel,
 
                     "exterior": exterior,
                     "interior": interior,
