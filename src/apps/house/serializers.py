@@ -1,173 +1,122 @@
 from rest_framework import serializers
 from apps.house import models
+from apps.main.models import Review
 from apps.house import mixins
+from apps.main.models import Comments, ContentType
 from drf_writable_nested import WritableNestedModelSerializer
-from apps.helpers.api.models import Currency
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 from apps.main.serializers import CommentListSerializer
+from django.utils.timesince import timesince
 from rest_framework_gis.serializers import GeoModelSerializer
+from apps.house import exceptions
 
-
-class ResidentialCategorySerializer(serializers.ModelSerializer):
+class BuildingPriceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.ResidentialCategory
+        model = models.BuildingPrice
         fields = '__all__'
 
-
-class MiscellaneousSerializer(serializers.ModelSerializer):
+class BuildingImagesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Miscellaneous
+        model = models.BuildingImage
         fields = '__all__'
 
-
-class SecuritySerializer(serializers.ModelSerializer):
+class BuildingsSerializer(serializers.ModelSerializer):
+    images = BuildingImagesSerializer(many=True)
+    prices = BuildingPriceSerializer(many=True)
     class Meta:
-        model = models.Security
+        model = models.Building
         fields = '__all__'
-
-
-class DocumentsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Documents
-        fields = '__all__'
-
-
-class CommunicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Communication
-        fields = '__all__'
-
-
-class RegionsSerializer(serializers.ModelSerializer, mixins.HierarchicalMixin):
-    class Meta:
-        model = models.Location
-        fields = [
-            'id',
-            'city', 'lat',
-            'lon', 'population',
-            'iso2', 'capital', 'lft',
-            "rght", "tree_id", "level", "parent",
-        ]
-
-
-class PicturesListSerializer(serializers.ModelSerializer):
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        comment_count = instance.reviews.count()
+        avarage_rating = Review.get_average_rating(instance)
+        representation['review_count'] = comment_count
+        representation['avarage_rating'] = float(avarage_rating)
+        return representation   
+        
+class PicturesSerializer(serializers.ModelSerializer):
     pictures = VersatileImageFieldSerializer(
         sizes=[
-            ('medium_size', 'crop__400x400')
+            ('thumbnail', 'crop__100x100'),  
+            ('small', 'crop__200x200'),      
+            ('medium', 'crop__400x400'),     
+            ('big', 'url')
         ]
     )
-
     class Meta:
         model = models.Pictures
         fields = ['pictures', ]
-
-
-class PicturesDetailSerializer(serializers.ModelSerializer):
-    pictures = VersatileImageFieldSerializer(
-        sizes=[
-            ('full_size', 'url'),
-        ]
-    )
-
+        
+class PriceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Pictures
-        fields = ['pictures', ]
-
-
+        model = models.Price
+        fields = '__all__'
+        
+class PhonesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Phones
+        fields = ['phones']
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return representation['phones']
+        
 class AddPropertySerializer(WritableNestedModelSerializer):
-    id = serializers.CharField(source='hashid', read_only=True)
-    security = SecuritySerializer(required=False)
-    miscellaneous = MiscellaneousSerializer(required=False)
-    documents = DocumentsSerializer(required=False)
-    communication = CommunicationSerializer(required=False)
-    properties_pictures = PicturesDetailSerializer(many=True, required=False)
-
+    properties_pictures = PicturesSerializer(many=True, required=False)
     class Meta:
         model = models.Property
-        fields = [
-            'id',
-            'type_deal',
-            'type_property',
-            'room_count', 'type_series',
-            'type_building', 'year_construction',
-            'floor_number', 'total_floors', 'general',
-            'residential', 'kitchen', 'land_area', 'type_heating', 'type_condition',
-            'eni_code', 'street', 'house_number', 'intersection_with', 'point',
-            'youtube_url', 'description', 'description', 'location', 'price', 'currency', 'price_for',
-            'installment_type',
-            'mortage_type', 'exchange_type', 'advertiser_type', 'phone_number', 'floor', 'internet', 'gas', 'furniture',
-            'front_door',
-            'balkony', 'parking', 'bathroom', 'disposition_object', 'electricity', 'sewage', 'drinking_water',
-            'phone_connection',
-            'complex_name',
-            'security',
-            "miscellaneous",
-            'documents',
-            'communication',
-            'properties_pictures',
-        ]
-
-
+        fields = '__all__' 
+        
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ['username', '_avatar']
-
-
-class PropertyDetailSerializer(GeoModelSerializer, serializers.ModelSerializer, mixins.BaseMixin):
+        fields = ['id', 'name', '_avatar', 'phone']
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        posted_count = models.Property.objects.filter(user=instance).count()
+        comment_count = instance.reviews.count()
+        avarage_rating = Review.get_average_rating(instance)
+        representation['name'] = representation['name'] if representation['name'] else 'пользователь'
+        representation['review_count'] = comment_count
+        representation['avarage_rating'] = float(avarage_rating)
+        representation['accommodation_count'] = posted_count
+        return representation
+    
+class PropertySerializer(GeoModelSerializer, serializers.ModelSerializer, mixins.BaseMixin):
     user = UserInfoSerializer()
-    id = serializers.CharField()
-    properties_pictures = PicturesDetailSerializer(many=True, read_only=True)
+    added_at = serializers.SerializerMethodField()
+    properties_pictures = PicturesSerializer(many=True, read_only=True)
     comments = serializers.SerializerMethodField()
+    count_comments = serializers.SerializerMethodField()
+    prices = PriceSerializer(many=True)
+    phones = PhonesSerializer(many=True)
 
     class Meta:
         model = models.Property
         geo_field = "point"
-        fields = [
-            'id', 'user', 'type_deal', 'type_property', 'room_count',
-            'type_series', 'type_building', 'year_construction',
-            'floor_number', 'total_floors', 'general', 'residential',
-            'kitchen', 'land_area', 'type_heating', 'type_condition',
-            'eni_code', 'street', 'house_number', 'intersection_with',
-            'point', 'youtube_url', 'description', 'price',
-            'currency', 'price_for', 'installment_type', 'mortage_type',
-            'exchange_type', 'advertiser_type', 'phone_connection',
-            'drinking_water', 'sewage', 'electricity', 'disposition_object',
-            'bathroom', 'parking', 'balkony', 'front_door', 'furniture',
-            'gas', 'internet', 'floor', 'phone_number', 'views',
-            'location', 'security', 'miscellaneous', 'documents',
-            'communication', 'complex_name', 'properties_pictures', 'comments'
-        ]
-        depth = 1
+        fields = '__all__'
 
     def get_comments(self, obj):
         return super().get_comments(obj, CommentListSerializer)
+    
+    def get_added_at(self, obj):
+        return timesince(obj.created_at)
+    
+    def get_count_comments(self, obj):
+        comment_instance = Comments.objects.filter(object_id=obj.id).first()
+        return comment_instance.count_comment if comment_instance else 0
+    
+class PropertyParamSerializer(serializers.Serializer):
+    def validate(self, data):
+        type_deal = data.get('type_deal')
+        type_property = data.get('type_property')
 
+        required_fields = exceptions.VALIDATION_RULES.get(type_deal, {}).get(type_property, [])
 
-class PropertyListSerializer(serializers.ModelSerializer, mixins.BaseMixin):
-    id = serializers.CharField()
-    properties_pictures = serializers.SerializerMethodField()
-    location = RegionsSerializer()
-    description = serializers.SerializerMethodField()
-    _usd_course = serializers.SerializerMethodField()
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            raise serializers.ValidationError(f"Missing required fields: {', '.join(missing_fields)}")
 
-    class Meta:
-        model = models.Property
-        fields = [
-            'id', 'type_property', 'room_count', 'general', 'land_area',
-            'street', 'house_number', 'description', 'price', 'currency', 'location', 'views', '_usd_course',
-            'properties_pictures'
-        ]
-
-    def get_description(self, instance):
-        if hasattr(instance, 'description') and instance.description:
-            return self.shortener_world(instance, 'description')
-        return None
-
-    def get__usd_course(self, instance):
-        instance = Currency.objects.first()
-        return instance.usd_course if instance and instance.usd_course else 'System error fx.kg'
-
-    def get_properties_pictures(self, obj):
-        return PicturesListSerializer(obj.properties_pictures.first()).data \
-            if obj.properties_pictures.exists() else None
+        return data

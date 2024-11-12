@@ -12,7 +12,7 @@ from PIL import Image
 
 @receiver(post_save, sender=models.Pictures)
 def add_watermark(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.pictures and instance.pictures.path:
         with Image.open(instance.pictures.path) as pictures:
             watermark = Image.open(settings.WATERMARK_PATH).convert('RGBA')
             pictures_width, pictures_height = pictures.size
@@ -24,14 +24,14 @@ def add_watermark(sender, instance, created, **kwargs):
             users = models.User.objects.all()
 
             for user in users:
-                if "gmail" in user.username:
+                if "gmail" in user.username: 
                     with open(settings.GMAIL_TEMPLATE_ADD, 'r') as html:
                         html_message = html.read()
                         send_mail(
                             subject='House.kg',
                             from_email=settings.EMAIL_HOST_USER,
-                            message='Ваше объявление успешно размещено.',
+                            message='Ваше объявление успешно размещено.', 
                             html_message=html_message,
-                            recipient_list=[user.username],
+                            recipient_list=[user.username], 
                         )
                         return user

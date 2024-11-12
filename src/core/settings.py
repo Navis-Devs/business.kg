@@ -1,6 +1,7 @@
 import environ
 import os
 from pathlib import Path
+from django.utils.translation import gettext_lazy as _
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.house.middleware.LocaleHeaderMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -165,10 +167,27 @@ WATERMARK_PATH = 'media/watermark_logo/logo-1.png'
 
 GMAIL_TEMPLATE_ADD = 'apps/helpers/send_mail_house.html'
 
-HASHID_FIELD_MIN_LENGTH = 25
-
-HASHID_FIELD_LOOKUP_EXCEPTION = False
-
-HASHID_FIELD_SALT = 'EF92B778BAFE771E89245B89ECBC08A44A4E166C06659911881F383D4473E94F'
-
 GDAL_LIBRARY_PATH = env('GDAL_LIBRARY_PATH', default='/usr/lib/libgdal.so')
+
+
+LANGUAGES = [
+    ('en', _('English')),
+    ('ru', _('Russian')),
+    ('kg', _('Kyrgyz')),
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
+
+PARLER_LANGUAGES = {
+    None: (
+        {'code': 'en',},
+        {'code': 'ru',},
+        {'code': 'kg',},
+    ),
+    'default': {
+        'fallback': 'ru',
+        'hide_untranslated': False,
+    }
+}

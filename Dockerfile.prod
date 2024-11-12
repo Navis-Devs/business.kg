@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update \
-    && apt-get install -y gcc netcat nano libmagic1 build-essential gdal-bin libgdal-dev \
+    && apt-get install -y gcc netcat nano libmagic1 build-essential gdal-bin libgdal-dev gettext gettext-base \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

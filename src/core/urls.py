@@ -13,8 +13,8 @@ urlpatterns = [
     path('cars-data/', include("apps.cars.urls")),
     path('cars/', include("apps.cars_posts.urls")),
     path('tariffs/', include("apps.tariffs.urls")),
-    path('v1.0/house/', include('apps.house.urls')),
-    path('v1.0/main/', include('apps.main.urls')),
+    path('house/', include('apps.house.urls')),
+    path('main/', include('apps.main.urls')),
     # swagger
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('', SpectacularSwaggerView.as_view(url_name='schema')),

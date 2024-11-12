@@ -13,7 +13,7 @@ from apps.cars_posts.serializers import CarsPostsSerializer
 
 ''' houses '''
 from apps.house.models import Property
-from apps.house.serializers import PropertyListSerializer
+from apps.house.serializers import PropertySerializer
 from itertools import chain
 
 
