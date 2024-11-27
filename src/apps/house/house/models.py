@@ -290,12 +290,6 @@ class Property(AbstractAdFeatures,  models.Model):
         blank=True,
         verbose_name=_('Удобства участка')
     )
-    likes = models.ManyToManyField(
-        to=User,
-        verbose_name=_("Понравится"),
-        related_name="liked_house",
-        blank=True
-    )
     land_options = models.ManyToManyField(
         data_models.LandOptions,
         blank=True,

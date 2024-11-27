@@ -1,10 +1,9 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from apps.cars.models import (PermissionForFront, CarColors,
+from apps.cars.models import (PermissionForFront, CarColors, 
                               CarType, CarMark, CarModel, CarGeneration, CarSerie, CarModification,
                               CarCharacteristic, CarCharacteristicValue, CarEquipment, CarOption, CarOptionValue
                               )
-
 
 @admin.register(PermissionForFront)
 class PermissionForFrontAdmin(admin.ModelAdmin):
@@ -45,10 +44,10 @@ class CarGenerationAdmin(admin.ModelAdmin):
     search_fields = ['name', 'id_car_model__name', 'year_begin', 'year_end', 'id_car_type__name']
 #
 #
-# @admin.register(CarSerie)
-# class CarSerieAdmin(admin.ModelAdmin):
-#     search_fields = ['name', 'id_car_model__name', 'id_car_generation__name', 'id_car_type__name']
-#
+@admin.register(CarSerie)
+class CarSerieAdmin(admin.ModelAdmin):
+    search_fields = ['id', 'name', 'id_car_model__name', 'id_car_generation__name', 'id_car_type__name']
+
 
 @admin.register(CarModification)
 class CarModificationAdmin(admin.ModelAdmin):
@@ -57,8 +56,7 @@ class CarModificationAdmin(admin.ModelAdmin):
 
 @admin.register(CarCharacteristic)
 class CarCharacteristicAdmin(admin.ModelAdmin):
-    search_fields = ['name', 'id_parent__name', 'id_car_type__name',
-                     'car_characteristic_value__id_car_modification__name']
+    search_fields = ['name', 'id_parent__name', 'id_car_type__name']
     ordering = ['id']
 
 
@@ -72,11 +70,11 @@ class CarCharacteristicValueAdmin(admin.ModelAdmin):
 #     search_fields = ['name', 'id_car_modification__name', 'id_car_type__name']
 #
 #
-# @admin.register(CarOption)
-# class CarOptionAdmin(admin.ModelAdmin):
-#     search_fields = ['name', 'id_parent__name', 'id_car_type__name']
-#
-#
-# @admin.register(CarOptionValue)
-# class CarOptionValueAdmin(admin.ModelAdmin):
-#     search_fields = ['id_car_option__name', 'id_car_equipment__name', 'id_car_type__name']
+@admin.register(CarOption)
+class CarOptionAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'id_parent__name', 'id_car_type__name']
+
+
+@admin.register(CarOptionValue)
+class CarOptionValueAdmin(admin.ModelAdmin):
+    search_fields = ['id_car_option__name', 'id_car_equipment__name', 'id_car_type__name']

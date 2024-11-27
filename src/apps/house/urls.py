@@ -9,5 +9,5 @@ router.register(r'', views.ComplexView)
 urlpatterns = [
     path('', include(router.urls)),
     path('public/data/', views.DataView.as_view()),
-    # path('param/', views.PropertyParam.as_view())
+    path('param/', views.PropertyParam.as_view())
 ]

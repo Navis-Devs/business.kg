@@ -71,7 +71,7 @@ class LikeViews(viewsets.GenericViewSet):
 
         ''' house data '''
         house_favorites = Property.objects.filter(likes=user)
-        house_serializer = PropertyListSerializer(house_favorites, many=True).data
+        house_serializer = PropertySerializer(house_favorites, many=True).data
 
         ''' using list comprehension for adding datatype '''
         cars_with_type = [{**car, 'object_type': 'car'} for car in cars_serializer]

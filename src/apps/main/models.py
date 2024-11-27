@@ -4,6 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from mptt.models import MPTTModel, TreeForeignKey
 from apps.accounts.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Avg
 
 class Comments(MPTTModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

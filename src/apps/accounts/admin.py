@@ -43,4 +43,4 @@ class BusinessAccountImagesInline(admin.TabularInline):
 class BusinessAccountAdmin(admin.ModelAdmin):
     inlines = [BusinessAccountImagesInline]
 
-admin.site.register(models.TariffPlan)
+

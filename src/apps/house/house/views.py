@@ -20,17 +20,17 @@ from apps.house import serializers
 from apps.house import data_serializers
 from apps.house import data_models
 from apps.house import filters
-from apps.helpers import paginations
+from apps.helpers import pagination
 from apps.house import mixins
 from apps.house import choices
 from apps.house.tasks import delete_post
-from apps.house import exceptions
+# from apps.house import exceptions
 
 
 class ComplexView(viewsets.GenericViewSet):
     queryset = models.Building.objects.all()
     serializer_class = serializers.BuildingsSerializer
-    pagination_class = paginations.StandardPaginationSet
+    pagination_class = pagination.BasePagination
     
     @action(detail=False, methods=['get'])
     def buildings(self, request, *args, **kwargs):
@@ -69,7 +69,7 @@ class PropertyView(
     serializer_class = serializers.AddPropertySerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = filters.PropertyFilter
-    pagination_class = paginations.StandardPaginationSet
+    pagination_class = pagination.BasePagination
     
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -166,11 +166,10 @@ class DataView(APIView):
             'finishing': data_models.Finishing.objects.all(),
             'canalization': data_models.Canalization.objects.all(),
             'comment_allowed': data_models.CommentAllowed.objects.all(),
-            'parking_type': data_models.ParkingType.objects.all(),
-            'commercial_type': data_models.CommercialType.objects.all(),
-            'room_location': data_models.RoomLocation.objects.all(),
+            'parking_type': data_models.ParkingType.objects.values('id', 'translations__name'),
+            'commercial_type': data_models.CommercialType.objects.values('id', 'translations__name'),
             'phone_info': data_models.Phone.objects.all(),
-            'internet': data_models.Internet.objects.all(), 
+            'internet': data_models.Internet.objects.all(),
             'toilet': data_models.Toilet.objects.all(),
             'gas': data_models.Gas.objects.all(),
             'balcony': data_models.Balcony.objects.all(),
@@ -193,61 +192,59 @@ class DataView(APIView):
         serializer = self.serializer_class(response_data)
         return Response(serializer.data)
     
-class PropertyParam(APIView):
-    def get(self, request):
+# class PropertyParam(APIView):
+#     def get(self, request):
 
-        validation_result = self.validate_params(request)
+#         validation_result = self.validate_params(request)
         
-        if 'error' in validation_result:
-            return Response(validation_result, status=status.HTTP_400_BAD_REQUEST)
+#         if 'error' in validation_result:
+#             return Response(validation_result, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response({"success": "Все параметры валидны"}, status=status.HTTP_200_OK)
+#         return Response({"success": "Все параметры валидны"}, status=status.HTTP_200_OK)
 
-    def validate_params(self, request):
-        type_id = request.query_params.get('type_id')
-        category = request.query_params.get('category')
-        region_id = request.query_params.get('region_id')  
-        town_id = request.query_params.get('town_id')
+#     def validate_params(self, request):
+#         type_id = request.query_params.get('type_id')
+#         category = request.query_params.get('category')
+#         region_id = request.query_params.get('region_id')  
+#         town_id = request.query_params.get('town_id')
         
-        rules = exceptions.get_validation_rules(region_id, town_id).get(type_id, {}).get(category)
-        print(f"Validation rules: {rules}")
-        if not rules:
-            return {"error": "Параметры не указаны type_id & category", "developer_message": "Введите идентификатор типа и категорий", "client_message": "Пожайлуста, заполните все обезятельые поля!"}
+#         rules = exceptions.get_validation_rules(region_id, town_id).get(type_id, {}).get(category)
 
-        missing_fields = []
-        invalid_fields = []
+#         if not rules:
+#             return {"error": "Invalid type_id or category"}
 
-        for rule in rules:
-            field_name = rule['label']
-            required = rule.get('required', False)
-            value = request.query_params.get(field_name)
+#         missing_fields = []
+#         invalid_fields = []
 
-            if required and not value :
-                missing_fields.append(field_name)
+#         for rule in rules:
+#             field_name = rule['name']
+#             required = rule.get('required', False)
+#             value = request.query_params.get(field_name)
 
-        available_fields = [
-            {
-                "label": rule['label'],
-                "type": rule['type'],
-                "title": rule['title'],
-                "placeholder": rule['placeholder'],
-                "required": rule['required'],
-                "input": rule['input'],
-            }
-            for rule in rules
-        ]
+#             if required and not value :
+#                 missing_fields.append(field_name)
 
-        response = {}
-        if missing_fields:
-            response.update({
-                "error": "Missing required fields",
-                "missing_fields": missing_fields,
-            })
-        if invalid_fields:
-            response.update({
-                "error": "Invalid fields",
-                "invalid_fields": invalid_fields,
-            })
+#         available_fields = [
+#             {
+#                 "name": rule['name'],
+#                 "type": rule['type'],
+#                 "required": rule['required'],
+#                 "data": rule.get('data', []),
+#             }
+#             for rule in rules
+#         ]
 
-        response["available_fields"] = available_fields
-        return response if response else {"success": "All fields are valid"}
+#         response = {}
+#         if missing_fields:
+#             response.update({
+#                 "error": "Missing required fields",
+#                 "missing_fields": missing_fields,
+#             })
+#         if invalid_fields:
+#             response.update({
+#                 "error": "Invalid fields",
+#                 "invalid_fields": invalid_fields,
+#             })
+
+#         response["available_fields"] = available_fields
+#         return response if response else {"success": "All fields are valid"}

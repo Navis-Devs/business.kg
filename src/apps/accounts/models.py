@@ -3,11 +3,13 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import random
+from parler.models import TranslatableModel, TranslatedFields
 import uuid
 
 from .managers import UserManager
+from django.contrib.contenttypes.fields import GenericRelation
 from apps.helpers import choices
-
+from colorfield.fields import ColorField
 
 class BaseModel(models.Model):
     id = models.UUIDField(
@@ -53,6 +55,7 @@ class User(AbstractUser, BaseModel):
         null=True,
         blank=True
     )
+    reviews = GenericRelation('main.Review', related_query_name='reviews')
     _avatar = models.ImageField(
         _("Avatar"),
         blank=True,
@@ -159,49 +162,52 @@ class BusinessAccountImages(models.Model):
         verbose_name = _("Image")
         verbose_name_plural = _("Images")
 
-
-class TariffPlan(BaseModel):
-    TARIFF_TYPES = (
-        ('Basic', 'Basic'),
-        ('Advanced', 'Advanced'),
-        ('Expert', 'Expert'),
+class Colors(TranslatableModel):
+    translations = TranslatedFields(
+        name=models.CharField(_('название Цвета')),
+        color=ColorField(_("цвет")),
+        dark_color=ColorField(_("темный цвет"), primary_key=True)
     )
 
-    DURATION_CHOICES = (
-        (30, '1 month'),
-        (90, '3 months'),
-        (180, '6 months'),
-        (365, '12 months'),
+class Plans(TranslatableModel):
+    duration_choices = [
+        (1, 1),
+        (3, 3),
+        (6, 6),
+        (12, 12),
+    ]
+    price = models.PositiveBigIntegerField()
+    duration = models.IntegerField(choices=duration_choices)
+    translations = TranslatedFields(
+        description=models.TextField(blank=True)
     )
+    cashback = models.CharField(blank=True)
+    
+    class Meta:
+        verbose_name = _("План")
+        verbose_name_plural = _("Планы")
 
-    name = models.CharField(
-        max_length=50,
-        choices=TARIFF_TYPES,
-        verbose_name=_('Tariff name')
-    )
-    price = models.IntegerField(verbose_name=_('Price'))
-    duration_days = models.IntegerField(
-        choices=DURATION_CHOICES,
-        verbose_name=_('Duration in days')
-    )
-    limit = models.IntegerField(
-        _("Limit")
-    )
 
-    own_branded_page = models.BooleanField(default=False, verbose_name=_('собственная брендированная страница'))
-    auto_up = models.BooleanField(default=False, verbose_name=_('UP'))
-    placement_on_main_page = models.BooleanField(default=False, verbose_name=_('размещение на главной странице сайта и в мобильных приложениях'))
-    tag_with_company_name = models.BooleanField(default=False, verbose_name=_('метка на объявлениях с названием вашей компании'))
-    no_ad_photos = models.BooleanField(default=False, verbose_name=_('отсутствие рекламы среди фотографий объявления'))
-    without_competitors = models.BooleanField(default=False, verbose_name=_('отсутствие конкурентов под вашим объявлением'))
-    search_by_ads = models.BooleanField(default=False, verbose_name=_('поиск по вашим объявлениям'))
-
+class Tariff(TranslatableModel):
+    translations = TranslatedFields(
+        name=models.CharField(max_length=50, verbose_name=_('Название тарифа')),
+        description=models.TextField(blank=True,verbose_name=_('Описание'))
+    )
+    amount = models.PositiveBigIntegerField(verbose_name=_('Цена тарифа'))
+    period_choices = [
+        ('one_time', 'one_time'),
+        ('days', 'days'),
+        ('months', 'months')
+    ]
+    period = models.CharField(_('Период тарифа'), choices=period_choices)
+    plans = models.ManyToManyField(Plans, related_name='plans')
+    
+    
     def __str__(self):
         return f"{self.name} - {self.get_duration_days_display()}"
 
     class Meta:
         verbose_name = _('Tariff Plan')
         verbose_name_plural = _('Tariff Plans')
-        unique_together = ("name", "duration_days", )
 
 

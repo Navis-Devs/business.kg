@@ -107,3 +107,16 @@ class PropertySerializer(GeoModelSerializer, serializers.ModelSerializer, mixins
     def get_count_comments(self, obj):
         comment_instance = Comments.objects.filter(object_id=obj.id).first()
         return comment_instance.count_comment if comment_instance else 0
+    
+class PropertyParamSerializer(serializers.Serializer):
+    def validate(self, data):
+        type_deal = data.get('type_deal')
+        type_property = data.get('type_property')
+
+        required_fields = exceptions.VALIDATION_RULES.get(type_deal, {}).get(type_property, [])
+
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            raise serializers.ValidationError(f"Missing required fields: {', '.join(missing_fields)}")
+
+        return data

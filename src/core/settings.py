@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'versatileimagefield',
     'leaflet',
     'django_admin_geomap',
+    'admin_extra_buttons',
+    'parler',
 
     # apps
     'apps.accounts',
@@ -77,7 +79,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.house.middleware.LocaleHeaderMiddleware',
+    'core.middleware.LocaleHeaderMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -148,7 +150,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-MEDIA_URL = f'{SITE_URL}/media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

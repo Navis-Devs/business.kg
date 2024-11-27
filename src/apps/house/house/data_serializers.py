@@ -273,7 +273,6 @@ class CombinedSerializer(serializers.Serializer):
     irrigation = IrrigationSerializer(many=True)  
     land_options = LandOptionsSerializer(many=True)  
     land_location = LandLocationSerializer(many=True)  
-    room_location = RoomLocationSerializer(many=True)
     rental_term = RentalTermSerializer(many=True) 
     serie = SerieSerializer(many=True)
     land_amenities = LandAmenitiesSerializer(many=True)  

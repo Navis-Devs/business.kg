@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from versatileimagefield.serializers import VersatileImageFieldSerializer
-from .models import CarsPosts, Media, Exterior, Interior, Security, GeneralOptions, Pictures
+from .models import CarsPosts, Media, Exterior, Interior, Safety, GeneralOptions, Pictures, CarPrices, User, Review
+from drf_writable_nested import WritableNestedModelSerializer
+
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,41 +21,51 @@ class InteriorSerializer(serializers.ModelSerializer):
         model = Interior
         fields = '__all__'
 
-class SecuritySerializer(serializers.ModelSerializer):
+class SafetySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Security
+        model = Safety
         fields = '__all__'
 
 class GeneralOptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralOptions
         fields = '__all__'
+        
+class PicturesSerializer(serializers.ModelSerializer):
+    pictures = VersatileImageFieldSerializer(
+        sizes=[
+            ('thumbnail', 'crop__100x100'),  
+            ('small', 'crop__200x200'),      
+            ('medium', 'crop__400x400'),     
+            ('big', 'url')
+        ]
+    )
+    class Meta:
+        model = Pictures
+        fields = ['pictures', ]
+        
+class PriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarPrices
+        fields = ['price', ]
+        
 
-
-# class PicturesListSerializer(serializers.ModelSerializer):
-#     pictures = VersatileImageFieldSerializer(
-#         sizes=[
-#             ('medium_size', 'crop__400x400')
-#         ]
-#     )
-#
-#     class Meta:
-#         model = Pictures
-#         fields = ['pictures', ]
-#
-#
-# class PicturesDetailSerializer(serializers.ModelSerializer):
-#     pictures = VersatileImageFieldSerializer(
-#         sizes=[
-#             ('full_size', 'url'),
-#         ]
-#     )
-#
-#     class Meta:
-#         model = Pictures
-#         fields = ['pictures', ]
-
-
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'name', '_avatar', 'phone']
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        posted_count = CarsPosts.objects.filter(user=instance).count()
+        comment_count = instance.reviews.count()
+        avarage_rating = Review.get_average_rating(instance)
+        representation['name'] = representation['name'] if representation['name'] else 'пользователь'
+        representation['review_count'] = comment_count
+        representation['avarage_rating'] = float(avarage_rating)
+        representation['accommodation_count'] = posted_count
+        return representation
+    
 class CarsPostsSerializer(serializers.ModelSerializer):
     # read only
     car_type_name = serializers.CharField(source="car_type.name", read_only=True)
@@ -59,135 +73,13 @@ class CarsPostsSerializer(serializers.ModelSerializer):
     model_name = serializers.CharField(source="model.name", read_only=True)
     serie_name = serializers.CharField(source="serie.name", read_only=True)
     modification_name = serializers.CharField(source="modification.name", read_only=True)
+    pictures = PicturesSerializer(many=True, read_only=True)
+    user = UserInfoSerializer(read_only=True)
+    prices = PriceSerializer(many=True, read_only=True)
 
     # additional
     likes = serializers.IntegerField(source="likes.count", read_only=True)
 
-    # nested
-    exterior = ExteriorSerializer()
-    interior = InteriorSerializer()
-    media = MediaSerializer()
-    security = SecuritySerializer()
-    options = GeneralOptionsSerializer()
-
     class Meta:
         model = CarsPosts
-        fields = (
-            "id",
-            "user",
-            "car_type",
-            "car_type_name",
-            "mark",
-            "mark_name",
-            "model",
-            "model_name",
-            "year",
-            "serie",
-            "serie_name",
-            "engine",
-            "drive",
-            "transmission",
-            "modification",
-            "modification_name",
-            "steering_wheel",
-            "video_url",
-            "color",
-            "condition",
-            "mileage",
-            "mileage_unit",
-            "description",
-            "availability",
-            "customs_cleared",
-            "registration",
-            "other",
-            "price",
-            "currency",
-            "exchange_possibility",
-            "installment",
-            "likes",
-
-            # nested one to one
-            "exterior",
-            "interior",
-            "media",
-            "security",
-            "options",
-        )
-
-    def __init__(self, *args, **kwargs):
-        context = kwargs.get('context', {})
-        super().__init__(*args, **kwargs)
-
-        if not context.get('is_detail', False):
-            allowed_fields = ('id', 'user', 'mark_name',
-                              'model_name', 'price', 'price_unit',
-                              'year', 'modification_name', 'engine',
-                              'serie_name', 'transmission', 'steering_wheel',
-                              'mileage', 'mileage_unit',
-                              )
-            for field_name in list(self.fields):
-                if field_name not in allowed_fields:
-                    self.fields.pop(field_name)
-
-
-    def create(self, validated_data):
-        exterior_data = validated_data.pop('exterior')
-        interior_data = validated_data.pop('interior')
-        media_data = validated_data.pop('media')
-        security_data = validated_data.pop('security')
-        options_data = validated_data.pop('options')
-
-        exterior = Exterior.objects.create(**exterior_data)
-        interior = Interior.objects.create(**interior_data)
-        media = Media.objects.create(**media_data)
-        security = Security.objects.create(**security_data)
-        options = GeneralOptions.objects.create(**options_data)
-
-        car_post = CarsPosts.objects.create(
-            **validated_data,
-            exterior=exterior,
-            interior=interior,
-            media=media,
-            security=security,
-            options=options
-        )
-
-        return car_post
-
-    def update(self, instance, validated_data):
-        exterior_data = validated_data.pop('exterior', None)
-        interior_data = validated_data.pop('interior', None)
-        media_data = validated_data.pop('media', None)
-        security_data = validated_data.pop('security', None)
-        options_data = validated_data.pop('options', None)
-
-        if exterior_data:
-            for attr, value in exterior_data.items():
-                setattr(instance.exterior, attr, value)
-            instance.exterior.save()
-
-        if interior_data:
-            for attr, value in interior_data.items():
-                setattr(instance.interior, attr, value)
-            instance.interior.save()
-
-        if media_data:
-            for attr, value in media_data.items():
-                setattr(instance.media, attr, value)
-            instance.media.save()
-
-        if security_data:
-            for attr, value in security_data.items():
-                setattr(instance.security, attr, value)
-            instance.security.save()
-
-        if options_data:
-            for attr, value in options_data.items():
-                setattr(instance.options, attr, value)
-            instance.options.save()
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-
-        return instance
+        fields = '__all__'

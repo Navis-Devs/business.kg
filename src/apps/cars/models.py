@@ -3,6 +3,7 @@ from django.db.models import SET_NULL
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from colorfield.fields import ColorField
+from versatileimagefield.fields import VersatileImageField
 import secrets
 import string
 
@@ -26,12 +27,16 @@ class PermissionForFront(models.Model):
 ###################################################################################################################################################################################################################
 
 class CarColors(models.Model):
-    id = ColorField(
-        _("HEX"),
+    id = models.IntegerField(
         primary_key=True
     )
     name = models.CharField(
         _("Название"),
+        max_length=300,
+        null=True
+    )
+    color = models.CharField(
+        _("Цвет"),
         max_length=300,
         null=True
     )
@@ -119,11 +124,6 @@ class CarGeneration(models.Model):
     name = models.CharField(
         _("Name"),
         max_length=255
-    )
-    img = models.ImageField(
-        _("Image"),
-        null=True,
-        upload_to="cars/mark"
     )
     id_car_model = models.ForeignKey(
         "CarModel",
@@ -220,7 +220,7 @@ class CarModification(models.Model):
 
 class CarCharacteristic(models.Model):
     id = models.IntegerField(
-        primary_key=True
+        primary_key=True,
     )
     name = models.CharField(
         _("Name"),
@@ -264,7 +264,7 @@ class CarCharacteristicValue(models.Model):
         verbose_name=_("Id car characteristic"),
         on_delete=models.RESTRICT,
         null=True,
-        related_name="car_characteristic_value"
+        related_name="id_car_characteristic_value"
     )
     id_car_modification = models.ForeignKey(
         "CarModification",
@@ -280,7 +280,6 @@ class CarCharacteristicValue(models.Model):
         null=True,
         blank=True
     )
-
     def __str__(self):
         return self.value
 
@@ -371,3 +370,11 @@ class CarOptionValue(models.Model):
         null=True,
         blank=True
     )
+
+
+class CarGenerationImages(models.Model):
+    generation_id = models.ForeignKey(
+        CarGeneration,
+        on_delete=models.CASCADE,
+    )
+    img = models.URLField(max_length=1000)
