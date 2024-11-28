@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Min, Max, Q
+from django.core.cache import cache
 
 from .models import (
     CarType, CarMark, CarModel, CarGeneration, CarSerie,
@@ -74,7 +75,7 @@ class CarDataListView(generics.GenericAPIView):
                 "type": "model",
                 "data": CarModelSerializer(
                 CarModel.objects.filter(
-                    id_car_mark__id=id_car_mark
+                    id_car_mark=id_car_mark
                 ), many=True).data}
 
             ''' filter with year (filtering with function) | output = available years'''
@@ -87,7 +88,7 @@ class CarDataListView(generics.GenericAPIView):
                 if year:
                     # Получаем данные без уникальности
                     car_series = CarSerie.objects.filter(
-                        id_car_model__id=id_car_model,
+                        id_car_model=id_car_model,
                         id_car_generation__year_end__gte=year,
                         id_car_generation__year_begin__lte=year
                     )
@@ -193,53 +194,43 @@ class CarDataListView(generics.GenericAPIView):
         else:
             return []
 
+from django.db.models import Prefetch
 
 class DataView(generics.GenericAPIView):
-    def get(self, request):
-        region_id = request.query_params.get('region_id')
+    def get(self, request):    
+        cached_data = cache.get('data_list')
+        
+        
+        if cached_data is not None:
+            print('================== data from cache ==================')
+            return Response(cached_data)
 
-        if region_id:
-            towns_queryset = Towns.objects.filter(region_id=region_id)
-            towns_serializer = TownsSerializer(towns_queryset, many=True)
-            return Response({"town": towns_serializer.data})   
-                    
-        car_type = CarType.objects.all()
-        car_condition = Condition.objects.all()
-        color = CarColors.objects.all()
-        currency = Currency.objects.all()
-        comment_allowed = CommentAllowed.objects.all()
-        configuration = GeneralOptions.objects.all()
-        exterior = Exterior.objects.all()
-        interior = Interior.objects.all()
-        media = Media.objects.all()
-        registration_country = RegistrationCountry.objects.all()
-        other_option = OtherOptions.objects.all()
-        gear_box = GearBox.objects.all()
-        fuel = Fuel.objects.all()
-        featured_option = FeaturedOption.objects.all()
-        transmission = Transmission.objects.all()
-        exchange = Exchange.objects.all()
-        steering_wheel = SteeringWheel.objects.all()
-        region = Region.objects.all()
         data = CombinedSerializer({
-            "car_type": car_type,
-            "car_condition": car_condition,
-            "color": color,
-            "currency": currency,
-            "comment_allowed": comment_allowed,
-            "configuration": configuration,
-            "exterior": exterior,
-            "registration_country": registration_country,
-            "interior": interior,
-            "media": media,
-            "other_option": other_option,
-            "gear_box": gear_box,
-            "fuel": fuel,
-            "featured_option": featured_option,
-            "transmission": transmission,
-            "exchange": exchange,
-            "steering_wheel": steering_wheel,
-            "region": region
+            "mark": CarMark.objects.prefetch_related(
+                    Prefetch('car_models', queryset=CarModel.objects.prefetch_related('car_generations'))
+                ).only('id', 'name', 'img', 'url_image'),
+                "car_type": CarType.objects.only('id', 'name'),
+                "car_condition": Condition.objects.only('id', 'name'),
+                "color": CarColors.objects.only('id', 'name', 'color'),
+                "currency": Currency.objects.only('id', 'name', 'sign', 'is_default'),
+                "comment_allowed": CommentAllowed.objects.only('id', 'name'),
+                "configuration": GeneralOptions.objects.only('id', 'name'),
+                "exterior": Exterior.objects.only('id', 'name'),
+                "interior": Interior.objects.only('id', 'name'),
+                "media": Media.objects.only('id', 'name'),
+                "registration_country": RegistrationCountry.objects.only('id', 'name'),
+                "other_option": OtherOptions.objects.only('id', 'name'),
+                "gear_box": GearBox.objects.only('id', 'name'),
+                "fuel": Fuel.objects.only('id', 'name'),
+                "featured_option": FeaturedOption.objects.only('id', 'name'),
+                "transmission": Transmission.objects.only('id', 'name'),
+                "exchange": Exchange.objects.only('id', 'name'),
+                "steering_wheel": SteeringWheel.objects.only('id', 'name'),
+                "region": Region.objects.only('id', 'name'),
+                "towns": Towns.objects.only('id', 'name'),
         }).data
 
+        cache.set('data_list', data, timeout=3600)
+
         return Response(data)
+

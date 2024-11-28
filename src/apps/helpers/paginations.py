@@ -1,4 +1,4 @@
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.response import Response
 
 
@@ -22,3 +22,11 @@ class StandardPaginationSet(PageNumberPagination):
                 'data': data,
             }
         )
+
+# class StandardPaginationSet(LimitOffsetPagination):
+#     default_limit = 10  # Default limit if no limit is specified
+#     max_limit = 100     # Maximum limit allowed
+
+#     # Optionally, you can also customize the query parameter name:
+#     limit_query_param = 'limit'  # By default it's 'limit', but can be changed.
+#     offset_query_param = 'offset' 

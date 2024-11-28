@@ -35,23 +35,32 @@ class CarTypeSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
-class CarMarkSerializer(serializers.ModelSerializer):
+class CarGenerationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CarMark
-        fields = ['id', 'name', 'img']
+        model = CarGeneration
+        fields = ['id', 'name', 'year_begin', 'year_end']
 
 
 class CarModelSerializer(serializers.ModelSerializer):
+    car_generations = CarGenerationSerializer(many=True, read_only=True)
     class Meta:
         model = CarModel
-        fields = ['id', 'name', 'is_popular']
+        fields = ['id', 'name', 'is_popular', 'car_generations']
+
+
+class CarMarkSerializer(serializers.ModelSerializer):
+    car_models = CarModelSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CarMark
+        fields = ['id', 'name', 'img', 'url_image', 'car_models']
 
 
 class CarGenerationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CarGeneration
-        fields = ['id', 'name', 'img', 'year_begin', 'year_end']
+        fields = ['id', 'name', 'year_begin', 'year_end']
 
 
 class CarSerieSerializer(serializers.ModelSerializer):
@@ -157,10 +166,9 @@ class TownsSerializer(serializers.ModelSerializer):
         fields = ['id', 'name'] 
 
 class RegionSerializer(serializers.ModelSerializer):
-    towns = TownsSerializer(many=True)
     class Meta:
         model = Region
-        fields = ['id', 'name', 'towns']         
+        fields = ['id', 'name']         
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -183,6 +191,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
         fields = ['id', 'name'] 
 
 class CombinedSerializer(serializers.Serializer):
+    mark = CarMarkSerializer(many=True)
     car_type = CarTypeSerializer(many=True)
     car_condition = ConditionSerializer(many=True)
     color = ColorSerializer(many=True)
@@ -201,3 +210,4 @@ class CombinedSerializer(serializers.Serializer):
     exchange = ExchangeSerializer(many=True)
     steering_wheel = SteeringWheelSerializer(many=True)
     region = RegionSerializer(many=True)
+    towns = TownsSerializer(many=True)

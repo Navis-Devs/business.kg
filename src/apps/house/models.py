@@ -54,7 +54,7 @@ class Building(models.Model, GeoItem):
         return self.name if self.lat is None else str(self.lat)
     
     def __str__(self):
-        return f"{self.name} Цена: $"
+        return f"{self.name} Цена: {self.prices}"
 
     class Meta:
         ordering = ['id']
@@ -480,6 +480,7 @@ class Property(AbstractAdFeatures,  models.Model):
         blank=True,
     )
     comments = GenericRelation(Comments, related_query_name='comments')
+    reviews = GenericRelation(Review, related_query_name='reviews')
 
     class Meta:
         verbose_name = _("Недвижимость")

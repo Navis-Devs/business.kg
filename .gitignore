@@ -4,7 +4,6 @@ src/media
 !media/watermark_logo
 src/static
 
-
 .env
 
 #db.sqlite3

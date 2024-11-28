@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework.permissions import IsAuthenticated
 from apps.main import models
 from apps.main import serializers
 
@@ -32,6 +32,7 @@ class CommentView(viewsets.GenericViewSet):
 
 
 class LikeViews(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated, ]
     def get_queryset(self):
         type = self.kwargs.get("type")
         if type == "car":
@@ -48,17 +49,17 @@ class LikeViews(viewsets.GenericViewSet):
 
         instance.likes.add(request.user)
         instance.save()
-        return Response({"message": "Like added successfully"})
+        return Response({"response": True, "message": "Like added successfully"})
 
     @action(detail=True, methods=["get"], url_path='(?P<type>house|car)/remove_like')
     def remove_like(self, request, pk=None, type=None):
         instance = self.get_object()
         if instance is None:
-            return Response({"error": "Invalid type"}, status=400)
+            return Response({"response": False, "error": "Invalid type"}, status=400)
 
         instance.likes.remove(request.user)
         instance.save()
-        return Response({"message": "Like removed successfully"})
+        return Response({"response": True, "message": "Like removed successfully"})
 
     @action(detail=False, methods=["get"], url_path="my_favorites")
     def my_favorites(self, request):
@@ -66,21 +67,14 @@ class LikeViews(viewsets.GenericViewSet):
 
         ''' cars data '''
         car_favorites = CarsPosts.objects.filter(likes=user)
-        context = {'is_detail': False}
-        cars_serializer = CarsPostsSerializer(car_favorites, many=True, context=context).data
+        cars_serializer = CarsPostsSerializer(car_favorites, many=True, context={'request': request}).data
 
         ''' house data '''
         house_favorites = Property.objects.filter(likes=user)
-        house_serializer = PropertySerializer(house_favorites, many=True).data
-
-        ''' using list comprehension for adding datatype '''
-        cars_with_type = [{**car, 'object_type': 'car'} for car in cars_serializer]
-        houses_with_type = [{**house, 'object_type': 'house'} for house in house_serializer]
+        house_serializer = PropertySerializer(house_favorites, many=True, context={'request': request}).data
 
         ''' merge all data and sorting with key "created_at" '''
-        combined_data = sorted(
-            chain(cars_with_type, houses_with_type),
-            key=lambda obj: obj['created_at']
-        )
-
-        return Response({"data": combined_data})
+        return Response({
+            "cars": cars_serializer,
+            "houses": house_serializer
+        })

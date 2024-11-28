@@ -59,43 +59,52 @@ def upload_data():
         print("STATUS CODE:", response.status_code)
         
 
-# def upload_marks():
-#     URL = 'https://doubledragon.mashina.kg:443/v1/public/data/'
-#     response = requests.get(URL, headers=headers)
+def upload_marks():
+    URL = 'https://doubledragon.mashina.kg:443/v1/public/data/'
+    response = requests.get(URL, headers=headers)
     
-#     if response.status_code == 200:
-#         print("Mark API\nOK..200")
-#         data = response.json()
-#         for data_list in data.get('data', {}).get('make', []):
+    if response.status_code == 200:
+        print("Mark API\nOK..200")
+        data = response.json()
+        
+        for data_list in data.get('data', {}).get('make', []):
+            instance_id = data_list.get('id')
+            instance_car_name = data_list.get('name')
+            logo = data_list.get('logo')
+            instance_car_type = CarType.objects.get(id=1)
             
-#             instance_id = data_list.get('id')
-#             instance_car_name = data_list.get('name')
-#             instance_is_popular = bool(data_list.get('is_popular', 0))
-#             logo = data_list.get('logo')
-#             instance_car_type = CarType.objects.get(id=1)
-#             instance_mark, created = CarMark.objects.get_or_create(
-#                 id=instance_id, 
-#                 defaults={
-#                     "name": instance_car_name,
-#                     "id_car_type": instance_car_type,
-#                     "is_popular": instance_is_popular,
-#                     "img": logo,
-#                 }
-#             )
-#             for model_instance in data_list.get('models', []):
-#                 id_model_instance = model_instance.get('id')
-#                 name_model_instance = model_instance.get('name')
-#                 instance_is_popular = bool(model_instance.get('is_popular', 0))
-#                 created = CarModel.objects.get_or_create(
-#                     id=id_model_instance, 
-#                     id_car_mark=instance_mark,
-#                     defaults={
-#                         "name": name_model_instance,
-#                         "is_popular": instance_is_popular,
-#                     }
-#                 )
-#     else:
-#         print("STATUS CODE:", response.status_code) 
+            instance_mark, created = CarMark.objects.get_or_create(
+                id=instance_id,
+                defaults={
+                    "name": instance_car_name,
+                    "id_car_type": instance_car_type,
+                    "url_image": logo,
+                    "is_popular": bool(data_list.get('is_popular', 0))
+                }
+            )
+            
+            if created:
+                print(f"Mark '{instance_car_name}' created successfully.")
+            
+            for model_instance in data_list.get('models', []):
+                id_model_instance = model_instance.get('id')
+                name_model_instance = model_instance.get('name')
+                is_popular = bool(model_instance.get('is_popular', 0))
+                print(name_model_instance)
+                car_model, created = CarModel.objects.update_or_create(
+                    id=id_model_instance,
+                    defaults={
+                        "name": name_model_instance,
+                        "is_popular": is_popular,
+                        "id_car_mark": instance_mark
+                    }
+                )
+                
+                if created:
+                    print(f"Model '{name_model_instance}' created successfully for mark '{instance_mark.name}'.")
+                    
+    else:
+        print("STATUS CODE:", response.status_code)
 
 
 

@@ -298,7 +298,7 @@ def load_location():
 
 @shared_task
 def load_properties():
-    URL = 'http://triplescotch.house.kg/v1/ads/?limit=100000'
+    URL = 'http://triplescotch.house.kg/v1/ads/?limit=1000'
     API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3Mjk3MTEyODIsImV4cCI6MjA0NTA3MTI4MiwidXNlcm5hbWUiOiI5OTY3MDkzNjIzNjAiLCJpcCI6IjQ2LjI1MS4yMDYuNzkiLCJpZCI6OTM1ODYzLCJwaG9uZSI6Ijk5NjcwOTM2MjM2MCIsIm5hbWUiOiJlcmhlIn0.FQVM0c06xgSEiU8ttB3Kz3SXOgKmTUrRqVIME9Ox9WyqMRD1pi_gp5wzBJlv6HBBPWNcsZ_oAo2CCqsfdZ4HrV1X6bdfO62x-lP7nQkpIJwLCJcKkZ4aDJPZANC5ZeT8_lP-_pK9l6GQr-gGyrBbFaaRXjUZal-SqRzsVJapgI2Q3Rf7u97DKK6Bvfe2g6KHZ1cehG0g4LuexHp_o12i9OGoagRChX10OtDjCCbURC1gfYAVB7QNqJQOJTfN7PlpOhN83U-RcSY7pOPiht71_CSKrToXU7G_njF3gCTPAP3wASJwZRJjLrAAfYlo5z44GV0s39Rp6kWPRJ84YKmvEjb8GKymAAichW6Hai61bB9dltXjQ3arQds0qBTXJdZZwlRWezOEphEx5eriR9NEHHHSphh9_HV3xkWlVRFmYIdUIpjJTCGikJmch2q6J1iz9Kl6Dw81UVc1u33R0qNGJMsvYiWA5CCWIPyyR-ydjWPxs2YAzsoCcRHiicBrWGmaV11V2UDI0hx0mO73WwUsYh0zHn0PkGQpvxf2H9IP3b0QFQAmB_Wr1VAFyT8hw3h8mWM6iPvurpaep3dxc_qO0fRBvGm2OT2DuRvAQHR-oM2zq5hBOsyg7N90a8apGF1KrFDTZDBtHr5agfB8NcZxCC5ADJnZjfQvzFZQ5QuAtvM'
     AUTO_AUTH = 'o0DfPm0UNcXwHFJpeKcNu8DxEGulHpUwuyXUvmVuDepb45tkTEjM8M42uryf9SAVqwXN1ct5C'
     
@@ -365,6 +365,8 @@ def load_properties():
                 longitude = property.get('longitude')
                 latitude = property.get('latitude')
                 phones = property.get('phones', [])
+                # for phone in phones:
+                #     print(phone)
                 point = Point(longitude, latitude)
                 property_instance = models.Property.objects.create(
                     user_id=random_user_id,

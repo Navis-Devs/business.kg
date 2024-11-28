@@ -199,7 +199,7 @@ class PropertyParam(APIView):
         validation_result = self.validate_params(request)
         
         if 'error' in validation_result:
-            return Response(validation_result, status=status.HTTP_400_BAD_REQUEST)
+            return Response(validation_result, status=status.HTTP_200_OK)
         
         return Response({"success": "Все параметры валидны"}, status=status.HTTP_200_OK)
 

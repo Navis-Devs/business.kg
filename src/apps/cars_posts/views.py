@@ -23,7 +23,27 @@ class CarsPostsViewSet(mixins.ListModelMixin,
                        mixins.UpdateModelMixin,
                        mixins.DestroyModelMixin,
                        viewsets.GenericViewSet):
-    queryset = CarsPosts.objects.all()
+    queryset = CarsPosts.objects.all().select_related(
+        'user',           # ForeignKey to Use
+        'region',         # ForeignKey to Region
+        'town',           # ForeignKey to Towns
+        'mark',           # ForeignKey to CarMark
+        'model',
+        'car_type',          # ForeignKey to CarModel
+        'modification_id',  # ForeignKey to CarModification
+        'serie_id',       # ForeignKey to CarSerie
+        'color',          # ForeignKey to CarColors
+    ).prefetch_related(
+        'configuration',  # ManyToMany to GeneralOptions
+        'interior',        # ManyToMany to Interior
+        'exterior',        # ManyToMany to Exterior
+        'media',           # ManyToMany to Media
+        'safety',          # ManyToMany to Safety
+        'other_options',
+        'pictures',
+        'prices',
+        'likes'
+    )
     serializer_class = CarsPostsSerializer
 
     # pagination
@@ -45,25 +65,16 @@ class CarsPostsViewSet(mixins.ListModelMixin,
         print(self.request.data)
         serializer.save(user=self.request.user, context={'is_detail': False})
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
 
-        if not instance.is_active:
-            return Response({"message": "Not found."}, status=404)
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True, context={'is_detail': False})
+    #         return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(instance, context={'is_detail': True})
-        return Response(serializer.data)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True, context={'is_detail': False})
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True, context={'is_detail': False})
-        return Response(serializer.data)
+    #     serializer = self.get_serializer(queryset, many=True, context={'is_detail': False})
+    #     return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
         restricted_fields = {'user', 'id', 'car_type', 'mark', 'model'}

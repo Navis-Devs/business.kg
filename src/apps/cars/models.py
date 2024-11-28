@@ -75,6 +75,7 @@ class CarMark(models.Model):
         null=True,
         upload_to="cars/mark"
     )
+    url_image = models.URLField(max_length=1000, null=True, blank=True)
     id_car_type = models.ForeignKey(
         "CarType",
         verbose_name=_("Id car type"),
@@ -84,6 +85,7 @@ class CarMark(models.Model):
         _("Name rus"),
         max_length=255
     )
+    is_popular = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -97,6 +99,9 @@ class CarModel(models.Model):
         "CarMark",
         verbose_name=_("Id car mark"),
         on_delete=models.RESTRICT,
+        related_name='car_models',
+        null=True,
+        blank=True
     )
     name = models.CharField(
         _("Name"),
@@ -105,13 +110,16 @@ class CarModel(models.Model):
     id_car_type = models.ForeignKey(
         "CarType",
         verbose_name=_("Id car type"),
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        null=True,
+        blank=True
     )
     name_rus = models.CharField(
         _("Name rus"),
         null=True,
         max_length=255
     )
+    is_popular = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -128,7 +136,8 @@ class CarGeneration(models.Model):
     id_car_model = models.ForeignKey(
         "CarModel",
         verbose_name=_("Id car model"),
-        on_delete=models.RESTRICT
+        on_delete=models.RESTRICT,
+        related_name='car_generations'
     )
     year_begin = models.CharField(
         _("Year begin"),

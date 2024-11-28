@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django_admin_geomap',
     'admin_extra_buttons',
     'parler',
+    'debug_toolbar',
+    'django_filters',
 
     # apps
     'apps.accounts',
@@ -68,6 +70,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
+            'rest_framework.renderers.BrowsableAPIRenderer',
         ),
 }
 
@@ -80,6 +83,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core.middleware.LocaleHeaderMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -192,4 +196,20 @@ PARLER_LANGUAGES = {
         'fallback': 'ru',
         'hide_untranslated': False,
     }
+}
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    "192.168.0.104",
+    "172.19.0.5",
+    "0.0.0.0"
+    # ...
+]
+
+def show_toolbar(request):
+        return True
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
 }

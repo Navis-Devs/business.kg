@@ -18,17 +18,17 @@ class BuildingImageInline(admin.TabularInline):
 @admin.register(data_models.PriceType)
 class Test(TranslatableAdmin):
     list_display = ('id', )
+
+@admin.register(data_models.Possibility)
+class Possibility(TranslatableAdmin):
+    list_display = ('id', )
     
 @admin.register(models.Building)
 class BuildingAdmin(MapAdmin):
     geomap_field_longitude = "id_lon"
     geomap_field_latitude = "id_lat"
     geomap_default_longitude = "74.6066926"
-    geomap_default_latitude = "42.8777895"
-    geomap_default_zoom = "12"
-    geomap_height = "500px"
-    list_display = ('id', 'name', 'object_state')
-    search_fields = ('name', 'id')
+ 
     inlines = [BuildingImageInline, ]
 
 class PicteresInline(admin.TabularInline):

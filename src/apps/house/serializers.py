@@ -92,11 +92,17 @@ class PropertySerializer(GeoModelSerializer, serializers.ModelSerializer, mixins
     count_comments = serializers.SerializerMethodField()
     prices = PriceSerializer(many=True)
     phones = PhonesSerializer(many=True)
+    likes = serializers.IntegerField(source="likes.count", read_only=True)
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Property
         geo_field = "point"
         fields = '__all__'
+
+    def get_is_liked(self, obj):
+        user = self.context.get('request').user
+        return user in obj.likes.all()
 
     def get_comments(self, obj):
         return super().get_comments(obj, CommentListSerializer)
