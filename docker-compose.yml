@@ -9,7 +9,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    command: sh -c "python manage.py runserver 0.0.0.0:8010"
+    command: sh -c "watchmedo auto-restart --directory=/home/app/web/ --pattern=*.py --recursive -- python manage.py runserver 0.0.0.0:8010"
     volumes:
       - ./src:/home/app/web/
       - static_volume:/home/app/web/staticfiles

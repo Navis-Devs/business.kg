@@ -387,3 +387,11 @@ class CarGenerationImages(models.Model):
         on_delete=models.CASCADE,
     )
     img = models.URLField(max_length=1000)
+    
+
+
+class FilterData(models.Model):
+    name = models.CharField(max_length=100)
+    
+    class Meta:
+        verbose_name = 'Фильтрация'

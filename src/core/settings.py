@@ -20,6 +20,7 @@ ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',
+    'https://business.navisdevs.ru'
 ]
 
 INSTALLED_APPS = [
@@ -64,13 +65,13 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
     'DEFAULT_PAGINATION_CLASS': 'apps.helpers.paginations.StandardPaginationSet',
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 20,
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
     'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
-            'rest_framework.renderers.BrowsableAPIRenderer',
+            # 'rest_framework.renderers.BrowsableAPIRenderer',
         ),
 }
 
@@ -146,7 +147,7 @@ SPECTACULAR_SETTINGS = {
 
 # URL Settings
 
-SITE_URL = env('SITE_URL', default='http://localhost')
+SITE_URL = env('SITE_URL', default='https://business.navisdevs.ru')
 
 STATIC_URL = f'{SITE_URL}/static/'
 STATIC_ROOT = 'staticfiles'
@@ -213,3 +214,5 @@ def show_toolbar(request):
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
 }
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

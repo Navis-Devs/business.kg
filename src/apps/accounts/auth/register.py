@@ -93,10 +93,10 @@ class RegisterView(CreateAPIView):
 
             ''' send activation code to email or phone number '''
             if serializer.validated_data.get("type") == "email":
-                send_mail.send_mail(mail_registration(user.email, user.code))
+                pass # send_mail.send_mail(mail_registration(user.email, user.code))
 
             elif serializer.validated_data.get("type") == "phone":
-                send_sms.send_sms(user.phone, phone_registration(user.code))
+                pass # send_sms.send_sms(user.phone, phone_registration(user.code))
 
             else:
                 return Response({"response": False, "message": "Not valid username"})

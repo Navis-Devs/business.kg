@@ -102,18 +102,28 @@ class User(AbstractUser, BaseModel):
         verbose_name_plural = _('Users')
 
 
-class BusinessAccount(BaseModel):
+class Dealer(models.Model):
+    type_dealer = [
+        ('house', 'house'),
+        ('car', 'car')
+    ]
     user = models.OneToOneField(
         to=User,
         on_delete=models.CASCADE,
         verbose_name=_("User")
     )
     tariff_plan = models.IntegerField(
-        verbose_name=_("Tariff plan")
+        verbose_name=_("Tariff plan"),
+        null=True,
+        blank=True
     )
     deadline = models.DateTimeField(
-        _("Deadline")
+        _("Deadline"),
+        null=True,
+        blank=True
     )
+    is_verified = models.BooleanField(default=False)
+    type_dealer = models.CharField(choices=type_dealer)
 
     # personal info
 
@@ -126,41 +136,55 @@ class BusinessAccount(BaseModel):
         null=True,
         verbose_name=_("Description")
     )
-    location = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        verbose_name=_("Location")
-    )
     website = models.URLField(
         blank=True,
         null=True,
-        verbose_name=_("Website URL")
+        verbose_name=_("Website URL"),
+        max_length=500
+    )
+    instagram = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True
+    )
+    facebook = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True
+    )
+    email = models.EmailField(
+        null=True,
+        blank=True
+    )
+    phone = models.CharField(
+        max_length=500
+    )
+    address = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+        verbose_name=_('Адресс компании')
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_("Created At")
     )
-    video = models.FileField(
-        upload_to='business/videos/',
-        blank=True,
-        null=True,
-        verbose_name=_("Company Video")
-    )
+    
+    longitude = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+
+    youtube = models.URLField(max_length=500, blank=True, null=True)
+    logo_path = models.URLField(max_length=1000, blank=True, null=True)
+    banner_path = models.URLField(_("Image"), max_length=1000, null=True, blank=True)
+    reviews = GenericRelation('main.Review', related_query_name='reviews')
 
     class Meta:
         ordering = ('-created_at',)
-        verbose_name = _('Business Account')
+        verbose_name = _('Dealer Account')
         verbose_name_plural = _('Business Accounts')
-
-
-class BusinessAccountImages(models.Model):
-    main = models.ForeignKey(BusinessAccount, on_delete=models.CASCADE)
-    image = models.ImageField(_("Image"), upload_to="business/images/")
-
-    class Meta:
-        verbose_name = _("Image")
-        verbose_name_plural = _("Images")
+        
+    def __str__(self):
+        return self.name
 
 class Colors(TranslatableModel):
     translations = TranslatedFields(

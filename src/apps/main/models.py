@@ -44,3 +44,13 @@ class Review(models.Model):
         if reviews.exists():
             return reviews.aggregate(Avg('rating'))['rating__avg'] or 0
         return 0
+    
+
+class SearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    search_query = models.CharField(max_length=255, blank=True, null=True)
+    filter_params = models.JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Фильтрация по {self.user.username} at {self.timestamp}"

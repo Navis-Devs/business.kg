@@ -12,8 +12,9 @@ from django.utils import translation
 import json
 from django.conf import settings
 from apps.house import models
+from apps.tariffs import models as tariff_models
 import traceback
-from apps.accounts.models import User
+from apps.accounts.models import User, Dealer
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from django.conf import settings
 import logging
@@ -34,6 +35,15 @@ def delete_post(post_id):
         if date_now - instance.updated_at >= timedelta(seconds=30):
             instance.delete()
         return None
+
+API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXAiOjE3Mjk3MTEyODIsImV4cCI6MjA0NTA3MTI4MiwidXNlcm5hbWUiOiI5OTY3MDkzNjIzNjAiLCJpcCI6IjQ2LjI1MS4yMDYuNzkiLCJpZCI6OTM1ODYzLCJwaG9uZSI6Ijk5NjcwOTM2MjM2MCIsIm5hbWUiOiJlcmhlIn0.FQVM0c06xgSEiU8ttB3Kz3SXOgKmTUrRqVIME9Ox9WyqMRD1pi_gp5wzBJlv6HBBPWNcsZ_oAo2CCqsfdZ4HrV1X6bdfO62x-lP7nQkpIJwLCJcKkZ4aDJPZANC5ZeT8_lP-_pK9l6GQr-gGyrBbFaaRXjUZal-SqRzsVJapgI2Q3Rf7u97DKK6Bvfe2g6KHZ1cehG0g4LuexHp_o12i9OGoagRChX10OtDjCCbURC1gfYAVB7QNqJQOJTfN7PlpOhN83U-RcSY7pOPiht71_CSKrToXU7G_njF3gCTPAP3wASJwZRJjLrAAfYlo5z44GV0s39Rp6kWPRJ84YKmvEjb8GKymAAichW6Hai61bB9dltXjQ3arQds0qBTXJdZZwlRWezOEphEx5eriR9NEHHHSphh9_HV3xkWlVRFmYIdUIpjJTCGikJmch2q6J1iz9Kl6Dw81UVc1u33R0qNGJMsvYiWA5CCWIPyyR-ydjWPxs2YAzsoCcRHiicBrWGmaV11V2UDI0hx0mO73WwUsYh0zHn0PkGQpvxf2H9IP3b0QFQAmB_Wr1VAFyT8hw3h8mWM6iPvurpaep3dxc_qO0fRBvGm2OT2DuRvAQHR-oM2zq5hBOsyg7N90a8apGF1KrFDTZDBtHr5agfB8NcZxCC5ADJnZjfQvzFZQ5QuAtvM'
+AUTO_AUTH = 'o0DfPm0UNcXwHFJpeKcNu8DxEGulHpUwuyXUvmVuDepb45tkTEjM8M42uryf9SAVqwXN1ct5C'
+    
+headers = {
+    'Authorization': f'Bearer {API_KEY}',
+    'auto-auth': AUTO_AUTH,
+    'locale': 'ru',
+}
 
 @shared_task
 def load_complex():
@@ -232,8 +242,48 @@ def load_location():
         response.raise_for_status() 
         
         data = response.json()
-
+        products = data.get('data', {}).get('products')
         regions = data.get('data', {}).get('region', [])
+        
+        products = products.get('data', {}).get('list', [])
+        # print(products)
+
+        for tariff in products:
+            tarif_instance, created = tariff_models.Tariff.objects.update_or_create(
+                id=tariff.get('id'),  
+                defaults={
+                    "name": tariff.get('name', None),
+                    "description": tariff.get('description', None),
+                    "amount": tariff.get("amount", None),  
+                    "period": tariff.get('period', None),
+                }
+            )
+            if created:
+                print(f'Тариф {tarif_instance} успешно создан')
+            
+
+            plan_instances = []
+            plans = tariff.get('plans', [])
+            if not plans:
+                print(f"Нет планов для тарифа {tarif_instance.name}, пропускаем.")
+                # print()
+                continue
+            
+            for plan in plans:
+                instance_plan, _ = tariff_models.Plans.objects.update_or_create(
+                    id=plan.get('id'),
+                    defaults={
+                        "price": plan.get('price'),
+                        "duration": plan.get('duration'),
+                        "description": plan.get('description', ""),
+                        "cashback": plan.get('cashback', ""),
+                        "default": bool(plan.get('default'))
+                    }
+                )
+                plan_instances.append(instance_plan)
+
+            tarif_instance.plans.set(plan_instances)  
+            print(f'Планы для тарифа {tarif_instance.name} обновлены')
 
         for region_data in regions:
             region, _ = data_models.Region.objects.get_or_create(
@@ -480,3 +530,96 @@ def load_properties():
     except Exception as e:
         traceback.print_exc() 
         print(f'Братан что то упустил: \n {e}')
+        
+    
+
+user_ids = list(User.objects.values_list('id', flat=True))
+user_iterator = iter(user_ids) 
+
+
+@shared_task
+def load_company():
+    URL = 'http://triplescotch.house.kg/v1/public/dealer/?limit=185'
+    
+    response = requests.get(URL, headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()
+        data_list = data.get('data', {}).get('list', [])
+        for dealer in data_list:
+            try:
+                user_id = next(user_iterator)
+                user = User.objects.get(id=user_id)
+            except StopIteration:
+                print("Не хватает пользователей для назначения.")
+                break
+            
+            if Dealer.objects.filter(user=user).exists():
+                print(f"Пользователь {user} уже назначен дилеру. Пропускаем.")
+                continue  
+            instance_dealer, created = Dealer.objects.update_or_create(
+                id=dealer.get('id'),
+                defaults={
+                    "name": dealer.get('name'),
+                    "type_dealer": 'house',
+                    "description": dealer.get('description'),
+                    "address": dealer.get('address'),
+                    "user": user,
+                    "website": dealer.get('website'),
+                    "instagram": dealer.get('instagram'),
+                    "facebook": dealer.get('facebook'),
+                    "youtube": dealer.get('youtube'),
+                    "email": dealer.get('email'),
+                    "phone": dealer.get('phone'),
+                    "longitude": dealer.get('longitude'),
+                    "latitude": dealer.get('latitude'),
+                    "logo_path": dealer.get('logo_path'),
+                    "banner_path": dealer.get('banner_path'),
+                }
+            )
+            if created:
+                print(f'Компания {instance_dealer} успешно выгрузилась!')
+
+
+@shared_task
+def load_auto_business():
+    URL = 'https://doubledragon.mashina.kg/v1/public/dealer/?limit=233'
+    
+    response = requests.get(URL, headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()
+        data_list = data.get('data', {}).get('list', [])
+        for dealer in data_list:
+            try:
+                user_id = next(user_iterator)
+                user = User.objects.get(id=user_id)
+            except StopIteration:
+                print("Не хватает пользователей для назначения.")
+                break
+            
+            if Dealer.objects.filter(user=user).exists():
+                print(f"Пользователь {user} уже назначен дилеру. Пропускаем.")
+                continue  
+            instance_dealer, created = Dealer.objects.update_or_create(
+                id=dealer.get('id'),
+                defaults={
+                    "name": dealer.get('name'),
+                    "type_dealer": 'car',
+                    "description": dealer.get('description'),
+                    "address": dealer.get('address'),
+                    "user": user,
+                    "website": dealer.get('website'),
+                    "instagram": dealer.get('instagram'),
+                    "facebook": dealer.get('facebook'),
+                    "youtube": dealer.get('youtube'),
+                    "email": dealer.get('email'),
+                    "phone": dealer.get('phone'),
+                    "longitude": dealer.get('longitude'),
+                    "latitude": dealer.get('latitude'),
+                    "logo_path": dealer.get('logo_path'),
+                    "banner_path": dealer.get('banner_path'),
+                }
+            )
+            if created:
+                print(f'Компания {instance_dealer} успешно выгрузилась!')

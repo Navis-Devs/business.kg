@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     CarType, CarMark, CarModel, CarGeneration, CarSerie,
     CarModification, CarCharacteristic, CarCharacteristicValue,
-    CarEquipment, CarOption, CarOptionValue, CarColors
+    CarEquipment, CarOption, CarOptionValue, CarColors,  FilterData,
 )
 from apps.cars_posts.models import (
     CarMark,
@@ -190,6 +190,11 @@ class ExchangeSerializer(serializers.ModelSerializer):
         model = Exchange
         fields = ['id', 'name'] 
 
+class FilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FilterData
+        fields = ['id', 'name']
+
 class CombinedSerializer(serializers.Serializer):
     mark = CarMarkSerializer(many=True)
     car_type = CarTypeSerializer(many=True)
@@ -201,6 +206,7 @@ class CombinedSerializer(serializers.Serializer):
     configuration = ConfigurationSerializer(many=True)
     exterior = ExteriorSerializer(many=True)
     interior = InteriorSerializer(many=True)
+    filter_by = FilterSerializer(many=True)
     media = MediaSerializer(many=True)
     other_option = OtherOptionsSerializer(many=True)
     gear_box = GearBoxSerializer(many=True)

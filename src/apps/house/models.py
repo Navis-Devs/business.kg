@@ -7,7 +7,7 @@ from versatileimagefield.fields import VersatileImageField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django_admin_geomap import GeoItem 
 from django.contrib.gis.db.models import PointField
-from apps.accounts.models import User, BusinessAccount
+from apps.accounts.models import User, Dealer
 from apps.house import data_models
 from apps.house.validators import ENIValidator, validate_youtube_url
 from .data_models import *
@@ -54,7 +54,9 @@ class Building(models.Model, GeoItem):
         return self.name if self.lat is None else str(self.lat)
     
     def __str__(self):
-        return f"{self.name} Цена: {self.prices}"
+        first_price = self.prices.first()
+        if first_price:
+            return f"{self.name} Цена: $ {first_price.price}"
 
     class Meta:
         ordering = ['id']
@@ -463,11 +465,11 @@ class Property(AbstractAdFeatures,  models.Model):
         verbose_name=_("Правоустанавливающие документы"), 
         blank=True,
     )
-    business_account = models.ForeignKey(
-        BusinessAccount,
+    dealer_id = models.ForeignKey(
+        Dealer,
         verbose_name=_("КОмпания"),
         on_delete=models.CASCADE,
-        related_name='business_account',
+        related_name='dealer_id',
         null=True,
         blank=True,
     )

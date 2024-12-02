@@ -13,6 +13,7 @@ from . import (
 
 router = DefaultRouter()
 router.register(r'', profile.ProfileViewSet, basename='profile')
+router.register(r'', profile.AccountInfo, basename='user_info')
 
 urls = [
     path('', include(router.urls)),

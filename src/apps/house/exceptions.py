@@ -34,7 +34,7 @@ def get_validation_rules(type_id, region_id, town_id=None):
             {'label': 'ceiling_height', 'type': 'float', "title": "Высота потолков", "placeholder": "", 'required': False, "input": True},
             {'label': 'safety', 'type': 'integer', "title": "Безопасность", "placeholder": "", 'required': False, "input": False},
             {'label': 'flat_options', 'type': 'integer', "title": "Разное", "placeholder": "",  'required': False, "input": False},
-            {'label': 'documents', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
+            {'label': 'document', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
             {'label': 'description', 'type': 'string', "title": "Описание", "placeholder": "Опишите, почему ваш объект стоит выбрать...", 'required': True, "input": True},
         ],
         '2': [
@@ -60,7 +60,7 @@ def get_validation_rules(type_id, region_id, town_id=None):
             # для  Безопасность Разное итд фронту нужно отправить запрос на public/data потом оттуда получить id значений(решетки на окнах) и отправить запрос 1, 8, 3,
             {'label': 'safety', 'type': 'integer', "title": "Безопасность", "placeholder": "", 'required': False, "input": False},
             {'label': 'flat_options', 'type': 'integer', "title": "Разное", "placeholder": "",  'required': False, "input": False},
-            {'label': 'documents', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
+            {'label': 'document', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
             {'label': 'description', 'type': 'string', "title": "Описание", "placeholder": "Опишите, почему ваш объект стоит выбрать...", 'required': True, "input": True},
         ],
         '3': [
@@ -78,7 +78,7 @@ def get_validation_rules(type_id, region_id, town_id=None):
             {'label': 'internet', 'type': 'integer', "title": "Интернет", "placeholder": "", 'required': False, "input": False},
             {'label': 'ceiling_height', 'type': 'float', "title": "Высота потолков", "placeholder": "", 'required': False, "input": True},
             {'label': 'safety', 'type': 'integer', "title": "Безопасность", "placeholder": "", 'required': False, "input": False},
-            {'label': 'documents', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
+            {'label': 'document', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
             {'label': 'description', 'type': 'string', "title": "Описание", "placeholder": "Опишите, почему ваш объект стоит выбрать...", 'required': True, "input": True},
         ],
         '4': [
@@ -95,7 +95,7 @@ def get_validation_rules(type_id, region_id, town_id=None):
             {'label': 'internet', 'type': 'integer', "title": "Интернет", "placeholder": "", 'required': False, "input": False},
             {'label': 'furniture', 'type': 'integer', "title": "Мебель", "placeholder": "", 'required': False, "input": False},
             {'label': 'safety', 'type': 'integer', "title": "Безопасность", "placeholder": "", 'required': False, "input": False},
-            {'label': 'documents', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
+            {'label': 'document', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
             {'label': 'room_option', 'type': 'integer', "title": "Разное", "placeholder": "", 'required': False, "input": False},
             {'label': 'description', 'type': 'string', "title": "Описание", "placeholder": "Опишите, почему ваш объект стоит выбрать...", 'required': True, "input": True},
         ],
@@ -104,7 +104,7 @@ def get_validation_rules(type_id, region_id, town_id=None):
             {'label': 'land_location', 'type': 'integer', "title": "Местоположение", "placeholder": "", 'required': False, "input": False},
             {'label': 'land_amenities', 'type': 'integer', "title": "Комуникации", "placeholder": "", 'required': False, "input": False},
             {'label': 'land_options', 'type': 'integer', "title": "Разное", "placeholder": "", 'required': False, "input": False},
-            {'label': 'documents', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
+            {'label': 'document', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
             {'label': 'description', 'type': 'string', "title": "Описание", "placeholder": "Опишите, почему ваш объект стоит выбрать...", 'required': True, "input": True},
         ],
         '6': [
@@ -128,7 +128,7 @@ def get_validation_rules(type_id, region_id, town_id=None):
         ],
         '7': [
             {'label': 'parking_type', 'type': 'integer', "title": "Тип объекта", "placeholder": "Тип объекта", "required": False, 'input': False},
-            {'label': 'documents', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
+            {'label': 'document', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
             {'label': 'description', 'type': 'string', "title": "Описание", "placeholder": "Опишите, почему ваш объект стоит выбрать...", 'required': True, "input": True},
         ],
     }

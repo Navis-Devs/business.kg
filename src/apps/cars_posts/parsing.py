@@ -368,8 +368,8 @@ def upload_cars():
             registration_country = RegistrationCountry.objects.get(id=car_data.get('registration_country')) if car_data.get('registration_country') else None
             comment_allowed = CommentAllowed.objects.get(id=car_data.get('comment_allowed'))
             currency_id = Currency.objects.get(id=car_data.get('currency_id'))
-            mark = CarMark.objects.get(id=80)
-            model = CarModel.objects.get(id=753)
+            mark = CarMark.objects.get(id=car_data.get('make'))
+            model = CarModel.objects.get(id=car_data.get('model'))
             car_type = CarType.objects.get(id=1)
             fuel =  Fuel.objects.get(id=car_data.get('fuel'))
             transmission = Transmission.objects.get(id=car_data.get('transmission'))

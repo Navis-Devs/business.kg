@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from versatileimagefield.serializers import VersatileImageFieldSerializer
-from .models import CarsPosts, Media, Exterior, Interior, Safety, GeneralOptions, Pictures, CarPrices, User, Review
+from .models import CarsPosts, Media, Exterior, Interior, Safety, GeneralOptions, Pictures, CarPrices, User, Review, GeneralOptions, OtherOptions
 from drf_writable_nested import WritableNestedModelSerializer
 from apps.main.serializers import CommentListSerializer
 from apps.main.models import Comments
@@ -11,31 +11,37 @@ from apps.house import mixins
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Media
         fields = '__all__'
+
 
 class ExteriorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exterior
         fields = '__all__'
 
+
 class InteriorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interior
         fields = '__all__'
+
 
 class SafetySerializer(serializers.ModelSerializer):
     class Meta:
         model = Safety
         fields = '__all__'
 
+
 class GeneralOptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralOptions
         fields = '__all__'
-        
+
+
 class PicturesSerializer(serializers.ModelSerializer):
     pictures = VersatileImageFieldSerializer(
         sizes=[
@@ -48,7 +54,8 @@ class PicturesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pictures
         fields = ['pictures', ]
-        
+
+
 class PriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarPrices
@@ -70,8 +77,21 @@ class UserInfoSerializer(serializers.ModelSerializer):
         representation['avarage_rating'] = float(avarage_rating)
         representation['accommodation_count'] = posted_count
         return representation
+
+
+class ConfigurationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GeneralOptions
+        fields = '__all__'
+
     
-class CarsPostsSerializer(serializers.ModelSerializer, mixins.BaseMixin):
+class OtherOptionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OtherOptions
+        fields = '__all__'
+
+
+class CarsPostsDetailSerializer(serializers.ModelSerializer, mixins.BaseMixin):
     # read only
     car_type_name = serializers.CharField(source="car_type.name", read_only=True)
     mark_name = serializers.CharField(source="mark.name", read_only=True)
@@ -107,3 +127,19 @@ class CarsPostsSerializer(serializers.ModelSerializer, mixins.BaseMixin):
     def get_count_comments(self, obj):
         comment_instance = Comments.objects.filter(object_id=obj.id).first()
         return comment_instance.count_comment if comment_instance else 0
+
+
+class CarsPostsListSerializer(serializers.ModelSerializer):
+    mark_name = serializers.CharField(source="mark.name", read_only=True)
+    model_name = serializers.CharField(source="model.name", read_only=True)
+    pictures = PicturesSerializer(many=True, read_only=True)
+    prices = PriceSerializer(many=True, read_only=True)
+    is_liked = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CarsPosts
+        fields = ['id', 'mark_name', 'model_name', 'pictures', 'year', 'mileage', 'mileage_unit', 'prices', 'is_liked']
+
+    def get_is_liked(self, obj):
+        user = self.context.get('request').user
+        return user in obj.likes.all()

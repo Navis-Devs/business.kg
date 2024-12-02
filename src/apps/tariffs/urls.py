@@ -1,19 +1,7 @@
 from django.urls import path
-
-from .views import (
-    TopView,
-    AutoUPView,
-    UrgentView,
-    HighlightView,
-    SubscribeToTariffView,
-)
+from apps.tariffs.views import ApplyTariffView, TarrifList
 
 urlpatterns = [
-    path("list/top/", TopView.as_view()),
-    path("list/auto-up/", AutoUPView.as_view()),
-    path("list/urgent/", UrgentView.as_view()),
-    path("list/highlight/", HighlightView.as_view()),
-
-    # process
-    path("activate/", SubscribeToTariffView.as_view()),
+    path('', TarrifList.as_view()),
+    path('active', ApplyTariffView.as_view())
 ]

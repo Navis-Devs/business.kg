@@ -7,14 +7,14 @@ from django.core.cache import cache
 from .models import (
     CarType, CarMark, CarModel, CarGeneration, CarSerie,
     CarModification, CarCharacteristic, CarCharacteristicValue,
-    CarEquipment, CarOption, CarOptionValue,  CarColors
+    CarEquipment, CarOption, CarOptionValue,  CarColors, FilterData,
 )
 from .serializers import (
     CarTypeSerializer, CarMarkSerializer, CarModelSerializer, CarGenerationSerializer,
     CarSerieSerializer, CarModificationSerializer,
     CarCharacteristicValueSerializer, CarEquipmentSerializer, CarOptionSerializer,
     CarOptionValueSerializer, FuelSerializer, TransmissionSerializer, GearBoxSerializer,
-    SteeringWheelSerializer, CombinedSerializer, TownsSerializer
+    SteeringWheelSerializer, CombinedSerializer, TownsSerializer, FilterSerializer
 )
 
 from apps.cars_posts.models import (
@@ -211,6 +211,7 @@ class DataView(generics.GenericAPIView):
                 ).only('id', 'name', 'img', 'url_image'),
                 "car_type": CarType.objects.only('id', 'name'),
                 "car_condition": Condition.objects.only('id', 'name'),
+                "filter_by": FilterData.objects.only('id', 'name'),
                 "color": CarColors.objects.only('id', 'name', 'color'),
                 "currency": Currency.objects.only('id', 'name', 'sign', 'is_default'),
                 "comment_allowed": CommentAllowed.objects.only('id', 'name'),

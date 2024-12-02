@@ -32,15 +32,3 @@ class UserAdmin(UserAdmin):
         return "No Avatar"
 
     get_avatar.short_description = 'Avatar'
-
-
-class BusinessAccountImagesInline(admin.TabularInline):
-    model = models.BusinessAccountImages
-    extra = 0
-
-
-@admin.register(models.BusinessAccount)
-class BusinessAccountAdmin(admin.ModelAdmin):
-    inlines = [BusinessAccountImagesInline]
-
-

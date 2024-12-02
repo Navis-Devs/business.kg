@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from apps.cars.models import (PermissionForFront, CarColors, 
                               CarType, CarMark, CarModel, CarGeneration, CarSerie, CarModification,
-                              CarCharacteristic, CarCharacteristicValue, CarEquipment, CarOption, CarOptionValue
+                              CarCharacteristic, CarCharacteristicValue, CarEquipment, CarOption, CarOptionValue,  FilterData
                               )
 
 @admin.register(PermissionForFront)
@@ -74,6 +74,9 @@ class CarCharacteristicValueAdmin(admin.ModelAdmin):
 class CarOptionAdmin(admin.ModelAdmin):
     search_fields = ['name', 'id_parent__name', 'id_car_type__name']
 
+@admin.register(FilterData)
+class Filter(admin.ModelAdmin):
+    list_display = ['id']
 
 @admin.register(CarOptionValue)
 class CarOptionValueAdmin(admin.ModelAdmin):

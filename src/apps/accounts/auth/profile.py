@@ -17,17 +17,26 @@ from user_agents import parse
 
 from apps.helpers.exceptions import BadRequest
 from apps.accounts.models import User
-
+from apps.house.serializers import PropertySerializer, UserInfoSerializer
+from apps.house.models import Property
+from apps.cars_posts.models import CarsPosts
+from apps.cars_posts.serializers import CarsPostsDetailSerializer
+from apps.helpers.paginations import StandardPaginationSet
 '''
 SERIALIZERS PART
 '''
 class ProfileSerializer(serializers.ModelSerializer):
     # date_joined = serializers.DateTimeField(format='%d.%m.%Y %H:%M')
+    _avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ("id", "username", "phone", "email", "name", "is_active", "_avatar", "balance", "language")
+        fields = ("id", "username", 'mkg_id', "phone", "email", "name", "is_active", "_avatar", "balance", "language")
 
+    def get__avatar(self, obj):
+        if obj._avatar:
+            return f"https://business.navisdevs.ru{obj._avatar.url}"
+        return None
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,37 +84,31 @@ class ProfileViewSet(
     @action(methods=['get'], permission_classes=[IsAuthenticated], detail=False)
     def me(self, request):
         user = request.user
+        if not user or not user.is_authenticated:
+            return Response({"detail": "Authentication required."}, status=401)
+
+        print(user.email)
+
+        car_data = CarsPostsDetailSerializer(
+            CarsPosts.objects.filter(user=user),
+            many=True,
+            context={'request': request} 
+        ).data
+
+        property_data = PropertySerializer(
+            Property.objects.filter(user=user),
+            many=True,
+            context={'request': request} 
+        ).data
+
+        ads = {"house": property_data, "car": car_data}
 
         data = self.serializer_class(user).data
         data["dates"] = {
             "date_joined": f"{user.date_joined}",
             "last_login": f"{user.last_login}",
+            "ads": ads
         }
-        ip_data = requests.get(f"http://ipapi.co/{request.META.get('REMOTE_ADDR')}/json")
-        if ip_data.status_code == 200:
-            ip_data = ip_data.json()
-            data["ipAddress"] = {
-                "ip": ip_data.get("ip"),
-                "country_name": ip_data.get("country_name"),
-                "country_code": ip_data.get("country_code"),
-                "continent_code": ip_data.get("continent_code"),
-                "timezone": ip_data.get("timezone"),
-                "city": ip_data.get("city"),
-                "region": ip_data.get("region"),
-            }
-        user_agent_string = request.headers.get('User-Agent', '')
-        user_agent = parse(user_agent_string)
-        data["deviceInfo"] = {
-            "os": user_agent.os.family,
-            "browser": user_agent.browser.family,
-            "device_brand": user_agent.device.brand,
-            "device_model": user_agent.device.model,
-            "is_mobile": user_agent.is_mobile,
-            "is_tablet": user_agent.is_tablet,
-            "is_pc": user_agent.is_pc,
-            "is_touch_capable": user_agent.is_touch_capable,
-        }
-        data["list"] = [1, 2, 3, {"key": "value"}]
         return Response(data)
 
     @action(methods=['patch'], permission_classes=[IsAuthenticated], detail=False, url_path='update')
@@ -122,3 +125,24 @@ class ProfileViewSet(
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(ProfileSerializer(request.user).data)
+
+
+
+class AccountInfo(viewsets.GenericViewSet):
+    serializer_class = UserInfoSerializer
+    queryset = User.objects.all()
+    pagination_class = StandardPaginationSet
+    
+    @action(methods=['get'], detail=True)
+    def user_info(self, request, pk=None):
+        user = self.get_object()
+        user_data = self.get_serializer(user).data
+        car_data = CarsPostsDetailSerializer(CarsPosts.objects.filter(user=user), many=True, context={'request': request}).data
+        property_data = PropertySerializer(Property.objects.filter(user=user), many=True, context={'request': request}).data
+
+        
+        ads = {"house": property_data, "car": car_data}
+        
+        response = {**user_data, "ads": ads}
+        
+        return Response(response)

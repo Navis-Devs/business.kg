@@ -16,6 +16,7 @@ GDAL==2.4.0
 geocoder==1.38.1
 django-admin-extra-buttons
 googletrans==4.0.0rc1
+watchdog
 h11==0.9.0
 h2==3.2.0
 hpack==3.0.0

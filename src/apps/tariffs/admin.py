@@ -1,12 +1,14 @@
 from django.contrib import admin
-from .models import (
-    AutoUP,
-    Urgent,
-    Highlight,
-    Top
-)
+from apps.tariffs import models
 
-admin.site.register(Top)
-admin.site.register(AutoUP)
-admin.site.register(Urgent)
-admin.site.register(Highlight)
+@admin.register(models.Colors)
+class Colors(admin.ModelAdmin):
+    list_display = ['name']
+
+@admin.register(models.Plans)
+class Plans(admin.ModelAdmin):
+    list_display = ['id']
+
+@admin.register(models.Tariff)
+class Tarrif(admin.ModelAdmin):
+    list_display = ['id', 'name', 'amount']

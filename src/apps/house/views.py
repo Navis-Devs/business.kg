@@ -56,6 +56,7 @@ class PropertyView(
         rest_mixin.ListModelMixin,
         rest_mixin.RetrieveModelMixin,
         viewsets.GenericViewSet,
+        rest_mixin.CreateModelMixin,
         mixins.ViewsMixin
     ):
     queryset = models.Property.objects.select_related(
@@ -73,30 +74,20 @@ class PropertyView(
     
     def get_serializer_class(self):
         if self.request.method == 'POST':
-            return self.get_serializer_class()
+            return serializers.AddPropertySerializer
         return serializers.PropertySerializer
     
-    # def list(self, request, *args, **kwargs):
-    #     start_time = time.time()  
-    #     response = super().list(request, *args, **kwargs)  
-    #     end_time = time.time()
-
-    #     elapsed_time = end_time - start_time
-    #     print(f'Запрос выполнен за {elapsed_time:.4f} секунд')  
-
-        # return response
-    
-    @action(detail=False, methods=['post'], url_path=None)
-    def set(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            property_instance = serializer.save(user=request.user)
-            if 'properties_pictures' in request.data:
-                pictures_data = request.data.getlist('properties_pictures') 
-                for picture in pictures_data:
-                    models.Pictures.objects.create(pictures=picture, property=property_instance)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # @action(detail=False, methods=['post'], url_path=None)
+    # def set(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     if serializer.is_valid():
+    #         property_instance = serializer.save(user=request.user)
+    #         if 'properties_pictures' in request.data:
+    #             pictures_data = request.data.getlist('properties_pictures') 
+    #             for picture in pictures_data:
+    #                 models.Pictures.objects.create(pictures=picture, property=property_instance)
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True, methods=['get'], url_path=None)
     def delete_ads(self, request, *args, **kwargs):
@@ -121,6 +112,20 @@ class PropertyView(
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {
+                "outcome": "success",
+                "ad_id": response.data.get('id'),
+                "status": response.status_code
+                },    
+            status=status.HTTP_201_CREATED
+        )
 
 class DataView(APIView):
     serializer_class = data_serializers.CombinedSerializer

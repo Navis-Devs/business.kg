@@ -1,6 +1,13 @@
+from django.db import models
+from colorfield.fields import ColorField
+from datetime import timedelta
+from django.utils import timezone
+from abc import ABC, abstractmethod
+from django.utils.translation import gettext_lazy as _
+
+
 from django.utils.translation import gettext_lazy as _
 from django.db import models
-from apps.accounts.models import BaseModel
 
 
 class AbstractAdFeatures(models.Model):
@@ -107,54 +114,101 @@ class AbstractAdFeatures(models.Model):
 DAY_RANGE = [(i, str(i)) for i in range(1, 31)]
 
 
-class AbstractDefaultTariff(BaseModel):
-    days = models.IntegerField(
-        _("Days duration"),
-        choices=DAY_RANGE,
-    )
-    price = models.IntegerField(
-        _("Price")
-    )
-
-    class Meta:
-        abstract = True
 
 
-class Top(AbstractDefaultTariff):
-    class Meta:
-        ordering = ("-days",)
-        verbose_name = _("Top")
-        verbose_name_plural = _("Top")
 
+
+class TariffStrategy(ABC):
+    @abstractmethod
+    def apply(self, ad):
+        """Применяет логику тарифа к объявлению"""
+        pass
+    def calculate_urgent_until(self, ad):
+        """Общая логика для всех тарифов"""
+        period = ad.product_id.period  
+        duration = ad.product_id.plans.first().duration  # Получаем продолжительность из плана
+
+        if period == 'days':
+            return timezone.now() + timedelta(days=duration)
+        elif period == 'months':
+            return timezone.now() + timedelta(days=duration * 30) 
+        elif period == 'one_time':
+            return timezone.now()  # Для одноразового тарифа можно установить сразу
+        return timezone.now() 
+
+class AutoUpStrategy(TariffStrategy):
+    def apply(self, ad):
+        """Логика для тарифа Auto Up"""
+        ad.is_autoup = True
+        ad.autoup_time = timezone.now().time() 
+        ad.autoup_until = self.calculate_urgent_until(ad)
+
+
+class UrgentStrategy(TariffStrategy):
+    def apply(self, ad):
+        """Логика для тарифа Срочно"""
+        ad.is_urgent = True
+        ad.urgent_until = self.calculate_urgent_until(ad)
+
+
+class HighlightStrategy(TariffStrategy):
+    def apply(self, ad):
+        """Логика для тарифа Выделить цветом"""
+        ad.featured = True
+        ad.colored_until =  self.calculate_urgent_until(ad)
+        ad.ad_color = '#FFC3C3'
+        ad.ad_dark_color = '#c62925'
+
+
+class TariffStrategyFactory:
+    strategies = {
+        "Auto Up": AutoUpStrategy(),
+        "Срочно": UrgentStrategy(),
+        "Выделить цветом": HighlightStrategy(),
+    }
+
+    @staticmethod
+    def get_strategy(tariff_name):
+        """Получаем стратегию по названию тарифа."""
+        return TariffStrategyFactory.strategies.get(tariff_name, None)
+
+class Colors(models.Model):
+    name = models.CharField(_('название Цвета'), max_length=50)
+    color = ColorField(_("цвет"))
+    dark_color = ColorField(_("темный цвет"))
+    
+
+class Plans(models.Model):
+    price = models.PositiveBigIntegerField()
+    duration = models.IntegerField(choices=DAY_RANGE)
+    description=models.TextField(blank=True)
+    cashback = models.CharField(blank=True, max_length=50)
+    default = models.BooleanField(default=False)
     def __str__(self):
-        return f"Продолжительность {self.days}дней за {self.price}сом"
-
-
-class AutoUP(AbstractDefaultTariff):
+        return f"План на {self.duration} месяцев с ценой {self.price}"
     class Meta:
-        ordering = ("-days",)
-        verbose_name = _("Auto Up")
-        verbose_name_plural = _("Auto Up")
+        verbose_name = _("План")
+        verbose_name_plural = _("Планы")
+        ordering = ['id']
 
+
+class Tariff(models.Model):
+    name=models.CharField(max_length=50, verbose_name=_('Название тарифа'))
+    description=models.TextField(blank=True,verbose_name=_('Описание'))
+    img = models.ImageField(upload_to='img/tariffs/', null=True, blank=True)
+    amount = models.PositiveBigIntegerField(verbose_name=_('Цена тарифа'), null=True, blank=True)
+    period_choices = [
+        ('one_time', 'one_time'),
+        ('days', 'days'),
+        ('months', 'months')
+    ]
+    period = models.CharField(_('Период тарифа'), choices=period_choices, max_length=50)
+    plans = models.ManyToManyField(Plans, related_name='plans')
+    
+    
     def __str__(self):
-        return f"Продолжительность {self.days}дней за {self.price}сом"
+        return f"{self.name} - {self.amount}"
 
-
-class Urgent(AbstractDefaultTariff):
     class Meta:
-        ordering = ("-days",)
-        verbose_name = _("Urgent")
-        verbose_name_plural = _("Urgent")
-
-    def __str__(self):
-        return f"Продолжительность {self.days}дней за {self.price}сом"
-
-
-class Highlight(AbstractDefaultTariff):
-    class Meta:
-        ordering = ("-days",)
-        verbose_name = _("Highlights")
-        verbose_name_plural = _("Highlights")
-
-    def __str__(self):
-        return f"Продолжительность {self.days}дней за {self.price}сом"
+        verbose_name = _('Tariff Plan')
+        verbose_name_plural = _('Tariff Plans')
