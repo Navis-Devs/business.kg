@@ -89,7 +89,7 @@ class LikeViews(viewsets.GenericViewSet):
 
         ''' cars data '''
         car_favorites = CarsPosts.objects.filter(likes=user)
-        cars_serializer = CarsPostsListSerializer(car_favorites, many=True, context={'request': request}).data
+        cars_serializer = CarsPostsDetailSerializer(car_favorites, many=True, context={'request': request}).data
 
         ''' house data '''
         house_favorites = Property.objects.filter(likes=user)
