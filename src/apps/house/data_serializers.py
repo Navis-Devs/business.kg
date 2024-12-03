@@ -233,13 +233,17 @@ class DocumentSerializer(serializers.ModelSerializer):
 class MicroDistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = data_models.MicroDistrict
-        fields = '__all__'   
+        fields = '__all__'  
+
+class TownSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = data_models.Town
+        fields = '__all__'  
 
 class DistrictSerializer(serializers.ModelSerializer):
-    micro_districts = MicroDistrictSerializer(many=True)
     class Meta:
         model = data_models.District
-        fields = ['id', 'name', 'slug', 'status', 'latitude', 'longitude', 'zoom', 'town', 'micro_districts']   
+        fields = ['id', 'name', 'slug', 'status', 'latitude', 'longitude', 'zoom', 'town']   
         
 class CombinedSerializer(serializers.Serializer):
     type = TypeSerializer(many=True)
@@ -285,3 +289,6 @@ class CombinedSerializer(serializers.Serializer):
     finishing = FinishingSerializer(many=True)
     canalization = CanalizationSerializer(many=True)
     region = RegionsSerializer(many=True)
+    district = DistrictSerializer(many=True)
+    microdistrict = MicroDistrictSerializer(many=True)
+    town = TownSerializer(many=True)

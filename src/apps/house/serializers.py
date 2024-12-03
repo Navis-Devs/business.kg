@@ -64,9 +64,73 @@ class PhonesSerializer(serializers.ModelSerializer):
         
 class AddPropertySerializer(WritableNestedModelSerializer):
     properties_pictures = PicturesSerializer(many=True, required=False)
+    price = serializers.IntegerField(required=True, write_only=True)
+    currency = serializers.IntegerField(required=True, write_only=True)
+    user = serializers.IntegerField(required=False)
     class Meta:
         model = models.Property
         fields = '__all__' 
+        
+    
+    def create(self, validated_data):
+        many_to_many_fields = [
+            'land_amenities', 'likes',
+            'land_options', 'flat_options',
+            'safety', 'documents',
+            'room_option', 'options',
+            'room_options'
+        ]
+        many_to_many_data = {field: validated_data.pop(field, []) for field in many_to_many_fields}
+        object_price = validated_data.pop('price')
+        print(object_price)
+        object_square = validated_data.pop('square')
+        object_currency = validated_data.pop('currency')
+        
+        validated_data['square'] = object_square
+
+        instance_model = models.Property.objects.create(**validated_data)
+        conversion_rate = 86  
+        prices = []
+
+        if object_currency.id == 1:  
+            usd_price = object_price * conversion_rate 
+            usd_price_per_m2 = object_price * conversion_rate / object_square  
+
+            prices.append(models.Price(
+                property=instance_model,
+                price=object_price,
+                m2_price=object_price / object_square, 
+            ))
+
+            prices.append(models.Price(
+                property=instance_model,
+                price=usd_price,
+                m2_price=usd_price_per_m2,  
+            ))
+
+        elif object_currency.id == 2: 
+            som_price = object_price * conversion_rate 
+            som_price_per_m2 = som_price / object_square
+
+            prices.append(models.Price(
+                property=instance_model,
+                price=object_price,
+                m2_price=object_price / object_square, 
+            ))
+
+            prices.append(models.Price(
+                property=instance_model,
+                price=som_price,
+                m2_price=som_price_per_m2,  
+            ))
+
+        models.Price.objects.bulk_create(prices)
+
+        for field, values in many_to_many_data.items():
+            if values:
+                getattr(instance_model, field).set(values)
+
+        return instance_model
         
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -9,6 +9,7 @@ from . import (
     login,
     check,
     change_password,
+    forgot_password
 )
 
 router = DefaultRouter()
@@ -23,4 +24,5 @@ urls = [
     path('activate/', activate_account.ActivateAccountView.as_view()),
     path('login/', login.LoginView.as_view()),
     path('change-password/', change_password.ChangePasswordView.as_view()),
+    path('forgot-password/', forgot_password.ForgotPasswordView.as_view())
 ]

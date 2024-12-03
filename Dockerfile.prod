@@ -53,4 +53,4 @@ COPY .env $APP_HOME/
 
 RUN chmod +x /home/app/web/entrypoint.sh
 RUN chmod +x /home/app/web/manage.py
-ENTRYPOINT ["/home/app/web/entrypoint.sh"]
+CMD ["/home/app/web/entrypoint.sh"]

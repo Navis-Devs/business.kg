@@ -126,7 +126,7 @@ class TariffStrategy(ABC):
     def calculate_urgent_until(self, ad):
         """Общая логика для всех тарифов"""
         period = ad.product_id.period  
-        duration = ad.product_id.plans.first().duration  # Получаем продолжительность из плана
+        duration = ad.product_id.plans.first().duration  
 
         if period == 'days':
             return timezone.now() + timedelta(days=duration)
@@ -143,12 +143,26 @@ class AutoUpStrategy(TariffStrategy):
         ad.autoup_time = timezone.now().time() 
         ad.autoup_until = self.calculate_urgent_until(ad)
 
+class PremiumStrategy(TariffStrategy):
+    def apply(self, ad):
+        """Логика для тарифа Premium"""
+        ad.is_premium = True
+        ad.premium_gradient = '#FACC00,#FFED9E'
+        ad.premium_dark_gradient = '#6C2E01,#CC5803' 
+        ad.premium_until = self.calculate_urgent_until(ad)
+
 
 class UrgentStrategy(TariffStrategy):
     def apply(self, ad):
         """Логика для тарифа Срочно"""
         ad.is_urgent = True
         ad.urgent_until = self.calculate_urgent_until(ad)
+
+class VipStrategy(TariffStrategy):
+    def apply(self, ad):
+        """Логика для тарифа VIP"""
+        ad.is_vip = True
+        ad.vipped_until = self.calculate_urgent_until(ad)
 
 
 class HighlightStrategy(TariffStrategy):
@@ -162,9 +176,11 @@ class HighlightStrategy(TariffStrategy):
 
 class TariffStrategyFactory:
     strategies = {
-        "Auto Up": AutoUpStrategy(),
-        "Срочно": UrgentStrategy(),
+        "Авто UP": AutoUpStrategy(),
+        "Метка Срочно": UrgentStrategy(),
         "Выделить цветом": HighlightStrategy(),
+        "VIP объявление": VipStrategy(),
+        "Премиум": PremiumStrategy(),
     }
 
     @staticmethod
@@ -185,7 +201,7 @@ class Plans(models.Model):
     cashback = models.CharField(blank=True, max_length=50)
     default = models.BooleanField(default=False)
     def __str__(self):
-        return f"План на {self.duration} месяцев с ценой {self.price}"
+        return f"План на {self.id} месяцев с ценой {self.price}"
     class Meta:
         verbose_name = _("План")
         verbose_name_plural = _("Планы")

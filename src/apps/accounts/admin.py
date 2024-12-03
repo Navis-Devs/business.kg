@@ -32,3 +32,14 @@ class UserAdmin(UserAdmin):
         return "No Avatar"
 
     get_avatar.short_description = 'Avatar'
+
+
+class DealerImagesInline(admin.StackedInline):
+    model = models.DealerImages
+    extra = 0
+
+@admin.register(models.Dealer)
+class DealerAdmin(admin.ModelAdmin):
+  list_display = ("name", "type_dealer",)
+  list_filter = ("type_dealer", "is_verified")
+  inlines = (DealerImagesInline,)

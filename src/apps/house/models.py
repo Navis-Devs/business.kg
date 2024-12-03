@@ -14,6 +14,7 @@ from .data_models import *
 from apps.tariffs.models import AbstractAdFeatures
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.contenttypes.fields import GenericRelation
+from apps.tariffs.models import TariffStrategyFactory
 
 
 class Building(models.Model, GeoItem):
@@ -257,13 +258,15 @@ class Property(AbstractAdFeatures,  models.Model):
     currency = models.ForeignKey(
         data_models.Currency,
         on_delete=models.CASCADE,
-        null=True,
         blank=True,
+        null=True
     )
     price_for = models.ForeignKey(
         data_models.PriceType,
         on_delete=models.CASCADE,
         verbose_name=_("Цена за"),
+        null=True,
+        blank=True
     )
     installment = models.ForeignKey(
         data_models.Possibility,
@@ -490,6 +493,11 @@ class Property(AbstractAdFeatures,  models.Model):
 
     def __str__(self):
         return f"{self.id} "
+    
+    def _apply_tariff(self):
+        strategy = TariffStrategyFactory.get_strategy(self.product_id.name)
+        if strategy:
+            strategy.apply(self)
 
 
 class Pictures(models.Model):

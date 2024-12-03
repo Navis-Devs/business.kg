@@ -71,7 +71,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
-            # 'rest_framework.renderers.BrowsableAPIRenderer',
+            'rest_framework.renderers.BrowsableAPIRenderer',
         ),
 }
 
@@ -111,6 +111,17 @@ DATABASES = {
     'default': env.db(),
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'business', 
+#         'USER': 'navisdevs',
+#         'PASSWORD': 'adminadmin',
+#         'HOST': 'db',
+#         'PORT': '5432',
+#     }
+# }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -147,7 +158,7 @@ SPECTACULAR_SETTINGS = {
 
 # URL Settings
 
-SITE_URL = env('SITE_URL', default='https://business.navisdevs.ru')
+SITE_URL = env('SITE_URL', default='http://localhost')
 
 STATIC_URL = f'{SITE_URL}/static/'
 STATIC_ROOT = 'staticfiles'

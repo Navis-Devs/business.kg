@@ -20,7 +20,7 @@ from apps.accounts.models import (
 # data
 ''' cars '''
 from apps.cars_posts.models import CarsPosts
-from apps.cars_posts.serializers import CarsPostsDetailSerializer
+from apps.cars_posts.serializers import CarsPostsListSerializer
 
 ''' houses '''
 from apps.house.models import Property
@@ -89,7 +89,7 @@ class LikeViews(viewsets.GenericViewSet):
 
         ''' cars data '''
         car_favorites = CarsPosts.objects.filter(likes=user)
-        cars_serializer = CarsPostsDetailSerializer(car_favorites, many=True, context={'request': request}).data
+        cars_serializer = CarsPostsListSerializer(car_favorites, many=True, context={'request': request}).data
 
         ''' house data '''
         house_favorites = Property.objects.filter(likes=user)
@@ -122,10 +122,12 @@ class DealerRetriveView(generics.RetrieveAPIView):
         dealer = self.get_object()  
         user = dealer.user
         
-        car_data = CarsPostsDetailSerializer(CarsPosts.objects.filter(user=user).select_related('car_type'), many=True, context={'request': request}).data
-        property_data = PropertySerializer(Property.objects.filter(user=user), many=True, context={'request': request}).data
+        if dealer.type_dealer == 'car':
+            ads = CarsPostsListSerializer(CarsPosts.objects.filter(user=user).select_related('car_type'), many=True, context={'request': request}).data
+        else:
+            ads = PropertySerializer(Property.objects.filter(user=user), many=True, context={'request': request}).data
         
-        ads = {"house": property_data, "car": car_data}
+        # ads = {"house": property_data, "car": car_data}
         
         data = self.serializer_class(dealer).data
         data["dates"] = {

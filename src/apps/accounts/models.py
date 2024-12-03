@@ -58,6 +58,7 @@ class User(AbstractUser, BaseModel):
     reviews = GenericRelation('main.Review', related_query_name='reviews')
     _avatar = models.ImageField(
         _("Avatar"),
+        default='avatar.svg',
         blank=True,
         null=True
     )
@@ -100,6 +101,12 @@ class User(AbstractUser, BaseModel):
         ordering = ('-date_joined',)
         verbose_name = _('User')
         verbose_name_plural = _('Users')
+
+
+class DealerImages(models.Model):
+    dealer = models.ForeignKey('Dealer', on_delete=models.CASCADE, related_name='dealer_images')
+    img = models.ImageField('Изображение', upload_to='dealers', blank=True)
+    image = models.URLField('Ссылка', max_length=255, blank=True)
 
 
 class Dealer(models.Model):

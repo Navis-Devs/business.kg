@@ -79,18 +79,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
         return representation
 
 
-class ConfigurationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GeneralOptions
-        fields = '__all__'
-
-    
-class OtherOptionsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OtherOptions
-        fields = '__all__'
-
-
 class CarsPostsDetailSerializer(serializers.ModelSerializer, mixins.BaseMixin):
     # read only
     car_type_name = serializers.CharField(source="car_type.name", read_only=True)

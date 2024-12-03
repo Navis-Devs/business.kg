@@ -9,6 +9,9 @@ from rest_framework.views import APIView
 from django.utils import translation
 from apps.house import exceptions
 from django.db.models import Count
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.core.cache import cache
 from rest_framework import mixins as rest_mixin
 import time
 from django.db import connection, reset_queries
@@ -60,7 +63,7 @@ class PropertyView(
         mixins.ViewsMixin
     ):
     queryset = models.Property.objects.select_related(
-    'user', 'category', 'type_id', 'region', 'town', 'district', 'microdistrict', 'complex_id', 'business_account',
+    'user', 'category', 'type_id', 'region', 'town', 'district', 'microdistrict', 'complex_id', 'dealer_id',
     ).prefetch_related(
         'land_amenities', 'options', 'safety', 'land_options',
         'room_options', 'flat_options', 'documents',
@@ -127,26 +130,78 @@ class PropertyView(
             status=status.HTTP_201_CREATED
         )
 
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.core.cache import cache
+
 class DataView(APIView):
+    # serializer_class = data_serializers.CombinedSerializer
+
+    # def get(self, request):
+    #     cached_data = cache.get('data_list')
+    #     if cached_data is not None:
+    #         print('================== data from cache ==================')
+    #         return Response(cached_data)
+
+    #     data = {
+    #         'type': list(data_models.Type.objects.values("translations__name")),
+    #         'category': list(data_models.Category.objects.values()),
+    #         'rooms': list(data_models.Rooms.objects.values()),
+    #         'material': list(data_models.Material.objects.values()),
+    #         'floors': list(data_models.Floor.objects.values()),
+    #         'condition': list(data_models.Condition.objects.values()),
+    #         'owner_type': list(data_models.AccountType.objects.values()),
+    #         'heating': list(data_models.Heating.objects.values()),
+    #         'region': list(data_models.Region.objects.values()),
+    #         'irrigation': list(data_models.Irrigation.objects.values()),
+    #         'land_options': list(data_models.LandOptions.objects.values()),
+    #         'land_location': list(data_models.LandLocation.objects.values()),
+    #         'rental_term': list(data_models.RentalTerm.objects.values()),
+    #         'land_amenities': list(data_models.LandAmenities.objects.values()),
+    #         'room_option': list(data_models.RoomOption.objects.values()),
+    #         'water': list(data_models.Water.objects.values()),
+    #         'electricity': list(data_models.Electricity.objects.values()),
+    #         'options': list(data_models.Options.objects.values()),
+    #         'building_type': list(data_models.BuildingType.objects.values()),
+    #         'finishing': list(data_models.Finishing.objects.values()),
+    #         'canalization': list(data_models.Canalization.objects.values()),
+    #         'comment_allowed': list(data_models.CommentAllowed.objects.values()),
+    #         'parking_type': list(data_models.ParkingType.objects.values()),
+    #         'commercial_type': list(data_models.CommercialType.objects.values()),
+    #         'room_location': list(data_models.RoomLocation.objects.values()),
+    #         'phone_info': list(data_models.Phone.objects.values()),
+    #         'internet': list(data_models.Internet.objects.values()),
+    #         'toilet': list(data_models.Toilet.objects.values()),
+    #         'gas': list(data_models.Gas.objects.values()),
+    #         'balcony': list(data_models.Balcony.objects.values()),
+    #         'door': list(data_models.Door.objects.values()),
+    #         'parking': list(data_models.Parking.objects.values()),
+    #         'furniture': list(data_models.Furniture.objects.values()),
+    #         'flooring': list(data_models.Flooring.objects.values()),
+    #         'safety': list(data_models.Safety.objects.values()),
+    #         'flat_options': list(data_models.FlatOptions.objects.values()),
+    #         'exchange': list(data_models.Exchange.objects.values()),
+    #         'price_type': list(data_models.PriceType.objects.values()),
+    #         'currency': list(data_models.Currency.objects.values()),
+    #         'possibility': list(data_models.Possibility.objects.values()),
+    #         'document': list(data_models.Document.objects.values()),
+    #         'serie': list(data_models.Serie.objects.values()),
+    #         'district': list(data_models.District.objects.values()),
+    #         'microdistrict': list(data_models.MicroDistrict.objects.values()),
+    #         'town': list(data_models.Town.objects.values())
+    #     }
+
+    #     cache.set('data_list', data, timeout=78796800)
+
+    #     return Response(data)
+    
     serializer_class = data_serializers.CombinedSerializer
     
     def get(self, request):
-        region = request.query_params.get('region_id')
-        town = request.query_params.get('town_id')
-        response_data = {}
-
-        if region:
-            r_queryset = data_models.Town.objects.filter(region_id=region)
-            r_serializer = data_serializers.TownsSerializer(r_queryset, many=True)
-            response_data['towns'] = r_serializer.data
-
-        if town:
-            t_queryset = data_models.District.objects.filter(town_id=town)
-            t_serializer = data_serializers.DistrictSerializer(t_queryset, many=True)
-            response_data['districts'] = t_serializer.data
-
-        if town or region:
-            return Response(response_data)
+        cached_data = cache.get('house_public')
+        if cached_data is not None:
+            print('================== data from cache ==================')
+            return Response(cached_data)
         
         data = {
             'type': data_models.Type.objects.all(),
@@ -190,14 +245,18 @@ class DataView(APIView):
             'currency': data_models.Currency.objects.all(),
             'possibility': data_models.Possibility.objects.all(),
             'document': data_models.Document.objects.all(),
-            'serie': data_models.Serie.objects.all()
+            'serie': data_models.Serie.objects.all(),
+            'district': data_models.District.objects.all(),
+            'town': data_models.Town.objects.all(),
+            'microdistrict': data_models.MicroDistrict.objects.all()
         }
         
-        response_data.update(data)
-
-        serializer = self.serializer_class(response_data)
+        serializer = self.serializer_class(data)
+        cache.set('house_public', serializer.data, timeout=3600)
         return Response(serializer.data)
+
     
+
 class PropertyParam(APIView):
     def get(self, request):
 

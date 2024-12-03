@@ -623,3 +623,8 @@ def load_auto_business():
             )
             if created:
                 print(f'Компания {instance_dealer} успешно выгрузилась!')
+
+    
+def load_dealer():
+    load_company()
+    load_auto_business()

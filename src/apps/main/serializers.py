@@ -3,7 +3,7 @@ from apps.main import models
 from django.utils.timesince import timesince
 from apps.house import mixins
 from drf_writable_nested import WritableNestedModelSerializer
-from apps.accounts.models import Dealer
+from apps.accounts.models import Dealer, DealerImages
 from apps.house.models import Property
 from apps.cars_posts.models import CarsPosts
 
@@ -51,7 +51,7 @@ class SearchHistorySerializer(serializers.ModelSerializer):
 class DealerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dealer
-        fields = ['id', 'logo_path', 'name', 'address']
+        fields = ['id', 'logo_path', 'name', 'is_verified', 'address']
 
 
     def to_representation(self, instance):
@@ -60,7 +60,15 @@ class DealerListSerializer(serializers.ModelSerializer):
         representation['ads_count'] = posted_count
         return representation
 
+
+class DealerImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DealerImages
+        fields = '__all__'
+
+
 class DealerSerializer(serializers.ModelSerializer):
+    dealer_images = DealerImagesSerializer(many=True, read_only=True)
     class Meta:
         model = Dealer
         fields = '__all__'

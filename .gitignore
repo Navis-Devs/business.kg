@@ -3,6 +3,8 @@ src/env
 src/media
 !media/watermark_logo
 src/static
+src/staticfiles
+media
 
 .env
 

@@ -3,8 +3,9 @@ from versatileimagefield.fields import VersatileImageField
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from apps.tariffs.models import TariffStrategyFactory
 from django.contrib.contenttypes.fields import GenericRelation
-from apps.accounts.models import BaseModel, User
+from apps.accounts.models import BaseModel, User, Dealer
 from apps.cars.models import (
     CarType,
     CarMark,
@@ -87,6 +88,12 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
         blank=True
     )
     reviews = GenericRelation(Review, related_query_name='reviews')
+    dealer_id = models.ForeignKey(
+        Dealer,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     
     ''' Описание и комплектация '''
     mileage_unit = models.CharField(
@@ -215,6 +222,11 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
         verbose_name = _("Car post")
         verbose_name_plural = _("Cars posts")
         ordering = ("-created_at",)
+    
+    def _apply_tariff(self):
+        strategy = TariffStrategyFactory.get_strategy(self.product_id.name)
+        if strategy:
+            strategy.apply(self)
 
 class Pictures(models.Model):
     cars = models.ForeignKey(CarsPosts, on_delete=models.CASCADE, related_name='pictures')
