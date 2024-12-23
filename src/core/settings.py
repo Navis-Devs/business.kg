@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'parler',
     'debug_toolbar',
     'django_filters',
+    'cachalot',
 
     # apps
     'apps.accounts',
@@ -65,7 +66,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
     'DEFAULT_PAGINATION_CLASS': 'apps.helpers.paginations.StandardPaginationSet',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 12,
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
@@ -158,7 +159,7 @@ SPECTACULAR_SETTINGS = {
 
 # URL Settings
 
-SITE_URL = env('SITE_URL', default='http://localhost')
+SITE_URL = env('SITE_URL', default='https://business.navisdevs.ru')
 
 STATIC_URL = f'{SITE_URL}/static/'
 STATIC_ROOT = 'staticfiles'
@@ -212,7 +213,7 @@ PARLER_LANGUAGES = {
 
 INTERNAL_IPS = [
     # ...
-    "127.0.0.1",
+    "business.navisdevs.ru",
     "192.168.0.104",
     "172.19.0.5",
     "0.0.0.0"
@@ -227,3 +228,11 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://host.docker.internal:6379/1',
+    }
+}

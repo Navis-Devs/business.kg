@@ -8,11 +8,18 @@ class PlansSerializers(serializers.ModelSerializer):
         model = models.Plans
         fields = '__all__'
         
+
+class ColorSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Colors
+        fields = '__all__'
+        
 class TariffSerializers(serializers.ModelSerializer):
+    colors = ColorSerializers(many=True, read_only=True)
     plans = PlansSerializers(many=True)
     class Meta:
         model = models.Tariff
-        fields = ['id', 'name', 'amount', 'img', 'description', 'period', 'plans']
+        fields = ['id', 'name', 'amount', 'img', 'description', 'period', 'colors', 'plans']
 
 
 class ApplyTariffSerializer(serializers.Serializer):

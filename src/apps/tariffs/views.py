@@ -21,7 +21,7 @@ class ApplyTariffView(APIView):
             return Response({
                 "outcome": "success",
                 'object_id': property_instance.id,
-                "status": response.status_code
+                # "status": response.status_code
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

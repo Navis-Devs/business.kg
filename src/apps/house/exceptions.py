@@ -2,7 +2,6 @@ from django.utils import translation
 translation.activate('en')
 
 
-
 def get_validation_rules(type_id, region_id, town_id=None):    
     return {
     '1': {
@@ -88,6 +87,7 @@ def get_validation_rules(type_id, region_id, town_id=None):
             {'label': 'floor', 'type': 'integer', "title": "Этаж", "placeholder": "Этаж", "required": False, 'input': False},
             {'label': 'floors', 'type': 'integer', "title": "", "placeholder": "Всего этажей", "required": False, 'input': False},
             {'label': 'land_square', 'type': 'integer', "title": "Площадь дома м2", "placeholder": "", "required": True, 'input': True}, 
+            {'label': 'square', 'type': 'integer', "title": "Площадь участка, соток", "placeholder": "", "required": True, 'input': True},
             {'label': 'living_square', 'type': 'integer', "title": "жилая", "placeholder": "", "required": False, 'input': True},
             {'label': 'kitchen_square', 'type': 'integer', "title": "кухня", "placeholder": "", "required": False, 'input': True},
             {'label': 'heating', 'type': 'integer',  "title": "Отопление*", "placeholder": "Отопление", "required": False, 'input': False},
@@ -127,37 +127,10 @@ def get_validation_rules(type_id, region_id, town_id=None):
             {'label': 'description', 'type': 'string', "title": "Описание", "placeholder": "Опишите, почему ваш объект стоит выбрать...", 'required': True, "input": True},
         ],
         '7': [
+            {'label': 'square', 'type': 'integer', "title": "Площадь участка, соток", "placeholder": "", "required": True, 'input': True},
             {'label': 'parking_type', 'type': 'integer', "title": "Тип объекта", "placeholder": "Тип объекта", "required": False, 'input': False},
             {'label': 'document', 'type': 'integer', "title": "Правоустанавливающие документы", "placeholder": "", 'required': True, "input": False},
             {'label': 'description', 'type': 'string', "title": "Описание", "placeholder": "Опишите, почему ваш объект стоит выбрать...", 'required': True, "input": True},
         ],
     }
 }
-# #         'land': [
-# #             {'name': 'land_area', 'type': 'float'},
-# #             {'name': 'price', 'type': 'float'},
-# #             {'name': 'currency', 'type': 'string', 'choices': [currency[0] for currency in choices.CURRENCY_TYPE]},
-# #         ],
-# #         'summer_house': [
-# #             {'name': 'room_count', 'type': 'string', 'choices': [room[0] for room in choices.ROOM_COUNT_OPTIONS]},
-# #             {'name': 'land_area', 'type': 'float'},
-# #             {'name': 'price', 'type': 'float'},
-# #             {'name': 'currency', 'type': 'string', 'choices': [currency[0] for currency in choices.CURRENCY_TYPE]},
-# #         ],
-# #         'parking_garage': [
-# #             {'name': 'price', 'type': 'float'},
-# #             {'name': 'currency', 'type': 'string', 'choices': [currency[0] for currency in choices.CURRENCY_TYPE]},
-# #             {'name': 'parking', 'type': 'string', 'choices': [choice[0] for choice in choices.PARKING_CHOICES]},
-# #         ],
-# #     },
-# #     'sell': {
-# #         'house': [
-# #             {'name': 'room_count', 'type': 'string', 'choices': [room[0] for room in choices.ROOM_COUNT_OPTIONS]},
-# #             {'name': 'type_building', 'type': 'string', 'choices': [building[0] for building in choices.BUILDING_TYPE_CHOICES]},
-# #             {'name': 'land_area', 'type': 'float'},
-# #             {'name': 'price', 'type': 'float'},
-# #             {'name': 'currency', 'type': 'string', 'choices': [currency[0] for currency in choices.CURRENCY_TYPE]},
-# #         ],
-# #         # Добавьте аналогичные параметры для других типов недвижимости
-# #     }
-# # }

@@ -67,6 +67,7 @@ class User(AbstractUser, BaseModel):
         default=False,
     )
     mkg_id = models.CharField(null=True, max_length=99999)
+    description = models.TextField(null=True, blank=True)
     objects = UserManager()
 
     first_name = None
@@ -87,6 +88,12 @@ class User(AbstractUser, BaseModel):
             return get_thumbnail(self._avatar.name, '500x500', padding=False, quality=75).url
         return f'{settings.STATIC_URL}img/avatar.svg'
 
+
+    # @property
+    # def posted_count(self):
+    #     car_posts_count = CarsPosts.objects.filter(user=self).count()
+    #     house_posts_count = Property.objects.filter(user=self).count()
+    #     return car_posts_count + house_posts_count
 
     def save(self, *args, **kwargs):
         self.code = int(random.randint(100_000, 999_999))

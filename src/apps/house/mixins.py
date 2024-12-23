@@ -1,4 +1,5 @@
 from apps.main import models
+
 class HierarchicalMixin:
     
     def base_method(self, instance):

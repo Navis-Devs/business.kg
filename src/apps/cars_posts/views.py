@@ -4,10 +4,11 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db.models import Exists, OuterRef
+from django.db.models import Count, Avg, F
 
 
-from .models import CarsPosts
-from .serializers import CarsPostsDetailSerializer, CarsPostsListSerializer
+from .models import CarsPosts, Pictures, User, CarPrices
+from .serializers import CarsPostsDetailSerializer, CarsPostsListSerializer, AdCarsPostsSerializer
 
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -17,12 +18,14 @@ from django.shortcuts import get_object_or_404
 
 from apps.helpers.paginations import StandardPaginationSet
 from apps.cars_posts.filters import CarsPostsFilter
+from apps.house.mixins import ViewsMixin as CustomMixin
 
 class CarsPostsViewSet(mixins.ListModelMixin,
                        mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
                        mixins.UpdateModelMixin,
                        mixins.DestroyModelMixin,
+                       CustomMixin,
                        viewsets.GenericViewSet):
 
     # pagination
@@ -38,6 +41,8 @@ class CarsPostsViewSet(mixins.ListModelMixin,
     def get_serializer_class(self):
         if self.action == 'list':
             return CarsPostsListSerializer
+        if self.action == 'create':
+            return AdCarsPostsSerializer
         return super().get_serializer_class()
 
     def get_queryset(self):
@@ -45,7 +50,7 @@ class CarsPostsViewSet(mixins.ListModelMixin,
             return CarsPosts.objects.annotate(
                     is_liked=Exists(
                         CarsPosts.likes.through.objects.filter(
-                            user_id=self.request.user.id,  # Check if the current user has liked the post
+                            user_id=self.request.user.id,  
                             carsposts_id=OuterRef('pk')
                         )
                     )
@@ -53,30 +58,32 @@ class CarsPostsViewSet(mixins.ListModelMixin,
                     'mark', 'model'
                 ).prefetch_related(
                     'pictures', 'prices', 'likes'
-                )
+                ).order_by('-is_vip', '-is_premium', '-is_top', '-is_autoup')
+                
         if self.action == 'retrieve':
             return CarsPosts.objects.all().select_related(
-                'user',           # ForeignKey to Use
-                'region',         # ForeignKey to Region
-                'town',           # ForeignKey to Towns
-                'mark',           # ForeignKey to CarMark
+                'user',     
+                'region',   
+                'town',     
+                'mark',     
                 'model',
-                'car_type',          # ForeignKey to CarModel
-                'modification_id',  # ForeignKey to CarModification
-                'serie_id',       # ForeignKey to CarSerie
-                'color',          # ForeignKey to CarColors
+                'car_type',          
+                'modification_id',  
+                'serie_id',       
+                'color',         
             ).prefetch_related(
-                'configuration',  # ManyToMany to GeneralOptions
-                'interior',        # ManyToMany to Interior
-                'exterior',        # ManyToMany to Exterior
-                'media',           # ManyToMany to Media
-                'safety',          # ManyToMany to Safety
+                'configuration',  
+                'interior',  
+                'exterior',  
+                'media',  
+                'safety',  
                 'other_options',
                 'pictures',
                 'prices',
                 'likes'
             )
         return super().get_queryset()
+    
 
     def get_permissions(self):
         if self.action in ['create', 'partial_update', 'destroy', 'set_active']:
@@ -85,8 +92,7 @@ class CarsPostsViewSet(mixins.ListModelMixin,
 
 
     def perform_create(self, serializer):
-        print(self.request.data)
-        serializer.save(user=self.request.user, context={'is_detail': False})
+        serializer.save(user=self.request.user)
 
 
     def partial_update(self, request, *args, **kwargs):
@@ -104,11 +110,29 @@ class CarsPostsViewSet(mixins.ListModelMixin,
         instance.is_active = False
         instance.save()
         return Response(status=204)
+    
+    def create(self, request, *args, **kwargs):
+        pictures_files = request.FILES.getlist('pictures')  
+        price = request.data.get('price')
 
-    @action(detail=True, methods=['patch'])
-    def set_active(self, request, pk=None):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        car_post = serializer.save(user=request.user)
+
+        if pictures_files:
+            pictures_instances = [
+                Pictures(cars=car_post, pictures=picture) for picture in pictures_files
+            ]
+            Pictures.objects.bulk_create(pictures_instances)
+        if price:
+            CarPrices.objects.create(cars=car_post, price=price)
+            CarPrices.objects.create(cars=car_post, price=price)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
+
+    
+    def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        is_active = request.data.get('is_active', True)
-        instance.is_active = is_active
-        instance.save()
-        return Response({'response': True, 'is_active': instance.is_active})
+        self.get_views(instance)  
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

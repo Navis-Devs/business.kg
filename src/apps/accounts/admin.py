@@ -10,7 +10,7 @@ admin.site.unregister(Group)
 
 @admin.register(models.User)
 class UserAdmin(UserAdmin):
-    list_display = ('get_avatar', 'name', 'email', 'phone', 'is_active', 'date_joined')
+    list_display = ('id', 'get_avatar', 'name', 'email', 'phone', 'is_active', 'date_joined')
     ordering = ('-date_joined',)
 
     search_fields = ('username', 'name',)
@@ -19,7 +19,7 @@ class UserAdmin(UserAdmin):
     readonly_fields = ('username', 'code',)
 
     fieldsets = (
-        (_('Главная'), {'fields': ('mkg_id', 'username', 'name', 'email', 'phone', 'language', 'balance', 'password', '_avatar')}),
+        (_('Главная'), {'fields': ('mkg_id', 'username', 'name', 'email', 'phone', 'language', 'balance', 'password', '_avatar', 'description')}),
         (_('Права доступы'), {
             'fields': ('code', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),

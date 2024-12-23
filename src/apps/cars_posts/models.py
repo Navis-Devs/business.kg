@@ -24,11 +24,11 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
         _("Активный"),
         default=True
     )
-    mkg_id = models.CharField(null=True, max_length=99999)
     user = models.ForeignKey(
         to=User,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         verbose_name=_("Пользователь")
     )
     ''' about car '''
@@ -56,7 +56,8 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
     )
     generation = models.CharField(
         max_length=100,
-        blank=True
+        blank=True,
+        null=True
     )
     modification_id = models.ForeignKey(
         to=CarModification,
@@ -66,7 +67,8 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
     )
     modification = models.CharField(
         max_length=100,
-        blank=True
+        blank=True,
+        null=True,
     )
     serie_id = models.ForeignKey(
         CarSerie,
@@ -75,10 +77,9 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
     serie = models.CharField(
         _("Кузов"),
         max_length=100,
-        blank=True
+        blank=True,
+        null=True
     )
-    
-    
     
     
     likes = models.ManyToManyField(
@@ -87,6 +88,8 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
         related_name="liked_car",
         blank=True
     )
+    views = models.PositiveIntegerField(null=True, blank=True, default=1)
+    comments = GenericRelation('main.Comments', related_query_name='comments')
     reviews = GenericRelation(Review, related_query_name='reviews')
     dealer_id = models.ForeignKey(
         Dealer,
@@ -202,6 +205,8 @@ class CarsPosts(BaseModel, AbstractAdFeatures):
     town = models.ForeignKey(
         "Towns",
         on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
     ''' ManyToMany rel '''
 

@@ -40,26 +40,20 @@ class CommentListSerializer(serializers.ModelSerializer, mixins.HierarchicalMixi
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Review
-        fields = ['content_type', 'object_id', 'content_object', 'rating']
+        fields = ['content_type', 'object_id', 'rating', 'comment']
 
 class SearchHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SearchHistory
         fields = ['search_query', 'filter_params', 'created_at']
-        
 
 class DealerListSerializer(serializers.ModelSerializer):
+    review_count = serializers.IntegerField(source='reviews.count', read_only=True, default=0)
+    avarage_rating = serializers.FloatField(read_only=True, default=5.0)
+    ads_count = serializers.IntegerField(read_only=True, default=0)
     class Meta:
         model = Dealer
-        fields = ['id', 'logo_path', 'name', 'is_verified', 'address']
-
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        posted_count = Dealer.objects.filter(user=instance.user).count()
-        representation['ads_count'] = posted_count
-        return representation
-
+        fields = ['id', 'logo_path', 'name', 'ads_count', 'avarage_rating', 'review_count', 'is_verified', 'address']
 
 class DealerImagesSerializer(serializers.ModelSerializer):
     class Meta:

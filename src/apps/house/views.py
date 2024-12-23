@@ -1,20 +1,19 @@
 # framework packages
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
-from django.utils import translation
 from apps.house import exceptions
-from django.db.models import Count
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.core.cache import cache
 from rest_framework import mixins as rest_mixin
-import time
-from django.db import connection, reset_queries
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.core.cache import cache
+from django.db import connection
 
 
 # your import 
@@ -67,9 +66,7 @@ class PropertyView(
     ).prefetch_related(
         'land_amenities', 'options', 'safety', 'land_options',
         'room_options', 'flat_options', 'documents',
-        ).annotate(
-            count_comments=Count('comments')
-            ).all().order_by('-id')
+        )
     serializer_class = serializers.AddPropertySerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = filters.PropertyFilter
@@ -78,33 +75,9 @@ class PropertyView(
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return serializers.AddPropertySerializer
+        if self.action == 'list':
+            return serializers.PropertyListSerializer
         return serializers.PropertySerializer
-    
-    # @action(detail=False, methods=['post'], url_path=None)
-    # def set(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     if serializer.is_valid():
-    #         property_instance = serializer.save(user=request.user)
-    #         if 'properties_pictures' in request.data:
-    #             pictures_data = request.data.getlist('properties_pictures') 
-    #             for picture in pictures_data:
-    #                 models.Pictures.objects.create(pictures=picture, property=property_instance)
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    @action(detail=True, methods=['get'], url_path=None)
-    def delete_ads(self, request, *args, **kwargs):
-        instance = self.get_object()
-        activate = request.query_params.get('activate', 'false').lower() == 'true'
-        if activate:
-            instance.active_post = True
-            instance.save()
-            return Response({"message ": "Post activated!"}, status=status.HTTP_200_OK)
-        instance.active_post = False
-        instance.save()
-        instance_id = str(instance.id)
-        delete_post.delay(instance_id)
-        return Response({"message": "Post archived!"}, status=status.HTTP_200_OK)
     
     @action(detail=True, methods=['patch'], url_path=None)
     def edit(self, request, *args, **kwargs):
@@ -129,10 +102,12 @@ class PropertyView(
                 },    
             status=status.HTTP_201_CREATED
         )
-
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.core.cache import cache
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.get_views(instance)  
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 class DataView(APIView):
     # serializer_class = data_serializers.CombinedSerializer
@@ -198,10 +173,10 @@ class DataView(APIView):
     serializer_class = data_serializers.CombinedSerializer
     
     def get(self, request):
-        cached_data = cache.get('house_public')
-        if cached_data is not None:
-            print('================== data from cache ==================')
-            return Response(cached_data)
+        # cached_data = cache.get('house_public')
+        # if cached_data is not None:
+        #     print('================== data from cache ==================')
+        #     return Response(cached_data)
         
         data = {
             'type': data_models.Type.objects.all(),
@@ -252,7 +227,7 @@ class DataView(APIView):
         }
         
         serializer = self.serializer_class(data)
-        cache.set('house_public', serializer.data, timeout=3600)
+        # cache.set('house_public', serializer.data, timeout=3600)
         return Response(serializer.data)
 
     

@@ -42,22 +42,21 @@ class CarGenerationSerializer(serializers.ModelSerializer):
 
 
 class CarModelSerializer(serializers.ModelSerializer):
-    car_generations = CarGenerationSerializer(many=True, read_only=True)
+    # car_generations = CarGenerationSerializer(many=True, read_only=True)
     class Meta:
         model = CarModel
         fields = ['id', 'name', 'is_popular', 'car_generations']
 
 
 class CarMarkSerializer(serializers.ModelSerializer):
-    car_models = CarModelSerializer(many=True, read_only=True)
+    # car_models = CarModelSerializer(many=True, read_only=True)
 
     class Meta:
         model = CarMark
-        fields = ['id', 'name', 'img', 'url_image', 'car_models']
+        fields = ['id', 'name', 'img', 'url_image',]
 
 
 class CarGenerationSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = CarGeneration
         fields = ['id', 'name', 'year_begin', 'year_end']
@@ -118,6 +117,11 @@ class ColorSerializer(serializers.ModelSerializer):
 class TransmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transmission
+        fields = ['id', 'name']
+
+class SafetySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Safety
         fields = ['id', 'name']
 
 class GearBoxSerializer(serializers.ModelSerializer):
@@ -196,7 +200,6 @@ class FilterSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class CombinedSerializer(serializers.Serializer):
-    mark = CarMarkSerializer(many=True)
     car_type = CarTypeSerializer(many=True)
     car_condition = ConditionSerializer(many=True)
     color = ColorSerializer(many=True)
@@ -216,4 +219,5 @@ class CombinedSerializer(serializers.Serializer):
     exchange = ExchangeSerializer(many=True)
     steering_wheel = SteeringWheelSerializer(many=True)
     region = RegionSerializer(many=True)
-    towns = TownsSerializer(many=True)
+    town = TownsSerializer(many=True)
+    safety = SafetySerializer(many=True)

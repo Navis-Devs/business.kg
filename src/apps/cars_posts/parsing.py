@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup as BS
+from .models import User
 import requests
 from .models import (
     CarMark,
@@ -355,7 +355,8 @@ from .models import Currency, CarPrices, CarsPosts
 
 
 def upload_cars():
-    URL = 'https://doubledragon.mashina.kg:443/v1/ads/'
+    # URL = 'https://doubledragon.mashina.kg:443/v1/ads/?limit=20'
+    URL = 'https://doubledragon.mashina.kg:443/v1/ads?filter=%7B%22type_id%22:[%7B%22value%22:%221%22,%22operator%22:%22=%22%7D]%7D&offset=0&limit=20&source=1&filter=%7B%22makes%22:[%7B%22id%22:116%7D]%7D&orderby=price&sort=desc'
     response = requests.get(URL, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -392,11 +393,13 @@ def upload_cars():
             safety = Safety.objects.filter(id__in=car_data.get('safety'))
             other_option = OtherOptions.objects.filter(id__in=car_data.get('other_option'))
             
+            user = User.objects.get(id='e4e91a6b-fb2a-4015-94e5-192a936cb6d1')
             
             
             model_instance, created = CarsPosts.objects.update_or_create(
                 id=car_data.get('id'),
                 defaults={
+                    "user": user,
                     "region": region,
                     "town": town,
                     "registration_country": registration_country,

@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from apps.main import models
+from django.db.models import Count, Avg, F
+from apps.accounts.models import User
 from apps.main import serializers
 from rest_framework import generics
 from apps.helpers.paginations import StandardPaginationSet
@@ -38,6 +40,10 @@ class SearchHistoryView(generics.ListAPIView):
     pagination_class = None
     permission_classes = [IsAuthenticated,]
 
+class AdReviewView(generics.CreateAPIView):
+    queryset = models.Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
+    
 class CommentView(viewsets.GenericViewSet):
     queryset = models.Comments.objects.all().order_by('-id')
     serializer_class = serializers.CommentSerializer
@@ -112,10 +118,19 @@ class DealerListView(generics.GenericAPIView):
         query = Dealer.objects.filter(type_dealer=type).select_related('user')
         serializer = self.get_serializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    # def get_queryset(self):
+    #     return Dealer.objects.filter(type_dealer=type_dealer).select_related('user').annotate(
+    #         average_rating=Avg('reviews__rating'),
+    #         property_count=Count('property', distinct=True),
+    #         carsposts_count=Count('carsposts', distinct=True),
+    #         accommodation_count=F('property_count') + F('carsposts_count')
+    #     )
 
 class DealerRetriveView(generics.RetrieveAPIView):
     queryset = Dealer.objects.all().order_by('-id').select_related('user')
     serializer_class = DealerSerializer
+    pagination_class = StandardPaginationSet
     lookup_field = 'id'
     
     def get(self, request, *args, **kwargs):

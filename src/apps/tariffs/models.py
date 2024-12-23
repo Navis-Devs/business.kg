@@ -151,7 +151,6 @@ class PremiumStrategy(TariffStrategy):
         ad.premium_dark_gradient = '#6C2E01,#CC5803' 
         ad.premium_until = self.calculate_urgent_until(ad)
 
-
 class UrgentStrategy(TariffStrategy):
     def apply(self, ad):
         """Логика для тарифа Срочно"""
@@ -218,6 +217,7 @@ class Tariff(models.Model):
         ('days', 'days'),
         ('months', 'months')
     ]
+    colors = models.ManyToManyField(Colors, related_name='colors',  null=True, blank=True)
     period = models.CharField(_('Период тарифа'), choices=period_choices, max_length=50)
     plans = models.ManyToManyField(Plans, related_name='plans')
     

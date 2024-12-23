@@ -16,24 +16,24 @@ class Comments(MPTTModel):
     content_object = GenericForeignKey('content_type', 'object_id')
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     
+    comment_count = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if self.parent:
+            self.parent.comment_count = Comments.objects.filter(parent=self.parent).count()
+            self.parent.save()
+        super().save(*args, **kwargs)
+    
     class MPTTMeta:
         order_insertion_by = ['content']
     
     def __str__(self):
         return self.content
-    
-    @property
-    def count_comment(self):
-        return Comments.objects.filter(
-            content_type=self.content_type,
-            object_id=self.object_id
-        ).count() or 0
-    
 
 class Review(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.CharField(max_length=200)
+    object_id = models.UUIDField(max_length=200)
     content_object = GenericForeignKey('content_type', 'object_id')
     rating = models.PositiveIntegerField(validators=[MaxValueValidator(5)])
     comment = models.TextField()

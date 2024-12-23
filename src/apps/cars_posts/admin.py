@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CarsPosts, Pictures, Region, Towns, Possibility
+from .models import CarsPosts, Pictures, Region, Towns, Possibility, CarPrices, OtherOptions
 
 class PicturesAdmin(admin.TabularInline):
     model = Pictures
@@ -21,3 +21,5 @@ class RegionAdmin(admin.ModelAdmin):
     search_fields = ['region_towns__name', 'name']
     
 admin.site.register(Possibility)
+admin.site.register(CarPrices)
+admin.site.register(OtherOptions)

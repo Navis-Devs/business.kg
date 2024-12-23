@@ -76,7 +76,11 @@ class CarDataListView(generics.GenericAPIView):
                 "data": CarModelSerializer(
                 CarModel.objects.filter(
                     id_car_mark=id_car_mark
-                ), many=True).data}
+                ).select_related(
+                    'id_car_mark',
+                    'id_car_type',
+                ).order_by('name'),
+                many=True).data}
 
             ''' filter with year (filtering with function) | output = available years'''
             if id_car_model:
@@ -174,7 +178,7 @@ class CarDataListView(generics.GenericAPIView):
             response = {
                 "type": "marks",
                 "data": CarMarkSerializer(
-                CarMark.objects.all(), many=True).data}
+                CarMark.objects.all().order_by('name').values(), many=True).data}
 
         return Response(response)
 
@@ -194,21 +198,16 @@ class CarDataListView(generics.GenericAPIView):
         else:
             return []
 
-from django.db.models import Prefetch
-
 class DataView(generics.GenericAPIView):
     def get(self, request):    
-        cached_data = cache.get('data_list')
+        # cached_data = cache.get('data_list')
         
         
-        if cached_data is not None:
-            print('================== data from cache ==================')
-            return Response(cached_data)
+        # if cached_data is not None:
+        #     print('================== data from cache ==================')
+        #     return Response(cached_data)
 
         data = CombinedSerializer({
-            "mark": CarMark.objects.prefetch_related(
-                    Prefetch('car_models', queryset=CarModel.objects.prefetch_related('car_generations'))
-                ).only('id', 'name', 'img', 'url_image'),
                 "car_type": CarType.objects.only('id', 'name'),
                 "car_condition": Condition.objects.only('id', 'name'),
                 "filter_by": FilterData.objects.only('id', 'name'),
@@ -228,10 +227,11 @@ class DataView(generics.GenericAPIView):
                 "exchange": Exchange.objects.only('id', 'name'),
                 "steering_wheel": SteeringWheel.objects.only('id', 'name'),
                 "region": Region.objects.only('id', 'name'),
-                "towns": Towns.objects.only('id', 'name'),
+                "town": Towns.objects.only('id', 'name', 'region'),
+                "safety": Safety.objects.only('id', 'name'),
         }).data
 
-        cache.set('data_list', data, timeout=3600)
+        # cache.set('data_list', data, timeout=50600)
 
         return Response(data)
 

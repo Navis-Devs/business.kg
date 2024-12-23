@@ -66,11 +66,12 @@ class Building(models.Model, GeoItem):
     
 class Property(AbstractAdFeatures,  models.Model):
     
-    # Основные характеристик
     user = models.ForeignKey(
         User,
         verbose_name=_("Пользователь"),
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
     type_id = models.ForeignKey(
         data_models.Type,
@@ -472,10 +473,11 @@ class Property(AbstractAdFeatures,  models.Model):
         Dealer,
         verbose_name=_("КОмпания"),
         on_delete=models.CASCADE,
-        related_name='dealer_id',
+        related_name='properties',
         null=True,
         blank=True,
     )
+    comments = GenericRelation('main.Comments', related_query_name='comments')
     complex_id = models.ForeignKey(
         Building,
         verbose_name=_("Название комплекса"),
