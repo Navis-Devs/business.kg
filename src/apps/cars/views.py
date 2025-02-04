@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, views
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Min, Max, Q
@@ -14,7 +14,7 @@ from .serializers import (
     CarSerieSerializer, CarModificationSerializer,
     CarCharacteristicValueSerializer, CarEquipmentSerializer, CarOptionSerializer,
     CarOptionValueSerializer, FuelSerializer, TransmissionSerializer, GearBoxSerializer,
-    SteeringWheelSerializer, CombinedSerializer, TownsSerializer, FilterSerializer
+    SteeringWheelSerializer, CombinedSerializer, TownsSerializer, FilterSerializer, CarDataSerializer
 )
 
 from apps.cars_posts.models import (
@@ -230,8 +230,16 @@ class DataView(generics.GenericAPIView):
                 "town": Towns.objects.only('id', 'name', 'region'),
                 "safety": Safety.objects.only('id', 'name'),
         }).data
-
+        return Response(data)
         # cache.set('data_list', data, timeout=50600)
 
-        return Response(data)
 
+
+class CarsDataView(views.APIView):
+    def get(self, request):
+        data = CarDataSerializer({
+            "mark": CarMark.objects.only("id", "url_image", "is_popular"),
+            "models": CarModel.objects.only('id', 'id_car_mark', 'name', 'is_popular'),
+            "generation": CarGeneration.objects.only('id', 'name', 'id_car_model'),
+        }).data
+        return Response(data)

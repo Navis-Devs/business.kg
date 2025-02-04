@@ -169,7 +169,7 @@ class HighlightStrategy(TariffStrategy):
         """Логика для тарифа Выделить цветом"""
         ad.featured = True
         ad.colored_until =  self.calculate_urgent_until(ad)
-        ad.ad_color = '#FFC3C3'
+        # ad.ad_color = '#FFC3C3'
         ad.ad_dark_color = '#c62925'
 
 

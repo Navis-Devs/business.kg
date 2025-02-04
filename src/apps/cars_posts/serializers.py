@@ -92,6 +92,7 @@ class CarsPostsDetailSerializer(serializers.ModelSerializer, mixins.BaseMixin):
     # additional
     likes = serializers.IntegerField(source="likes.count", read_only=True)
     is_liked = serializers.SerializerMethodField()
+
     class Meta:
         model = CarsPosts
         fields = '__all__'
@@ -113,11 +114,12 @@ class CarsPostsListSerializer(serializers.ModelSerializer):
     prices = PriceSerializer(many=True, read_only=True)
     dealer_name = serializers.CharField(source='dealer.name', read_only=True)
     is_liked = serializers.SerializerMethodField()
+    phone = serializers.IntegerField(source='user.phone', read_only=True)
 
     class Meta:
         model = CarsPosts
         fields = ['id', 'is_vip', 'is_premium', 'is_autoup', 'is_urgent', 'featured', 'is_top',
-                 'mark_name', 'model_name', 'dealer_name', 'pictures', 'year', 'mileage', 'mileage_unit', 'prices', 'is_liked',
+                 'mark_name', 'model_name', 'dealer_name', 'pictures', 'year', 'mileage', 'mileage_unit', 'prices', 'is_liked', 'phone',
                  'autoup_time', 'autoup_until', 'vipped_until', 'premium_until', 'premium_gradient', 'premium_dark_gradient',
                  'urgent_until', 'topped_until', 'ad_color', 'ad_dark_color', 'colored_until'
                  ]

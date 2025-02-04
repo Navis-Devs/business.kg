@@ -90,7 +90,7 @@ class ProfileViewSet(
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        if self.action == 'patch': return ProfileUpdateSerializer
+        if self.action == 'update': return ProfileUpdateSerializer
         if self.action == 'avatar': return UserAvatarSerializer
         return self.serializer_class
 

@@ -8,6 +8,9 @@ from django.db.models import Count, Avg, F
 from apps.accounts.models import User
 from apps.main import serializers
 from rest_framework import generics
+from django.shortcuts import get_object_or_404
+from rest_framework import views
+from django.utils.translation import gettext_lazy as _
 from apps.helpers.paginations import StandardPaginationSet
 
 from .serializers import (
@@ -34,12 +37,30 @@ class SearchHistoryAddView(generics.CreateAPIView):
     serializer_class = serializers.SearchHistorySerializer
     permission_classes = [IsAuthenticated,]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 class SearchHistoryView(generics.ListAPIView):
     queryset = models.SearchHistory.objects.all()
     serializer_class = serializers.SearchHistorySerializer
     pagination_class = None
     permission_classes = [IsAuthenticated,]
 
+    def get_queryset(self):
+        query_type = self.request.query_params.get("type")
+        if not query_type:
+            return models.SearchHistory.objects.all()
+        return models.SearchHistory.objects.filter(type=query_type)
+
+class SearchHistoryDestroyView(views.APIView):
+    permission_classes = [IsAuthenticated,]
+    
+    def delete(self, request, id):
+        user = request.user
+        q = get_object_or_404(models.SearchHistory, user=user, id=id)
+        q.delete()
+        return Response({"message": _("Сохраненный поиск удален!")}, status=status.HTTP_200_OK)
+    
 class AdReviewView(generics.CreateAPIView):
     queryset = models.Review.objects.all()
     serializer_class = serializers.ReviewSerializer
@@ -73,21 +94,21 @@ class LikeViews(viewsets.GenericViewSet):
     def set_like(self, request, pk=None, type=None):
         instance = self.get_object()
         if instance is None:
-            return Response({"error": "Invalid type"}, status=400)
+            return Response({"error": "Не валидный тип"}, status=400)
 
         instance.likes.add(request.user)
         instance.save()
-        return Response({"response": True, "message": "Like added successfully"})
+        return Response({"response": True, "message": "Лайк добавлен успешно!"})
 
     @action(detail=True, methods=["get"], url_path='(?P<type>house|car)/remove_like')
     def remove_like(self, request, pk=None, type=None):
         instance = self.get_object()
         if instance is None:
-            return Response({"response": False, "error": "Invalid type"}, status=400)
+            return Response({"response": False, "error": "Неверный тип"}, status=400)
 
         instance.likes.remove(request.user)
         instance.save()
-        return Response({"response": True, "message": "Like removed successfully"})
+        return Response({"response": True, "message": "Лайк был успешно удалён!"})
 
     @action(detail=False, methods=["get"], url_path="my_favorites")
     def my_favorites(self, request):

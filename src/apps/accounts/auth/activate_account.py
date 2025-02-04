@@ -34,7 +34,7 @@ class ActivateAccountSerializer(serializers.Serializer):
                 attrs["type"] = "email"
 
             else:
-                raise serializers.ValidationError("Invalid username type")
+                raise serializers.ValidationError("Некорректный тип активации.")
         return attrs
 
 
@@ -56,7 +56,7 @@ class ActivateAccountView(generics.GenericAPIView):
                     user = User.objects.get(phone=username)
 
                 if user.is_active:
-                    return Response({"response": False, "message": "Account is already active"})
+                    return Response({"response": False, "message": "Этот аккаунт уже активен."})
 
                 if user.code == code:
                     user.is_active = True
@@ -67,19 +67,19 @@ class ActivateAccountView(generics.GenericAPIView):
                     return Response(
                         {
                             "response": True,
-                            "message": "Account activation was successful",
+                            "message": "Аккаунт был успешно активирован.",
                             "token": token.key,
                             "type": "Token",
                         }
                     )
                 return Response(
-                    {"response": False, "message": "Invalid code"}
+                    {"response": False, "message": "Код введен неверно."}
                 )
             except ObjectDoesNotExist:
                 return Response(
                     {
                         "response": False,
-                        "message": "No such user exists",
+                        "message": "Такой пользователь не найден в системе или неактивный.",
                     }
                 )
         return Response(

@@ -22,7 +22,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
         user = self.get_user(check)
 
         if not user:
-            raise serializers.ValidationError("User with the given username does not exist.")
+            raise serializers.ValidationError("Пользователь с данным логином не существует.")
 
         new_password = fake.password()
 
@@ -53,6 +53,6 @@ class ForgotPasswordView(GenericAPIView):
         if serializer.is_valid():
             return Response({
                 "response": True,
-                "message": "The password was successfully sent"
+                "message": "Пароль успешно отправлен на ваш адрес."
             })
         return Response(serializer.errors)

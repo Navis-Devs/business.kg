@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.gis',
 
     # additional
+    'channels',
+    # 'daphne',
     'mptt',
     'rest_framework',
     'rest_framework.authtoken',
@@ -56,6 +58,7 @@ INSTALLED_APPS = [
     'apps.main',
     'apps.tariffs',
     'apps.transactions',
+    'apps.chat',
     'apps.helpers.api',
 ]
 
@@ -66,7 +69,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
     'DEFAULT_PAGINATION_CLASS': 'apps.helpers.paginations.StandardPaginationSet',
-    'PAGE_SIZE': 12,
+    'PAGE_SIZE': 50,
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
@@ -86,6 +89,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core.middleware.LocaleHeaderMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'apps.chat.middleware.TokenAuthMiddleware'
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -106,7 +110,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 DATABASES = {
     'default': env.db(),
@@ -174,7 +178,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Variables
 
-CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6380/0")
+CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
@@ -213,15 +217,15 @@ PARLER_LANGUAGES = {
 
 INTERNAL_IPS = [
     # ...
+    "127.0.0.1",
     "business.navisdevs.ru",
-    "192.168.0.104",
-    "172.19.0.5",
-    "0.0.0.0"
+    # "172.19.0.5",
+    # "0.0.0.0"
     # ...
 ]
 
 def show_toolbar(request):
-        return True
+        return request.user.is_superuser
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
@@ -233,6 +237,15 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://host.docker.internal:6379/1',
+        'LOCATION': 'redis://redis:6379/1',
     }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
 }

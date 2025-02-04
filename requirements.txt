@@ -95,4 +95,7 @@ vine==5.1.0
 wcwidth==0.2.13
 webencodings==0.5.1
 django-debug-toolbar==4.4.6
-django-cachalot
+django-cachalot==2.7.0
+channels==4.0.0
+channels_redis==4.0.0
+daphne==4.0.0

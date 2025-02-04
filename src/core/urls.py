@@ -17,6 +17,7 @@ urlpatterns = [
     path('tariffs/', include("apps.tariffs.urls")),
     path('house/', include('apps.house.urls')),
     path('main/', include('apps.main.urls')),
+    path('chat/', include('apps.chat.urls')),
     # swagger
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('', SpectacularSwaggerView.as_view(url_name='schema')),

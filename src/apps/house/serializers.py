@@ -151,6 +151,7 @@ class PropertySerializer(serializers.ModelSerializer, mixins.BaseMixin):
     count_comments = serializers.SerializerMethodField()
     prices = PriceSerializer(many=True)
     phones = PhonesSerializer(many=True)
+    phone = serializers.IntegerField(source='user.phone', read_only=True)
     likes = serializers.IntegerField(source="likes.count", read_only=True)
     is_liked = serializers.SerializerMethodField()
     count_comments = serializers.IntegerField(source='comments_count', read_only=True)
@@ -177,7 +178,14 @@ class PropertyListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Property
-        fields = ['id', 'prices', 'properties_pictures', 'type_id', 'category', 'rooms', 'square', 'floor', 'floors', 'is_liked']
+        fields = [
+            'id', 'prices', 'properties_pictures', 'type_id', 'category',
+            'rooms', 'square', 'floor', 'floors', 'is_liked', 
+            'autoup_time', 'autoup_until', 'vipped_until', 'premium_until', 'premium_gradient', 
+            'premium_dark_gradient',
+            'urgent_until', 'topped_until', 'ad_color', 'ad_dark_color', 'colored_until',
+            'is_vip', 'is_premium', 'is_autoup', 'is_urgent', 'featured', 'is_top',
+        ]
 
     def get_is_liked(self, obj):
         user = self.context.get('request').user

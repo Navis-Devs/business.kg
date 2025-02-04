@@ -17,7 +17,7 @@ class UserCheckSerializer(serializers.Serializer):
         check_type = check_username(username)
 
         if not check_type:
-            return {"response": False, "username": username, "user_exists": "Invalid username format"}
+            return {"response": False, "username": username, "user_exists": "Некорректный формат имени"}
 
         login_type = check_type.get("type")
         username = check_type.get("data")
@@ -27,7 +27,7 @@ class UserCheckSerializer(serializers.Serializer):
         elif login_type == "phone":
             exists = User.objects.filter(phone=username).exists()
         else:
-            return {"response": False, "username": username, "user_exists": "Unknown login type"}
+            return {"response": False, "username": username, "user_exists": "Неизвестный способ входа."}
 
         return {"response": True, "username": username, "user_exists": exists}
 

@@ -18,7 +18,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(
         required=True,
         min_length=8,
-        error_messages={"min_length": "At least 8 characters"},
+        error_messages={"min_length": "Введите не менее 8 символов."},
     )
 
     class Meta:
@@ -46,12 +46,12 @@ class RegisterSerializer(serializers.ModelSerializer):
                 attrs["type"] = "email"
 
             else:
-                raise serializers.ValidationError("Invalid username type")
+                raise serializers.ValidationError("Неверный способ регистрации.")
 
         validate_password(password)
 
         if password != confirm_password:
-            raise serializers.ValidationError("The passwords don't match")
+            raise serializers.ValidationError("Введённые пароли не совпадают.")
 
         return attrs
 
@@ -99,12 +99,12 @@ class RegisterView(CreateAPIView):
                 pass # send_sms.send_sms(user.phone, phone_registration(user.code))
 
             else:
-                return Response({"response": False, "message": "Not valid username"})
+                return Response({"response": False, "message": "Недопустимое имя пользователя"})
 
             return Response(
                 {
                     "response": True,
-                    "message": "The code was successfully sent"
+                    "message": "Код отправлен успешно."
                 }
             )
 

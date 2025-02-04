@@ -45,7 +45,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class SearchHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SearchHistory
-        fields = ['search_query', 'filter_params', 'created_at']
+        fields = ['id', 'type', 'search_query', 'filter_params', 'created_at']
 
 class DealerListSerializer(serializers.ModelSerializer):
     review_count = serializers.IntegerField(source='reviews.count', read_only=True, default=0)
@@ -75,7 +75,7 @@ class DealerSerializer(serializers.ModelSerializer):
         ads_count = property_count + cars_count
         comment_count = instance.reviews.count()
         avarage_rating = models.Review.get_average_rating(instance)
-        representation['name'] = representation.get('name', 'пользователь') or 'пользователь'
+        representation['name'] = representation.get('name', 'пользователь')
         representation['review_count'] = comment_count
         representation['avarage_rating'] = float(avarage_rating) 
         representation['ads_count'] = ads_count

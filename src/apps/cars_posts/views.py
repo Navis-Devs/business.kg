@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db.models import Exists, OuterRef
+from rest_framework import status
+from rest_framework.views import APIView
 from django.db.models import Count, Avg, F
 
 
@@ -136,3 +138,23 @@ class CarsPostsViewSet(mixins.ListModelMixin,
         self.get_views(instance)  
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+
+class CarsPostsDestroyAPIView(APIView):
+    
+    def delete(self, request, id):
+        user = request.user
+        try:
+            # Конкреттүү объектти алуу, эгер ал жок болсо, 404 кайтаруу
+            instance = CarsPosts.objects.get(user=user, id=id)
+            instance.delete()
+            return Response(
+                {"message": "Ваше объявление успешно удалено."}, 
+                status=status.HTTP_200_OK
+            )
+        except CarsPosts.DoesNotExist:
+            return Response(
+                {"error": "Объявление не найдено или у вас нет доступа."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )

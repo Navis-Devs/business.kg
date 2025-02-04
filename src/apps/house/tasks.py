@@ -362,7 +362,7 @@ def load_properties():
             data_list = response.json()
             properties = data_list.get('data', {}).get('list', [])
             for property in properties:
-                user = User.objects.get(id='18191c25-a84e-4efc-a008-66456e4036b3')
+                user = User.objects.get(id='fc3bb797-bb11-450d-ab26-1c72bea938a5')
                 category_instance = models.Category.objects.get(id=property.get('category'))
                 type_instance = models.Type.objects.get(id=property.get('type_id'))
                 rooms_instance = models.Rooms.objects.get(id=property.get('rooms')) if property.get('rooms') else None 

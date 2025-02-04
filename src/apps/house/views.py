@@ -66,7 +66,7 @@ class PropertyView(
     ).prefetch_related(
         'land_amenities', 'options', 'safety', 'land_options',
         'room_options', 'flat_options', 'documents',
-        )
+        ).order_by('-is_vip', '-is_premium', '-is_top', '-is_autoup')
     serializer_class = serializers.AddPropertySerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = filters.PropertyFilter
@@ -94,14 +94,15 @@ class PropertyView(
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        return Response(
-            {
-                "outcome": "success",
-                "ad_id": response.data.get('id'),
-                "status": response.status_code
-                },    
-            status=status.HTTP_201_CREATED
-        )
+        return Response(response.data, status=status.HTTP_201_CREATED)
+            # {
+            #     "outcome": "success",
+            #     "ad_id": response.data.get('id'),
+            #     "status": response.status_code,
+            #     "data": response.data
+            #     },    
+            # status=status.HTTP_201_CREATED
+        # )
     
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

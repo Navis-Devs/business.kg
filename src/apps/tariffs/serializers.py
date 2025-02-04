@@ -29,6 +29,7 @@ class ApplyTariffSerializer(serializers.Serializer):
     plan_id = serializers.IntegerField()
     color = serializers.CharField(required=False)
     up_time = serializers.TimeField(required=False)
+    price = serializers.IntegerField(required=True)
 
     def validate(self, data):
         object_type = data['object_type']
@@ -63,14 +64,20 @@ class ApplyTariffSerializer(serializers.Serializer):
         object_instance = self.validated_data['object_instance']
         tariff_instance = self.validated_data['tariff_instance']
         plan_instance = self.validated_data['plan_instance']
-        color_instance = self.validated_data.get('color', None)
-        up_time_instance = self.validated_data.get('up_time', None)
+        color_instance = self.validated_data.get('color')
+        up_time_instance = self.validated_data.get('up_time')
+        price_instance = self.validated_data.get('price')
+
+        user = self.context['request'].user
+        if price_instance:
+            user.balance -= price_instance
+            user.save()
 
         object_instance.product_id = tariff_instance
         object_instance.plans = plan_instance
         object_instance.ad_color = color_instance
         object_instance.autoup_time = up_time_instance
-        object_instance._apply_tariff()  
+        object_instance._apply_tariff()
         object_instance.save()
 
         return object_instance

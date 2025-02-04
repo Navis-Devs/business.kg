@@ -45,7 +45,7 @@ class CarModelSerializer(serializers.ModelSerializer):
     # car_generations = CarGenerationSerializer(many=True, read_only=True)
     class Meta:
         model = CarModel
-        fields = ['id', 'name', 'is_popular', 'car_generations']
+        fields = ['id', 'name', 'is_popular',]
 
 
 class CarMarkSerializer(serializers.ModelSerializer):
@@ -167,7 +167,7 @@ class InteriorSerializer(serializers.ModelSerializer):
 class TownsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Towns
-        fields = ['id', 'name'] 
+        fields = ['id', 'name', 'region'] 
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -221,3 +221,11 @@ class CombinedSerializer(serializers.Serializer):
     region = RegionSerializer(many=True)
     town = TownsSerializer(many=True)
     safety = SafetySerializer(many=True)
+
+
+class CarDataSerializer(serializers.Serializer):
+    mark = CarMarkSerializer(many=True, read_only=True)
+    models = CarModelSerializer(many=True, read_only=True)
+    generation = CarGenerationSerializer(many=True, read_only=True)
+    
+

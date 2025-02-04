@@ -53,4 +53,5 @@ COPY .env $APP_HOME/
 
 RUN chmod +x /home/app/web/entrypoint.sh
 RUN chmod +x /home/app/web/manage.py
-CMD ["/home/app/web/entrypoint.sh"]
+# CMD ["/home/app/web/entrypoint.sh"]
+CMD ["daphne", "-u", "/tmp/daphne.sock", "core.asgi:application"]

@@ -1,8 +1,9 @@
 services:
   redis:
+    container_name: redis
     image: "redis:alpine"
-    expose:
-      - 6379
+    ports:
+      - "6379:6379"
 
   web:
     container_name: web
@@ -10,6 +11,7 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     command: sh -c "watchmedo auto-restart --directory=/home/app/web/ --pattern=*.py --recursive -- python manage.py runserver 0.0.0.0:8010"
+    # command: "gunicorn --reload core.wsgi:application --bind 0.0.0.0:8010"
     volumes:
       - ./src:/home/app/web/
       - static_volume:/home/app/web/staticfiles
@@ -54,8 +56,34 @@ services:
     depends_on:
       - web
 
+  daphne:
+    container_name: daphne
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: daphne -b 0.0.0.0 -p 8011  core.asgi:application --verbosity 3
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/media
+  #    extra_hosts:
+  #      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  # channels:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.prod
+  #   command: python3 manage.py runworker channels
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #   - db
   db:
     image: postgis/postgis:15-3.3-alpine
+    container_name: db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:

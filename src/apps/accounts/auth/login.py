@@ -37,7 +37,7 @@ class LoginSerializer(serializers.Serializer):
                 attrs["type"] = "email"
 
             else:
-                raise serializers.ValidationError("Invalid username type")
+                raise serializers.ValidationError("Неверное имя пользователя")
         return attrs
 
 
@@ -61,20 +61,20 @@ class LoginView(generics.GenericAPIView):
                 else:
                     return Response({
                         "response": False,
-                        "message": "Invalid username"}
+                        "message": "Имя пользователя не является действительным"}
                     )
                 if not user.is_active:
                     return Response(
                         {
                             "response": False,
-                            "message": "Confirm your account before logging in",
+                            "message": "Для входа необходимо подтвердить вашу учетную запись.",
                         }
                     )
             except ObjectDoesNotExist:
                 return Response(
                     {
                         "response": False,
-                        "message": "No such user exists",
+                        "message": "Такого пользователя нет в системе.",
                     }
                 )
 
@@ -84,7 +84,7 @@ class LoginView(generics.GenericAPIView):
                 return Response(
                     {
                         "response": False,
-                        "message": "Invalid password or login",
+                        "message": "Некорректный логин или пароль.",
                     }
                 )
 
@@ -93,7 +93,7 @@ class LoginView(generics.GenericAPIView):
                 return Response(
                     {
                         "response": True,
-                        "message": "The login was successful",
+                        "message": "Вход в систему успешно завершён.",
                         "token": token.key,
                         "type": "Token"
                     }
